@@ -155,7 +155,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                     <td className="px-3 py-3 whitespace-nowrap text-gray-600 text-sm hidden lg:table-cell">
                       {child.expectedDepartureDate ? (
                         <span>
-                          {format(new Date(child.expectedDepartureDate), 'MMM d')}
+                          {format(new Date(child.expectedDepartureDate), 'MMM d, yyyy')}
                         </span>
                       ) : (
                         <span className="text-gray-400">-</span>

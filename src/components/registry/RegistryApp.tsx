@@ -359,8 +359,15 @@ export function RegistryApp() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    // Clear all state first
+    setUser(null);
+    setProvider(null);
+    setVacancyData(undefined);
+    setOrganization(null);
+    setOrgProviders([]);
     setView('public');
+    // Then sign out from Supabase
+    await signOut();
   };
 
   const handleUpdateProvider = async (updates: Partial<Provider>) => {
@@ -647,6 +654,7 @@ export function RegistryApp() {
                 return months < 24;
               }).length,
             }}
+            licenseNumber={provider.license_number}
           />
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">

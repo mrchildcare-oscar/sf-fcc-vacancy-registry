@@ -171,7 +171,7 @@ export function OrganizationDashboard({ organization, providers, onRefresh }: Or
   };
 
   // Download CSV template with current data
-  const handleDownloadTemplate = () => {
+  const handleDownloadCurrentData = () => {
     const headers = ['license_number', 'business_name', 'infant_spots', 'toddler_spots', 'preschool_spots', 'school_age_spots', 'available_date', 'waitlist'];
     const rows = providers.map(p => {
       const v = vacancies[p.id];
@@ -193,6 +193,25 @@ export function OrganizationDashboard({ organization, providers, onRefresh }: Or
     const a = document.createElement('a');
     a.href = url;
     a.download = 'vacancy-data.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Download sample template with fake example data
+  const handleDownloadSampleTemplate = () => {
+    const headers = ['license_number', 'business_name', 'infant_spots', 'toddler_spots', 'preschool_spots', 'school_age_spots', 'available_date', 'waitlist'];
+    const sampleData = [
+      ['123456789', '"Sunshine Family Childcare"', '2', '1', '3', '0', '2025-02-01', 'yes'],
+      ['987654321', '"Rainbow Kids FCC"', '0', '2', '1', '2', '2025-03-15', 'no'],
+      ['555123456', '"Little Stars Daycare"', '1', '0', '0', '0', '', 'yes'],
+    ];
+
+    const csv = [headers.join(','), ...sampleData.map(row => row.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'vacancy-import-template.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -328,7 +347,7 @@ export function OrganizationDashboard({ organization, providers, onRefresh }: Or
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={handleDownloadTemplate}
+            onClick={handleDownloadCurrentData}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-white border rounded-lg hover:bg-gray-50"
           >
             <Download size={16} />
@@ -432,13 +451,22 @@ export function OrganizationDashboard({ organization, providers, onRefresh }: Or
                 </ul>
               </div>
 
-              <button
-                onClick={handleDownloadTemplate}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
-              >
-                <Download size={16} />
-                Download template with current data
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={handleDownloadSampleTemplate}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
+                >
+                  <Download size={16} />
+                  Download sample template (with example data)
+                </button>
+                <button
+                  onClick={handleDownloadCurrentData}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100"
+                >
+                  <Download size={16} />
+                  Export my current data
+                </button>
+              </div>
 
               <div className="border-t pt-4">
                 <input

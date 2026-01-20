@@ -1,9 +1,9 @@
 # SF FCC Vacancy Registry - Demo Script
 ## For Provider Walkthroughs
 
-**Duration:** 10-15 minutes
+**Duration:** 15-20 minutes
 **Presenter:** Oscar Tang
-**Platform URL:** [Your deployed URL]
+**Platform URL:** https://beta.familychildcaresf.com
 
 ---
 
@@ -12,6 +12,7 @@
 - Have the platform open in your browser
 - Make sure you have a test provider account ready
 - Have some sample data entered (a few children in roster, vacancy info)
+- For organization demo: Log in as info@daycaresf.com to show multi-location management
 
 ---
 
@@ -96,7 +97,32 @@
 
 ---
 
-## Part 5: Roster & Projections (3 min) - Optional
+## Part 5: Embed Widget for Your Website (NEW!) (2 min)
+
+### Show the Embed Code Feature
+
+> "Here's something new - you can show your availability right on your own website."
+
+**Walk through:**
+
+1. **Scroll down in the vacancy form**
+   > "After you save your vacancy info, look for 'Embed on your website' at the bottom."
+
+2. **Click to expand**
+   > "Click here and you'll see a code snippet."
+
+3. **Copy the code**
+   > "Just copy this code and paste it into your website. It works with any website builder - Wix, Squarespace, WordPress, anything that lets you add custom HTML."
+
+4. **Show what it looks like**
+   > "The widget shows your current availability to parents. And here's the best part - when you update your vacancy here, it automatically updates on your website. No extra work."
+
+**Key point:**
+> "This way, families visiting your website always see your current availability. No more outdated info, no more phone calls just to check if you have space."
+
+---
+
+## Part 6: Roster & Projections (3 min) - Optional
 
 *Only show this if the provider seems interested in more features*
 
@@ -123,17 +149,48 @@
 
 ---
 
-## Part 6: Wrap Up & Feedback Request (2 min)
+## Part 7: Multi-Location Management (NEW!) (3 min)
+
+*For organizations with multiple programs - demo with Modern Education account*
+
+### Show the Organization Dashboard
+
+> "For providers who run multiple programs, we have something special."
+
+**Walk through:**
+
+1. **Log in as organization owner**
+   > "When you log in with your organization account, you see all your locations in one place."
+
+2. **Overview of all programs**
+   > "You can see the vacancy status of every location at a glance - which ones have openings, which are full, which have waitlist."
+
+3. **Quick edit**
+   > "Click on any program to update its vacancy info directly. No need to log into separate accounts."
+
+4. **CSV import/export**
+   > "If you have many locations, you can export everything to a spreadsheet, update it there, and import it back. Great for bulk updates."
+
+5. **Public widget**
+   > "And you can embed a widget on your website that shows all your locations. Families can see availability across all your programs."
+
+**Key point:**
+> "One login to manage everything. Makes it easy to keep all your programs updated."
+
+---
+
+## Part 8: Wrap Up & Feedback Request (2 min)
 
 ### Closing
 
-> "That's basically it. Simple to use - report your vacancies, families find you.
+> "That's basically it. Simple to use - report your vacancies, families find you. And now you can even show that info right on your own website.
 >
 > We're in beta testing right now, which means we're still improving it based on what providers like you tell us.
 >
 > **I'd love to hear:**
 > - What challenges do you face with managing vacancies and enrollment?
 > - Is there anything you wish this could do that it doesn't?
+> - Would the embed widget be useful for your website?
 > - Any questions about how it works?
 >
 > Your feedback helps us make this better for everyone. You can email me anytime at oscar.fccasf@gmail.com."
@@ -160,6 +217,15 @@
 **Q: Can I use this on my phone?**
 > "Yes, it works on mobile. You can update your vacancies from anywhere."
 
+**Q: How do I add the widget to my website?**
+> "After updating your vacancy, scroll down and click 'Embed on your website.' Copy the code and paste it into your website. If you need help, I can walk you through it."
+
+**Q: I have multiple locations. Do I need separate accounts?**
+> "No! We can set you up with an organization account that lets you manage all your locations from one login. Just reach out and we'll get you set up."
+
+**Q: How do I change my password?**
+> "Click on Account Settings in the menu. You can change your password there anytime."
+
 ---
 
 ## Demo Checklist
@@ -169,6 +235,7 @@ Before the demo:
 - [ ] Logged into test provider account
 - [ ] Have some sample roster data
 - [ ] Have vacancy form filled with sample data
+- [ ] For org demo: Have Modern Education account ready
 
 During the demo:
 - [ ] Showed public listings page
@@ -176,8 +243,28 @@ During the demo:
 - [ ] Showed expanded listing detail
 - [ ] Explained sign-in process
 - [ ] Showed vacancy form
+- [ ] **Showed embed widget feature (NEW)**
+- [ ] Showed roster (if interested)
+- [ ] **Showed org dashboard (if applicable) (NEW)**
 - [ ] Asked for feedback
 - [ ] Gave contact info for questions
+
+---
+
+## What's New (January 2025)
+
+**Embed Widget**
+- Providers can now embed a live vacancy widget on their own website
+- Updates automatically when they change their vacancy info
+- Works with any website builder
+
+**Organization Dashboard**
+- Multi-location providers can manage all programs from one login
+- Overview shows status across all locations
+- CSV import/export for bulk updates
+
+**Account Settings**
+- Providers can now change their password after login
 
 ---
 
@@ -189,9 +276,11 @@ During the demo:
 
 **Date:** ______________________
 
+**Number of locations:** ______________________
+
+**Interested in embed widget?** [ ] Yes  [ ] No
+
 **Feedback/Ideas:**
-
-
 
 
 

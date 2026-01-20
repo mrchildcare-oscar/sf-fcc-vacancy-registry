@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Child } from '../types';
-import { Upload, FileSpreadsheet, X, Check } from 'lucide-react';
+import { Upload, FileSpreadsheet, X, Check, Download } from 'lucide-react';
 
 interface CsvImportProps {
   onImport: (children: Omit<Child, 'id'>[]) => void;
@@ -116,6 +116,27 @@ export function CsvImport({ onImport, onClose }: CsvImportProps) {
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Download sample template with fake example data
+  const handleDownloadTemplate = () => {
+    const headers = ['First Name', 'Last Name', 'Date of Birth', 'Enrollment Date', 'Expected Departure Date'];
+    const sampleData = [
+      ['Emma', 'Garcia', '2023-06-15', '2024-01-10', ''],
+      ['Liam', 'Chen', '2022-03-22', '2023-08-01', '2027-08-15'],
+      ['Sofia', 'Johnson', '2021-11-08', '2023-09-05', '2026-08-20'],
+      ['Noah', 'Williams', '2020-04-12', '2022-06-01', '2025-08-15'],
+      ['Olivia', 'Martinez', '2024-01-20', '2024-09-01', ''],
+    ];
+
+    const csv = [headers.join(','), ...sampleData.map(row => row.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'roster-import-template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -199,9 +220,16 @@ export function CsvImport({ onImport, onClose }: CsvImportProps) {
               <code className="text-xs bg-gray-200 p-2 rounded block">
                 First Name, Last Name, Date of Birth, Enrollment Date
               </code>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 mt-2 mb-3">
                 Dates can be in YYYY-MM-DD or MM/DD/YYYY format
               </p>
+              <button
+                onClick={handleDownloadTemplate}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 w-full justify-center"
+              >
+                <Download size={16} />
+                Download Sample Template (with example data)
+              </button>
             </div>
           </>
         ) : (

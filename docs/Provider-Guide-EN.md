@@ -56,18 +56,58 @@ Tell families about your available spots:
 - **Availability date**: When spots open up
 - **Waitlist**: Let families know you accept waitlist signups even when full
 
+![Vacancy Form](screenshot-5-vacancy-form.png)
+*Update your vacancy information with spots by age group*
+
 ### Roster Management
 Track your enrolled children (optional but helpful):
 - Add children with just their date of birth (names are optional for privacy)
 - The system automatically calculates ages and age groups
 - See upcoming openings as children age out or transition to kindergarten
 - Auto-fill your vacancy form based on your roster
+- Import your roster from CSV file for quick setup
+
+![Roster Management](screenshot-8-roster.png)
+*View all enrolled children with their ages and age groups*
 
 ### Capacity Projections
 Plan ahead with automatic calculations:
 - See when children will transition between age groups
 - Know when spots will open due to kindergarten starts
 - California infant ratio compliance is built-in
+
+![Capacity Timeline](screenshot-9-timeline.png)
+*Visual timeline shows when age group transitions will happen*
+
+### Embed Widget for Your Website (NEW!)
+Show your availability directly on your own website:
+- After updating your vacancy, look for "Embed on your website" at the bottom of the form
+- Copy the code snippet and paste it into your website
+- Works with any website builder (Wix, Squarespace, WordPress, etc.)
+- **Updates automatically** when you change your vacancy info - no extra work!
+
+![Embed Widget Section](screenshot-6-embed-widget.png)
+*Copy the embed code to add a live vacancy widget to your website*
+
+**Example embed code:**
+```html
+<div id="fcc-vacancy-widget" data-provider="YOUR-LICENSE-NUMBER"></div>
+<script src="https://beta.familychildcaresf.com/widget.js"></script>
+```
+
+This way, families visiting your website always see your current availability.
+
+### Multi-Location Dashboard (NEW!)
+If you manage multiple childcare locations, you can view and manage all of them from one dashboard:
+
+![Organization Dashboard](screenshot-7-organization-dashboard.png)
+*Organization owners can see all locations and their vacancy status at a glance*
+
+Features include:
+- View vacancy status for all your locations in one place
+- Quick-update any location's availability
+- Import/export vacancy data via CSV
+- Download sample templates with example data
 
 ---
 
@@ -87,6 +127,7 @@ If you have no current openings:
 2. **Update when things change** - New opening? Child leaving? Update right away
 3. **Use the roster feature** - It helps predict future openings automatically
 4. **Check the "Waitlist" box** - Even when full, families want to plan ahead
+5. **Add the widget to your website** - Show live availability to families visiting your site
 
 ---
 
@@ -115,6 +156,16 @@ Your feedback directly shapes how this platform develops. Thank you for being pa
 ## Questions?
 
 If you have questions or need help, please contact: **Oscar Tang** at **oscar.fccasf@gmail.com**
+
+---
+
+---
+
+## What's New (January 2025)
+
+- **Embed Widget** - Show your vacancy status directly on your own website
+- **Account Settings** - Change your password anytime from the settings menu
+- **Multi-Location Support** - Providers with multiple programs can manage all locations from one login (contact us to set this up)
 
 ---
 

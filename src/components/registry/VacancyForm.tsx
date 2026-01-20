@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Baby, Clock, Calendar, Save, AlertCircle, CheckCircle, AlertTriangle, ClipboardList } from 'lucide-react';
+import { Baby, Clock, Calendar, Save, AlertCircle, CheckCircle, AlertTriangle, ClipboardList, Code, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { getMaxInfantsAllowed } from '../../utils/compliance';
 import { useLanguage } from '../../i18n/LanguageContext';
 
@@ -11,6 +11,7 @@ interface VacancyFormProps {
     total: number;
     infants: number;
   };
+  licenseNumber?: string;
 }
 
 export interface VacancyFormData {
@@ -45,12 +46,14 @@ const DEFAULT_DATA: VacancyFormData = {
   notes: '',
 };
 
-export function VacancyForm({ initialData, onSubmit, programType, currentEnrollment }: VacancyFormProps) {
+export function VacancyForm({ initialData, onSubmit, programType, currentEnrollment, licenseNumber }: VacancyFormProps) {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<VacancyFormData>(initialData || DEFAULT_DATA);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showEmbedCode, setShowEmbedCode] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Sync form data when initialData changes (e.g., from auto-fill)
   useEffect(() => {
@@ -341,6 +344,60 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
           <br />
           {t('vacancy.keepUpdatedNote')}
         </p>
+
+        {/* Embed Code Section */}
+        {licenseNumber && (
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={() => setShowEmbedCode(!showEmbedCode)}
+              className="flex items-center justify-between w-full text-left"
+            >
+              <div className="flex items-center gap-2">
+                <Code size={18} className="text-gray-500" />
+                <span className="text-sm font-medium text-gray-700">
+                  Embed on your website
+                </span>
+              </div>
+              {showEmbedCode ? (
+                <ChevronUp size={18} className="text-gray-400" />
+              ) : (
+                <ChevronDown size={18} className="text-gray-400" />
+              )}
+            </button>
+
+            {showEmbedCode && (
+              <div className="mt-4 space-y-3">
+                <p className="text-xs text-gray-500">
+                  Add this code to your website to show your current availability to families. It updates automatically when you change your vacancy status.
+                </p>
+                <div className="relative">
+                  <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto">
+{`<div id="fcc-vacancy-widget" data-provider="${licenseNumber}"></div>
+<script src="https://beta.familychildcaresf.com/widget.js"></script>`}
+                  </pre>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+`<div id="fcc-vacancy-widget" data-provider="${licenseNumber}"></div>
+<script src="https://beta.familychildcaresf.com/widget.js"></script>`
+                      );
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 rounded text-gray-300"
+                  >
+                    {copied ? <Check size={14} /> : <Copy size={14} />}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-400">
+                  Works with any website builder that allows custom HTML.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </form>
     </div>
   );

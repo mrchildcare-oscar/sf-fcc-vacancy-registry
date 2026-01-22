@@ -3,7 +3,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import {
   checkEligibility,
   getThresholds,
-  SF_RR_AGENCIES,
+  getRelevantAgencies,
   EligibilityResult,
 } from '../../lib/eligibility';
 
@@ -288,28 +288,32 @@ function ResultsDisplay({ result, onReset, onFindProviders, language, t }: Resul
         <p className="text-sm text-gray-600 mb-3">{t('eligibility.nextStepDesc')}</p>
 
         <div className="space-y-3">
-          {SF_RR_AGENCIES.map((agency, index) => (
-            <div key={index} className="bg-gray-50 rounded-lg p-3">
+          {getRelevantAgencies(result).map((agency) => (
+            <div key={agency.id} className={`rounded-lg p-3 ${agency.id === 'compass' ? 'bg-amber-50 border border-amber-200' : 'bg-gray-50'}`}>
               <div className="font-medium text-gray-800">
                 {language === 'zh-TW' ? agency.nameZh : agency.name}
               </div>
-              <div className="text-sm text-gray-600">
-                <a href={`tel:${agency.phone.replace(/[^0-9]/g, '')}`} className="text-blue-600 hover:underline">
-                  {agency.phone}
-                </a>
-                {' • '}
-                <a href={`https://${agency.website}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {agency.website}
-                </a>
+              <div className="text-xs text-gray-500 mt-1 mb-2">
+                {language === 'zh-TW' ? agency.descriptionZh : agency.description}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {language === 'zh-TW' ? agency.languagesZh.join(', ') : agency.languages.join(', ')}
+              <div className="text-sm text-gray-600 space-y-1">
+                <div>
+                  <a href={`tel:${agency.phone.replace(/[^0-9x]/gi, '')}`} className="text-blue-600 hover:underline">
+                    {agency.phone}
+                  </a>
+                </div>
+                <div>
+                  <a href={`mailto:${agency.email}`} className="text-blue-600 hover:underline">
+                    {agency.email}
+                  </a>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {language === 'zh-TW' ? agency.addressZh : agency.address}
+                </div>
               </div>
             </div>
           ))}
         </div>
-
-        <p className="text-xs text-gray-500 mt-3">{t('eligibility.agencyNote')}</p>
       </div>
 
       {/* Other Options for Over-Income */}

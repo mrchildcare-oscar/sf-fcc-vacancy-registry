@@ -103,32 +103,81 @@ export function checkEligibility(
 
 // R&R Agency Information
 export interface RRAgency {
+  id: string;
   name: string;
   nameZh: string;
   phone: string;
+  email: string;
+  address: string;
+  addressZh: string;
   website: string;
-  languages: string[];
-  languagesZh: string[];
+  forTiers: ('free' | 'credit100' | 'credit50' | 'homeless')[];
+  description: string;
+  descriptionZh: string;
 }
 
 export const SF_RR_AGENCIES: RRAgency[] = [
   {
+    id: 'childrens-council',
     name: "Children's Council of San Francisco",
     nameZh: "舊金山兒童議會",
-    phone: "(415) 343-3300",
+    phone: "415-343-3300",
+    email: "rr@childrenscouncil.org",
+    address: "445 Church Street, San Francisco, CA 94114",
+    addressZh: "445 Church Street, San Francisco, CA 94114",
     website: "childcaresf.org",
-    languages: ["English", "Spanish", "Cantonese", "Mandarin"],
-    languagesZh: ["英語", "西班牙語", "粵語", "普通話"],
+    forTiers: ['free'],
+    description: "For Fully-Funded ELFA applications (≤110% AMI)",
+    descriptionZh: "適用於全額補助 ELFA 申請（≤110% AMI）",
   },
   {
+    id: 'wu-yee',
     name: "Wu Yee Children's Services",
-    nameZh: "華裔兒童服務中心",
-    phone: "(415) 391-4956",
+    nameZh: "護兒兒童服務",
+    phone: "844-644-4300",
+    email: "randr@wuyee.org",
+    address: "880 Clay St., Floor 3, San Francisco, CA 94108",
+    addressZh: "880 Clay St., 3樓, San Francisco, CA 94108",
     website: "wuyee.org",
-    languages: ["English", "Cantonese", "Mandarin", "Vietnamese"],
-    languagesZh: ["英語", "粵語", "普通話", "越南語"],
+    forTiers: ['free', 'credit100', 'credit50'],
+    description: "For Tuition Credit AND Fully-Funded ELFA applications (all income tiers)",
+    descriptionZh: "適用於學費抵免和全額補助 ELFA 申請（所有收入等級）",
+  },
+  {
+    id: 'compass',
+    name: "Compass Family Services",
+    nameZh: "Compass 家庭服務",
+    phone: "415-644-0504 x 2330",
+    email: "access@compass-sf.org",
+    address: "37 Grove Street, San Francisco, CA 94102",
+    addressZh: "37 Grove Street, San Francisco, CA 94102",
+    website: "compass-sf.org",
+    forTiers: ['homeless'],
+    description: "For families currently experiencing homelessness",
+    descriptionZh: "適用於目前正在經歷無家可歸的家庭",
   },
 ];
+
+/**
+ * Get relevant R&R agencies based on eligibility result
+ */
+export function getRelevantAgencies(result: EligibilityResult): RRAgency[] {
+  const agencies: RRAgency[] = [];
+
+  if (result.elfaFree) {
+    // For fully-funded: show both Children's Council and Wu Yee
+    agencies.push(SF_RR_AGENCIES.find(a => a.id === 'childrens-council')!);
+    agencies.push(SF_RR_AGENCIES.find(a => a.id === 'wu-yee')!);
+  } else if (result.elfaCredit100 || result.elfaDiscount50) {
+    // For tuition credit tiers: Wu Yee only
+    agencies.push(SF_RR_AGENCIES.find(a => a.id === 'wu-yee')!);
+  }
+
+  // Always show Compass for homeless families (at the end)
+  agencies.push(SF_RR_AGENCIES.find(a => a.id === 'compass')!);
+
+  return agencies;
+}
 
 /**
  * Format a number as currency

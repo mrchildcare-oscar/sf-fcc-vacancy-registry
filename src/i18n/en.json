@@ -240,5 +240,65 @@
     "english": "English",
     "chinese": "繁體中文",
     "switchLanguage": "Language"
+  },
+  "eligibility": {
+    "title": "Check if you qualify for FREE or reduced-cost childcare",
+    "subtitle": "Answer 2 quick questions - No personal info saved",
+    "householdSize": "Household Size",
+    "selectSize": "Select...",
+    "person": "person",
+    "people": "people",
+    "householdHint": "Include all people in your home",
+    "yourIncome": "Your Income",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "incomeHint": "Before taxes",
+    "checkButton": "Check Eligibility",
+    "disclaimer": "This is a quick estimate only. No information is saved.",
+    "startOver": "Start Over",
+    "findProviders": "Find Providers",
+    "nextStep": "Next Step: Contact a Resource & Referral Agency",
+    "nextStepDesc": "They'll help you apply and find openings near you.",
+    "agencyNote": "Both agencies provide the same services - choose based on language preference or location.",
+    "results": {
+      "eligible": "Great news! You may qualify for FREE childcare",
+      "eligibleDesc": "Based on your household size and income, you may be eligible for:",
+      "discount": "You may qualify for reduced-cost childcare",
+      "discountDesc": "Starting July 2026, you may be eligible for 50% off tuition.",
+      "overIncome": "Based on income alone, you may not qualify",
+      "overIncomeDesc": "However, eligibility depends on many factors beyond income."
+    },
+    "programs": {
+      "elfaFree": {
+        "title": "SF ELFA - Fully Funded (FREE)",
+        "desc": "Fully-funded tuition for SF residents earning up to 110% AMI"
+      },
+      "elfaCredit100": {
+        "title": "SF ELFA - 100% Tuition Credit (FREE)",
+        "desc": "100% tuition credit for SF residents earning 111-150% AMI"
+      },
+      "elfaDiscount50": {
+        "title": "SF ELFA - 50% Discount",
+        "desc": "50% off tuition for SF residents earning 151-200% AMI"
+      },
+      "cspp": {
+        "title": "CA State Preschool Program (CSPP)",
+        "desc": "Free preschool for children ages 3-4"
+      },
+      "generalSubsidy": {
+        "title": "State Childcare Subsidies (CalWORKs, CCTR, CAPP)",
+        "desc": "Income-based assistance for eligible families"
+      },
+      "headStart": {
+        "title": "Head Start / Early Head Start",
+        "desc": "Comprehensive early learning program for ages 0-5"
+      }
+    },
+    "otherOptions": {
+      "title": "Other options to explore:",
+      "sliding": "Sliding scale fees at some providers",
+      "employer": "Employer childcare benefits",
+      "fsa": "Dependent Care FSA (save on taxes)"
+    }
   }
 }

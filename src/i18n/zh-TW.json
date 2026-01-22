@@ -240,5 +240,65 @@
     "english": "English",
     "chinese": "繁體中文",
     "switchLanguage": "語言"
+  },
+  "eligibility": {
+    "title": "查看您是否符合免費或減價托兒服務資格",
+    "subtitle": "回答 2 個簡單問題 - 不保存任何個人資訊",
+    "householdSize": "家庭人數",
+    "selectSize": "選擇...",
+    "person": "人",
+    "people": "人",
+    "householdHint": "包括您家中所有人",
+    "yourIncome": "您的收入",
+    "monthly": "每月",
+    "annual": "每年",
+    "incomeHint": "稅前收入",
+    "checkButton": "查看資格",
+    "disclaimer": "這只是一個快速估算。不會保存任何資訊。",
+    "startOver": "重新開始",
+    "findProviders": "尋找托兒服務",
+    "nextStep": "下一步：聯繫資源與轉介機構",
+    "nextStepDesc": "他們將幫助您申請並尋找附近的空缺。",
+    "agencyNote": "兩個機構提供相同的服務 - 根據語言偏好或地點選擇。",
+    "results": {
+      "eligible": "好消息！您可能符合免費托兒服務資格",
+      "eligibleDesc": "根據您的家庭人數和收入，您可能有資格申請：",
+      "discount": "您可能符合減價托兒服務資格",
+      "discountDesc": "從 2026 年 7 月起，您可能有資格獲得學費 50% 的折扣。",
+      "overIncome": "僅根據收入，您可能不符合資格",
+      "overIncomeDesc": "但是，資格取決於收入以外的許多因素。"
+    },
+    "programs": {
+      "elfaFree": {
+        "title": "舊金山 ELFA - 全額補助（免費）",
+        "desc": "為收入不超過 110% AMI 的舊金山居民提供全額學費補助"
+      },
+      "elfaCredit100": {
+        "title": "舊金山 ELFA - 100% 學費抵免（免費）",
+        "desc": "為收入在 111-150% AMI 的舊金山居民提供 100% 學費抵免"
+      },
+      "elfaDiscount50": {
+        "title": "舊金山 ELFA - 50% 折扣",
+        "desc": "為收入在 151-200% AMI 的舊金山居民提供 50% 學費折扣"
+      },
+      "cspp": {
+        "title": "加州州立學前班計劃 (CSPP)",
+        "desc": "為 3-4 歲兒童提供免費學前教育"
+      },
+      "generalSubsidy": {
+        "title": "州立托兒補助 (CalWORKs, CCTR, CAPP)",
+        "desc": "為符合收入條件的家庭提供補助"
+      },
+      "headStart": {
+        "title": "Head Start / Early Head Start",
+        "desc": "為 0-5 歲兒童提供的綜合早期學習計劃"
+      }
+    },
+    "otherOptions": {
+      "title": "其他可探索的選項：",
+      "sliding": "部分服務提供者提供浮動收費",
+      "employer": "雇主托兒福利",
+      "fsa": "受扶養人照護 FSA（節省稅款）"
+    }
   }
 }

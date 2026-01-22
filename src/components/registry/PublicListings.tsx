@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { EligibilityScreener } from './EligibilityScreener';
 
 interface PublicListingsProps {
   listings: PublicListing[];
@@ -250,6 +251,11 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
 
       {/* Listings */}
       <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* Eligibility Screener */}
+        <EligibilityScreener />
+
+        {/* Provider Listings */}
+        <div id="provider-listings">
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
@@ -571,6 +577,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
             )}
           </div>
         )}
+        </div>
       </div>
 
       {/* Footer */}

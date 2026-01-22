@@ -187,6 +187,11 @@ export function RegistryApp() {
           console.log('[Auth] No session found');
         }
       } catch (err) {
+        // Ignore AbortError - happens in React 18 StrictMode double-mount
+        if (err instanceof Error && err.name === 'AbortError') {
+          console.log('[Auth] Request aborted (StrictMode re-mount)');
+          return;
+        }
         console.error('[Auth] Exception during auth check:', err);
         if (isMounted) {
           setLoadingError(`Connection error: ${err instanceof Error ? err.message : 'Unknown error'}`);

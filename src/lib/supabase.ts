@@ -211,6 +211,11 @@ export async function getPublicListings(): Promise<PublicListing[]> {
       .order('last_updated', { ascending: false });
 
     if (error) {
+      // Ignore AbortError - happens in React 18 StrictMode double-mount
+      if (error.message?.includes('AbortError')) {
+        console.log('[Supabase] getPublicListings aborted (StrictMode re-mount)');
+        return [];
+      }
       console.error('[Supabase] getPublicListings error:', error);
       return [];
     }

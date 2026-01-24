@@ -631,7 +631,7 @@ export function RegistryApp() {
     return (
       <div className="min-h-screen bg-gray-50">
         <ProviderNav />
-        <div className="max-w-2xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900">{provider.business_name}</h1>
             <p className="text-gray-600">
@@ -663,10 +663,9 @@ export function RegistryApp() {
           />
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="font-medium text-blue-900 mb-2">Your listing is live!</h3>
+            <h3 className="font-medium text-blue-900 mb-2">{t('vacancy.listingLive')}</h3>
             <p className="text-sm text-blue-700">
-              Families searching for childcare in {provider.neighborhood || provider.zip_code} can see your program.
-              Remember to update your vacancy info when your availability changes.
+              {t('vacancy.listingLiveDesc', { location: provider.neighborhood || provider.zip_code })}
             </p>
           </div>
         </div>
@@ -679,14 +678,14 @@ export function RegistryApp() {
     return (
       <div className="min-h-screen bg-gray-50">
         <ProviderNav />
-        <div className="max-w-4xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
           <div className="flex justify-end mb-4">
             <button
               onClick={() => setShowImport(true)}
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-              Import CSV
+              {t('roster.importCsv')}
             </button>
           </div>
           <ChildList
@@ -744,7 +743,7 @@ export function RegistryApp() {
     return (
       <div className="min-h-screen bg-gray-50">
         <ProviderNav />
-        <div className="max-w-2xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
           <ProviderSettings
             provider={provider}
             userEmail={user.email || ''}

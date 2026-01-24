@@ -1,7 +1,7 @@
 {
   "name": "vacancy-projection-tool",
   "private": true,
-  "version": "1.0.0-beta",
+  "version": "1.2.0-beta",
   "type": "module",
   "scripts": {
     "dev": "vite",

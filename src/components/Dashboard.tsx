@@ -4,6 +4,7 @@ import { calculateComplianceStatus, getCapacityRuleDescription } from '../utils/
 import { getAgeGroupConfig } from '../utils/ageGroups';
 import { format, formatDistanceToNow } from 'date-fns';
 import { AlertTriangle, CheckCircle, Users, Calendar, Clock, XCircle } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface DashboardProps {
   children: Child[];
@@ -11,6 +12,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ children, capacityConfig }: DashboardProps) {
+  const { t } = useLanguage();
   const compliance = calculateComplianceStatus(children, capacityConfig);
   const projections = calculateProjectedOpenings(children, 12);
 
@@ -22,7 +24,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
           <div className="flex items-start gap-3">
             <XCircle className="text-red-600 flex-shrink-0 mt-0.5" size={24} />
             <div>
-              <h3 className="font-semibold text-red-800">Compliance Violation</h3>
+              <h3 className="font-semibold text-red-800">{t('projections.complianceViolation')}</h3>
               <ul className="mt-1 text-sm text-red-700 space-y-1">
                 {compliance.errors.map((error, i) => (
                   <li key={i}>{error}</li>
@@ -38,7 +40,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
           <div className="flex items-start gap-3">
             <AlertTriangle className="text-amber-600 flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h3 className="font-medium text-amber-800">Capacity Notices</h3>
+              <h3 className="font-medium text-amber-800">{t('projections.capacityNotices')}</h3>
               <ul className="mt-1 text-sm text-amber-700 space-y-1">
                 {compliance.warnings.map((warning, i) => (
                   <li key={i}>{warning}</li>
@@ -57,7 +59,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
               <Users size={24} className="text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Enrolled</p>
+              <p className="text-sm text-gray-500">{t('projections.totalEnrolled')}</p>
               <p className="text-2xl font-bold text-gray-900">
                 {compliance.totalChildren}
                 <span className="text-sm font-normal text-gray-500"> / {compliance.maxTotalAllowed}</span>
@@ -76,10 +78,10 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
               )}
             </div>
             <div>
-              <p className="text-sm text-gray-500">Infants (under 2)</p>
+              <p className="text-sm text-gray-500">{t('projections.infantsUnder2')}</p>
               <p className="text-2xl font-bold text-gray-900">
                 {compliance.infantCount}
-                <span className="text-sm font-normal text-gray-500"> / {compliance.maxInfantsAllowed} max</span>
+                <span className="text-sm font-normal text-gray-500"> / {compliance.maxInfantsAllowed} {t('projections.max')}</span>
               </p>
             </div>
           </div>
@@ -91,7 +93,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
               <Calendar size={24} className={compliance.totalSpotsAvailable > 0 ? 'text-emerald-600' : 'text-gray-400'} />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Spots Available</p>
+              <p className="text-sm text-gray-500">{t('projections.spotsAvailable')}</p>
               <p className="text-2xl font-bold text-gray-900">{compliance.totalSpotsAvailable}</p>
             </div>
           </div>
@@ -103,7 +105,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
               <Clock size={24} className="text-purple-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Upcoming Changes</p>
+              <p className="text-sm text-gray-500">{t('projections.upcomingChanges')}</p>
               <p className="text-2xl font-bold text-gray-900">{projections.length}</p>
             </div>
           </div>
@@ -112,7 +114,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
 
       {/* Current Availability */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Capacity Status</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('projections.currentCapacityStatus')}</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           {/* Infant Status */}
@@ -124,7 +126,7 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
               : 'border-pink-200'
           }`}>
             <div className="flex justify-between items-start mb-2">
-              <h4 className="font-medium text-pink-600">Infant (under 2)</h4>
+              <h4 className="font-medium text-pink-600">{t('projections.infantUnder2')}</h4>
               <span
                 className={`px-2 py-1 text-xs font-medium rounded-full ${
                   compliance.infantSpotsAvailable > 0
@@ -133,25 +135,25 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
                 }`}
               >
                 {compliance.infantSpotsAvailable > 0
-                  ? `${compliance.infantSpotsAvailable} can add`
-                  : 'Cannot add more'}
+                  ? t('projections.canAdd', { count: compliance.infantSpotsAvailable })
+                  : t('projections.cannotAddMore')}
               </span>
             </div>
             <p className="text-sm text-gray-600">
-              {compliance.infantCount} enrolled, max {compliance.maxInfantsAllowed} allowed
+              {t('projections.enrolledMaxAllowed', { enrolled: compliance.infantCount, max: compliance.maxInfantsAllowed })}
             </p>
             <p className="text-xs text-gray-500 mt-2">
               {getCapacityRuleDescription(capacityConfig.programType, compliance.totalChildren)}
             </p>
             {compliance.infantSpotsAvailable <= 0 && (
-              <NextOpeningInfo projections={projections} ageGroup="infant" label="Next infant spot opens" />
+              <NextOpeningInfo projections={projections} ageGroup="infant" label={t('projections.nextInfantSpotOpens')} />
             )}
           </div>
 
           {/* Non-Infant Status */}
           <div className="border-2 border-blue-200 rounded-lg p-4">
             <div className="flex justify-between items-start mb-2">
-              <h4 className="font-medium text-blue-600">Non-Infant (2+)</h4>
+              <h4 className="font-medium text-blue-600">{t('projections.nonInfant2Plus')}</h4>
               <span
                 className={`px-2 py-1 text-xs font-medium rounded-full ${
                   compliance.totalSpotsAvailable > 0
@@ -160,18 +162,18 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
                 }`}
               >
                 {compliance.totalSpotsAvailable > 0
-                  ? `${compliance.totalSpotsAvailable} spots`
-                  : 'Full'}
+                  ? t('projections.spotsCount', { count: compliance.totalSpotsAvailable })
+                  : t('projections.full')}
               </span>
             </div>
             <p className="text-sm text-gray-600">
-              {compliance.nonInfantCount} enrolled
+              {t('projections.enrolledCount', { count: compliance.nonInfantCount })}
             </p>
             <p className="text-xs text-gray-500 mt-2">
-              Total: {compliance.totalChildren} of {compliance.maxTotalAllowed} capacity
+              {t('projections.totalOfCapacity', { total: compliance.totalChildren, capacity: compliance.maxTotalAllowed })}
             </p>
             {compliance.totalSpotsAvailable <= 0 && (
-              <NextOpeningInfo projections={projections} ageGroup="non_infant" label="Next spot opens" />
+              <NextOpeningInfo projections={projections} ageGroup="non_infant" label={t('projections.nextSpotOpens')} />
             )}
           </div>
         </div>
@@ -179,19 +181,19 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
         {/* Capacity Rules Reference */}
         <div className="mt-4 p-3 bg-gray-50 rounded-lg">
           <h4 className="text-sm font-medium text-gray-700 mb-2">
-            CA Reg 102416.5 - {capacityConfig.programType === 'small_family' ? 'Small' : 'Large'} Family Limits
+            {t('projections.caRegTitle', { type: capacityConfig.programType === 'small_family' ? t('projections.smallFamily') : t('projections.largeFamily') })}
           </h4>
           <div className="text-xs text-gray-600 space-y-1">
             {capacityConfig.programType === 'small_family' ? (
               <>
-                <p><strong>1-4 children:</strong> All can be infants (max 4 infants)</p>
-                <p><strong>5-6 children:</strong> Max 3 infants</p>
-                <p><strong>7-8 children:</strong> Max 2 infants (requires 1 in K-12 + 1 age 6+)</p>
+                <p><strong>{t('projections.rule1to4')}:</strong> {t('projections.rule1to4Desc')}</p>
+                <p><strong>{t('projections.rule5to6')}:</strong> {t('projections.rule5to6Desc')}</p>
+                <p><strong>{t('projections.rule7to8')}:</strong> {t('projections.rule7to8Desc')}</p>
               </>
             ) : (
               <>
-                <p><strong>1-12 children:</strong> Max 4 infants</p>
-                <p><strong>13-14 children:</strong> Max 3 infants (requires 1 in K-12 + 1 age 6+)</p>
+                <p><strong>{t('projections.rule1to12')}:</strong> {t('projections.rule1to12Desc')}</p>
+                <p><strong>{t('projections.rule13to14')}:</strong> {t('projections.rule13to14Desc')}</p>
               </>
             )}
           </div>
@@ -200,21 +202,21 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
 
       {/* Projected Changes Timeline */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Projected Changes (Next 12 Months)</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('projections.projectedChanges12Months')}</h3>
 
         {projections.length === 0 ? (
           <p className="text-gray-500 text-center py-8">
-            No projected changes in the next 12 months.
+            {t('projections.noProjectedChanges')}
           </p>
         ) : (
           <div className="space-y-3">
             {projections.map((opening, index) => {
               const groupConfig = getAgeGroupConfig(opening.ageGroup);
               const reasonLabels: Record<ProjectedOpening['reason'], string> = {
-                aging_into_next_group: 'Turns 2 (infant spot opens)',
-                aging_out: 'Aging out of program',
-                kindergarten: 'Starting kindergarten',
-                scheduled_departure: 'Scheduled departure',
+                aging_into_next_group: t('projections.reasonTurns2'),
+                aging_out: t('projections.reasonAgingOut'),
+                kindergarten: t('projections.reasonKindergarten'),
+                scheduled_departure: t('projections.reasonScheduledDeparture'),
               };
 
               return (

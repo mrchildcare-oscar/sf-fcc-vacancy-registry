@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Child } from '../types';
 import { X } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ChildFormProps {
   onSubmit: (child: Omit<Child, 'id'>) => void;
@@ -9,6 +10,7 @@ interface ChildFormProps {
 }
 
 export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     firstName: initialData?.firstName || '',
     lastName: initialData?.lastName || '',
@@ -37,7 +39,7 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 my-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg sm:text-xl font-semibold">
-            {initialData ? 'Edit Child' : 'Add New Child'}
+            {initialData ? t('roster.editChild') : t('roster.addChild')}
           </h2>
           <button onClick={onCancel} className="text-gray-500 hover:text-gray-700 p-1">
             <X size={24} />
@@ -48,19 +50,19 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                First Name <span className="text-gray-400 font-normal">(optional)</span>
+                {t('roster.firstName')} <span className="text-gray-400 font-normal">({t('roster.optional')})</span>
               </label>
               <input
                 type="text"
                 value={formData.firstName}
                 onChange={e => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                placeholder="e.g., Child 1"
+                placeholder={t('roster.firstNamePlaceholder')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Last Name <span className="text-gray-400 font-normal">(optional)</span>
+                {t('roster.lastName')} <span className="text-gray-400 font-normal">({t('roster.optional')})</span>
               </label>
               <input
                 type="text"
@@ -74,7 +76,7 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date of Birth *
+                {t('roster.dateOfBirth')} *
               </label>
               <input
                 type="date"
@@ -86,7 +88,7 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Enrollment Date *
+                {t('roster.enrollmentDate')} *
               </label>
               <input
                 type="date"
@@ -101,7 +103,7 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Expected Departure
+                {t('roster.expectedDeparture')}
               </label>
               <input
                 type="date"
@@ -112,32 +114,32 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Departure Reason
+                {t('roster.departureReason')}
               </label>
               <select
                 value={formData.departureReason}
                 onChange={e => setFormData(prev => ({ ...prev, departureReason: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">Select reason...</option>
-                <option value="aging_out">Aging out</option>
-                <option value="kindergarten">Starting kindergarten</option>
-                <option value="moving">Moving/Relocating</option>
-                <option value="other">Other</option>
+                <option value="">{t('roster.selectReason')}</option>
+                <option value="aging_out">{t('roster.agingOut')}</option>
+                <option value="kindergarten">{t('roster.kindergarten')}</option>
+                <option value="moving">{t('roster.moving')}</option>
+                <option value="other">{t('roster.other')}</option>
               </select>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
+              {t('roster.notes')}
             </label>
             <textarea
               value={formData.notes}
               onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Optional notes about this child..."
+              placeholder={t('roster.notesPlaceholder')}
             />
           </div>
 
@@ -147,13 +149,13 @@ export function ChildForm({ onSubmit, onCancel, initialData }: ChildFormProps) {
               onClick={onCancel}
               className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
             >
-              {initialData ? 'Save Changes' : 'Add Child'}
+              {initialData ? t('roster.saveChanges') : t('roster.addChild')}
             </button>
           </div>
         </form>

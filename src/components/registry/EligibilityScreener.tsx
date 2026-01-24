@@ -189,7 +189,7 @@ interface ResultsDisplayProps {
   thresholds: ReturnType<typeof getThresholds>;
   onReset: () => void;
   onFindProviders: () => void;
-  language: 'en' | 'zh-TW';
+  language: 'en' | 'zh-TW' | 'es';
   t: (key: string, params?: Record<string, string | number>) => string;
 }
 

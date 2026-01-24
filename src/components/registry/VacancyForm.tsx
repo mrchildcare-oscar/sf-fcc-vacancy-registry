@@ -68,13 +68,12 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
   const maxCapacity = programType === 'small_family' ? 8 : 14;
 
   // Compliance check for infant limits
-  // Note: vacancy spots are AVAILABLE spots, not additional children
+  // IMPORTANT: Must calculate based on PROJECTED total (current + reported spots)
+  // not just current enrollment. CA Reg 102416.5 limits change with total count.
   const complianceWarning = (() => {
     if (!currentEnrollment) return null;
 
     const availableSpots = maxCapacity - currentEnrollment.total;
-    const maxInfantsAllowed = getMaxInfantsAllowed(programType, currentEnrollment.total);
-    const infantSpotsAvailable = Math.max(0, maxInfantsAllowed - currentEnrollment.infants);
 
     // Check if reporting more spots than actually available
     if (totalSpots > availableSpots) {
@@ -89,14 +88,20 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
       };
     }
 
-    // Check if reporting more infant spots than allowed
-    if (formData.infant_spots > infantSpotsAvailable) {
+    // Calculate infant limit based on PROJECTED total after filling spots
+    // Example: 0 enrolled + 7 spots = 7 total → max 2 infants (not 4!)
+    const projectedTotal = currentEnrollment.total + totalSpots;
+    const maxInfantsAtProjectedTotal = getMaxInfantsAllowed(programType, projectedTotal);
+    const projectedInfants = currentEnrollment.infants + formData.infant_spots;
+
+    // Check if projected infant count would violate regulations
+    if (projectedInfants > maxInfantsAtProjectedTotal) {
       return {
-        type: 'warning' as const,
+        type: 'error' as const,
         message: t('vacancy.complianceInfantWarning', {
-          total: currentEnrollment.total,
-          infants: currentEnrollment.infants,
-          allowed: infantSpotsAvailable,
+          total: projectedTotal,
+          infants: projectedInfants,
+          allowed: maxInfantsAtProjectedTotal,
           reporting: formData.infant_spots,
         }),
       };
@@ -220,13 +225,30 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
             </div>
           </div>
 
-          <p className="text-sm text-gray-500 mt-2">
-            {totalSpots === 0 ? (
-              <span className="text-amber-600">{t('vacancy.reportingAsFull')}</span>
-            ) : (
-              <>{t('vacancy.totalSpotsReported')}: <strong>{totalSpots}</strong></>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-sm text-gray-500">
+              {totalSpots === 0 ? (
+                <span className="text-amber-600">{t('vacancy.reportingAsFull')}</span>
+              ) : (
+                <>{t('vacancy.totalSpotsReported')}: <strong>{totalSpots}</strong></>
+              )}
+            </p>
+            {totalSpots > 0 && (
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({
+                  ...prev,
+                  infant_spots: 0,
+                  toddler_spots: 0,
+                  preschool_spots: 0,
+                  school_age_spots: 0,
+                }))}
+                className="text-xs text-gray-500 hover:text-red-600 underline"
+              >
+                {t('common.clearAll')}
+              </button>
             )}
-          </p>
+          </div>
 
           {complianceWarning && (
             <div className={`flex items-start gap-2 mt-3 p-3 rounded-lg ${
@@ -356,7 +378,7 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
               <div className="flex items-center gap-2">
                 <Code size={18} className="text-gray-500" />
                 <span className="text-sm font-medium text-gray-700">
-                  Embed on your website
+                  {t('vacancy.embedOnWebsite')}
                 </span>
               </div>
               {showEmbedCode ? (
@@ -369,7 +391,7 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
             {showEmbedCode && (
               <div className="mt-4 space-y-3">
                 <p className="text-xs text-gray-500">
-                  Add this code to your website to show your current availability to families. It updates automatically when you change your vacancy status.
+                  {t('vacancy.embedDescription')}
                 </p>
                 <div className="relative">
                   <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto">
@@ -392,7 +414,7 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
                   </button>
                 </div>
                 <p className="text-xs text-gray-400">
-                  Works with any website builder that allows custom HTML.
+                  {t('vacancy.embedNote')}
                 </p>
               </div>
             )}

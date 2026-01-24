@@ -22,6 +22,11 @@ function getAgeInMonths(dob: string): number {
   return (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
 }
 
+// Get age in years from DOB
+function getAgeInYears(dob: string): number {
+  return getAgeInMonths(dob) / 12;
+}
+
 // Detailed age group for vacancy form (different from regulatory groups)
 function getDetailedAgeGroup(dob: string): 'infant' | 'toddler' | 'preschool' | 'school_age' {
   const months = getAgeInMonths(dob);
@@ -31,9 +36,109 @@ function getDetailedAgeGroup(dob: string): 'infant' | 'toddler' | 'preschool' | 
   return 'school_age';                    // 6+ years
 }
 
+/**
+ * CA Regulation 102416.5 - School-age criteria for extended capacity
+ *
+ * Small Family (7-8 children) and Large Family (13-14 children) require:
+ * - At least 1 child enrolled in K-12 (kindergarten starts ~age 5)
+ * - At least 1 child age 6 or older
+ *
+ * These can be the same child (e.g., a 6-year-old in 1st grade)
+ */
+function checkSchoolAgeCriteria(children: Child[]): {
+  hasK12Child: boolean;
+  hasAge6Plus: boolean;
+  qualifies: boolean;
+} {
+  let hasK12Child = false;   // At least 1 child in K-12 (typically age 5+)
+  let hasAge6Plus = false;   // At least 1 child age 6+
+
+  for (const child of children) {
+    const ageYears = getAgeInYears(child.dateOfBirth);
+    if (ageYears >= 5) hasK12Child = true;  // Kindergarten eligible
+    if (ageYears >= 6) hasAge6Plus = true;
+  }
+
+  return {
+    hasK12Child,
+    hasAge6Plus,
+    qualifies: hasK12Child && hasAge6Plus,
+  };
+}
+
+/**
+ * Get effective capacity based on school-age criteria
+ * Without qualifying school-age children:
+ * - Small Family: max 6 children (not 8)
+ * - Large Family: max 12 children (not 14)
+ */
+function getEffectiveCapacity(
+  programType: 'small_family' | 'large_family',
+  licensedCapacity: number,
+  qualifiesForExtended: boolean
+): number {
+  if (programType === 'small_family') {
+    // Can only have 7-8 children if school-age criteria met
+    return qualifiesForExtended ? licensedCapacity : Math.min(licensedCapacity, 6);
+  } else {
+    // Can only have 13-14 children if school-age criteria met
+    return qualifiesForExtended ? licensedCapacity : Math.min(licensedCapacity, 12);
+  }
+}
+
+/**
+ * Get max infants allowed based on total children
+ * This follows CA Regulation 102416.5
+ */
+function getMaxInfantsForTotal(
+  programType: 'small_family' | 'large_family',
+  totalChildren: number
+): number {
+  if (programType === 'small_family') {
+    if (totalChildren <= 4) return 4;
+    if (totalChildren <= 6) return 3;
+    return 2; // 7-8 children
+  } else {
+    if (totalChildren <= 12) return 4;
+    return 3; // 13-14 children
+  }
+}
+
+/**
+ * Calculate available infant spots by simulating progressive enrollment
+ * This accounts for the fact that infant limits change as total enrollment increases
+ */
+function calculateInfantSpotsAvailable(
+  programType: 'small_family' | 'large_family',
+  currentInfants: number,
+  currentTotal: number,
+  effectiveCapacity: number
+): number {
+  const spotsLeft = effectiveCapacity - currentTotal;
+  if (spotsLeft <= 0) return 0;
+
+  let maxNewInfants = 0;
+
+  // Simulate adding infants one by one
+  for (let newInfants = 1; newInfants <= spotsLeft; newInfants++) {
+    const newTotal = currentTotal + newInfants;
+    const newInfantCount = currentInfants + newInfants;
+    const maxAllowed = getMaxInfantsForTotal(programType, newTotal);
+
+    if (newInfantCount <= maxAllowed) {
+      maxNewInfants = newInfants;
+    } else {
+      break;
+    }
+  }
+
+  return maxNewInfants;
+}
+
 export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSummaryProps) {
   const { t } = useLanguage();
   const projections = calculateProjectedOpenings(children, 6);
+  const programType = capacityConfig.programType;
 
   // Count children by detailed age groups
   const ageCounts = {
@@ -44,51 +149,60 @@ export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSu
   };
 
   const totalEnrolled = children.length;
-  const totalCapacity = capacityConfig.totalCapacity;
-  const totalAvailable = Math.max(0, totalCapacity - totalEnrolled);
+  const licensedCapacity = capacityConfig.totalCapacity;
 
-  // Calculate infant limit AT FULL CAPACITY per CA Regulation 102416.5
-  // Large Family: 1-12 children = max 4 infants, 13-14 children = max 3 infants
-  // Small Family: 1-4 = max 4, 5-6 = max 3, 7-8 = max 2
-  const programType = capacityConfig.programType;
-  const atCapacityInfantLimit = programType === 'small_family'
-    ? (totalCapacity <= 4 ? 4 : totalCapacity <= 6 ? 3 : 2)
-    : (totalCapacity <= 12 ? 4 : 3);
-  const infantAvailable = Math.max(0, Math.min(
-    atCapacityInfantLimit - ageCounts.infant,
-    totalAvailable
-  ));
+  // Check if roster qualifies for extended capacity (7-8 for small, 13-14 for large)
+  const schoolAgeStatus = checkSchoolAgeCriteria(children);
+
+  // Calculate effective capacity based on school-age criteria
+  // Without qualifying school-age children, capacity is limited:
+  // - Small Family: max 6 (not 8)
+  // - Large Family: max 12 (not 14)
+  const effectiveCapacity = getEffectiveCapacity(
+    programType,
+    licensedCapacity,
+    schoolAgeStatus.qualifies
+  );
+
+  const totalAvailable = Math.max(0, effectiveCapacity - totalEnrolled);
+
+  // Calculate infant spots using progressive simulation
+  const infantAvailable = calculateInfantSpotsAvailable(
+    programType,
+    ageCounts.infant,
+    totalEnrolled,
+    effectiveCapacity
+  );
 
   const handleAutoFill = () => {
     if (!onAutoFill) return;
 
-    // CA Regulation 102416.5 - infant limits depend on TOTAL children at capacity
-    // Large Family: 1-12 children = max 4 infants, 13-14 children = max 3 infants
-    // Small Family: 1-4 = max 4, 5-6 = max 3, 7-8 = max 2
+    // When auto-filling to capacity, we need to calculate max infants
+    // based on the FINAL total enrollment, not progressive addition.
     //
-    // For vacancy reporting, we need infant limit AT FULL CAPACITY
-    const programType = capacityConfig.programType;
-    const atCapacityInfantLimit = programType === 'small_family'
-      ? (totalCapacity <= 4 ? 4 : totalCapacity <= 6 ? 3 : 2)
-      : (totalCapacity <= 12 ? 4 : 3);
+    // Example: 0 enrolled, 6 capacity
+    // - Progressive logic says "you can add 4 infants" (if adding only infants)
+    // - But if filling to 6 total, max infants at 6 children is 3
+    // - So auto-fill should suggest 3 infants + 3 non-infants
 
-    // Current infants already enrolled
+    const finalTotal = totalEnrolled + totalAvailable; // = effectiveCapacity
+    const maxInfantsAtFinal = getMaxInfantsForTotal(programType, finalTotal);
     const currentInfants = ageCounts.infant;
 
-    // Infant spots = limit at capacity minus current infants
-    const infantSpotsAvailable = Math.max(0, Math.min(
-      atCapacityInfantLimit - currentInfants,
+    // Infant spots = max allowed at final total - current infants (capped at available)
+    const infantSpotsForAutoFill = Math.max(0, Math.min(
+      maxInfantsAtFinal - currentInfants,
       totalAvailable
     ));
 
     // Remaining spots go to non-infant age groups
-    const remainingSpots = Math.max(0, totalAvailable - infantSpotsAvailable);
+    const remainingSpots = totalAvailable - infantSpotsForAutoFill;
     const spotsPerGroup = Math.floor(remainingSpots / 3);
     const extraSpots = remainingSpots % 3;
 
     // Distribute evenly: toddler gets extras first, then preschool
     onAutoFill({
-      infant_spots: infantSpotsAvailable,
+      infant_spots: infantSpotsForAutoFill,
       toddler_spots: spotsPerGroup + (extraSpots >= 1 ? 1 : 0),
       preschool_spots: spotsPerGroup + (extraSpots >= 2 ? 1 : 0),
       school_age_spots: spotsPerGroup,
@@ -121,7 +235,7 @@ export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSu
           <p className="text-xs text-gray-500">{t('rosterSummary.enrolled')}</p>
         </div>
         <div className="p-3 bg-gray-50 rounded-lg text-center">
-          <p className="text-2xl font-bold text-gray-900">{totalCapacity}</p>
+          <p className="text-2xl font-bold text-gray-900">{licensedCapacity}</p>
           <p className="text-xs text-gray-500">{t('rosterSummary.capacity')}</p>
         </div>
         <div className={`p-3 rounded-lg text-center ${totalAvailable > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
@@ -132,8 +246,16 @@ export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSu
         </div>
       </div>
 
+      {/* School-age criteria warning */}
+      {!schoolAgeStatus.qualifies && effectiveCapacity < licensedCapacity && (
+        <div className="text-xs text-amber-700 bg-amber-50 p-2 rounded mb-4 border border-amber-200">
+          <span className="font-medium">{t('rosterSummary.capacityLimited')}:</span>{' '}
+          {t('rosterSummary.needSchoolAge', { effective: effectiveCapacity, licensed: licensedCapacity })}
+        </div>
+      )}
+
       {/* Breakdown by age group - matches vacancy form */}
-      <div className="grid grid-cols-4 gap-2 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
         <div className="p-2 bg-pink-50 rounded-lg text-center border border-pink-200">
           <p className="text-lg font-bold text-pink-700">{ageCounts.infant}</p>
           <p className="text-xs text-pink-600">{t('vacancy.infant')}</p>

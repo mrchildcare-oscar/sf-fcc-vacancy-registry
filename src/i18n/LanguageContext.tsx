@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import en from './en.json';
 import zhTW from './zh-TW.json';
+import es from './es.json';
 
-type Language = 'en' | 'zh-TW';
+type Language = 'en' | 'zh-TW' | 'es';
 type Translations = typeof en;
 
 interface LanguageContextType {
@@ -14,6 +15,7 @@ interface LanguageContextType {
 const translations: Record<Language, Translations> = {
   'en': en,
   'zh-TW': zhTW,
+  'es': es as Translations,
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -22,13 +24,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
     // Check localStorage first
     const saved = localStorage.getItem('language');
-    if (saved === 'en' || saved === 'zh-TW') {
+    if (saved === 'en' || saved === 'zh-TW' || saved === 'es') {
       return saved;
     }
     // Check browser language
     const browserLang = navigator.language;
     if (browserLang.startsWith('zh')) {
       return 'zh-TW';
+    }
+    if (browserLang.startsWith('es')) {
+      return 'es';
     }
     return 'en';
   });
@@ -99,6 +104,16 @@ export function LanguageSwitcher({ className, compact }: { className?: string; c
         }`}
       >
         EN
+      </button>
+      <button
+        onClick={() => setLanguage('es')}
+        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap ${
+          language === 'es'
+            ? 'bg-blue-600 text-white'
+            : 'bg-white text-gray-600 hover:bg-gray-100'
+        }`}
+      >
+        ES
       </button>
       <button
         onClick={() => setLanguage('zh-TW')}

@@ -3,6 +3,7 @@ import { Child } from '../types';
 import { formatAge, getAgeGroup, getAgeGroupConfig } from '../utils/ageGroups';
 import { Pencil, Trash2, UserPlus, Trash } from 'lucide-react';
 import { format } from 'date-fns';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ChildListProps {
   children: Child[];
@@ -13,6 +14,7 @@ interface ChildListProps {
 }
 
 export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: ChildListProps) {
+  const { t } = useLanguage();
   const [confirmingRemove, setConfirmingRemove] = useState<string | null>(null);
   const [confirmingClearAll, setConfirmingClearAll] = useState(false);
   // Sort by DOB - oldest children first (earliest DOB at top)
@@ -24,7 +26,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
     <div className="bg-white rounded-lg shadow">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">Enrolled Children</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('roster.title')}</h2>
           <span className="px-2.5 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full">
             {children.length}
           </span>
@@ -33,7 +35,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
           {onClearAll && children.length > 0 && (
             confirmingClearAll ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">Clear all?</span>
+                <span className="text-xs text-gray-500">{t('roster.clearAllConfirm')}</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -42,14 +44,14 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                   }}
                   className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
                 >
-                  Yes
+                  {t('common.yes')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setConfirmingClearAll(false)}
                   className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                 >
-                  No
+                  {t('common.no')}
                 </button>
               </div>
             ) : (
@@ -57,10 +59,10 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                 type="button"
                 onClick={() => setConfirmingClearAll(true)}
                 className="flex items-center gap-1 px-3 py-2 text-sm text-red-600 bg-red-50 rounded-md hover:bg-red-100"
-                title="Clear all children"
+                title={t('roster.clearAll')}
               >
                 <Trash size={16} />
-                Clear All
+                {t('roster.clearAll')}
               </button>
             )
           )}
@@ -69,15 +71,15 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
             className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
           >
             <UserPlus size={16} />
-            Add Child
+            {t('roster.addChild')}
           </button>
         </div>
       </div>
 
       {children.length === 0 ? (
         <div className="px-6 py-12 text-center text-gray-500">
-          <p>No children enrolled yet.</p>
-          <p className="text-sm mt-1">Click "Add Child" to get started.</p>
+          <p>{t('roster.noChildren')}</p>
+          <p className="text-sm mt-1">{t('roster.noChildrenHelp')}</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -85,25 +87,25 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                  Name
+                  {t('roster.name')}
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                  Age
+                  {t('roster.age')}
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
-                  Group
+                  {t('roster.group')}
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
-                  DOB
+                  {t('roster.dob')}
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
-                  Enrolled
+                  {t('roster.enrolled')}
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
-                  Departure
+                  {t('roster.departure')}
                 </th>
                 <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">
-                  Actions
+                  {t('roster.actions')}
                 </th>
               </tr>
             </thead>
@@ -164,7 +166,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                     <td className="px-3 py-3 whitespace-nowrap text-right">
                       {confirmingRemove === child.id ? (
                         <div className="flex items-center gap-2 justify-end">
-                          <span className="text-xs text-gray-500">Remove?</span>
+                          <span className="text-xs text-gray-500">{t('roster.removeConfirm')}</span>
                           <button
                             type="button"
                             onClick={(e) => {
@@ -175,7 +177,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                             }}
                             className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
                           >
-                            Yes
+                            {t('common.yes')}
                           </button>
                           <button
                             type="button"
@@ -186,7 +188,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                             }}
                             className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                           >
-                            No
+                            {t('common.no')}
                           </button>
                         </div>
                       ) : (
@@ -199,7 +201,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                               onEdit(child);
                             }}
                             className="text-gray-400 hover:text-blue-600 p-1"
-                            title="Edit"
+                            title={t('common.edit')}
                           >
                             <Pencil size={16} />
                           </button>
@@ -211,7 +213,7 @@ export function ChildList({ children, onEdit, onRemove, onAdd, onClearAll }: Chi
                               setConfirmingRemove(child.id);
                             }}
                             className="text-gray-400 hover:text-red-600 p-1 ml-2"
-                            title="Remove"
+                            title={t('common.remove')}
                           >
                             <Trash2 size={16} />
                           </button>

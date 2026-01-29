@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { PublicListing, SearchFilters, SF_NEIGHBORHOODS, LANGUAGES } from '../../types/registry';
+import { useState, useMemo } from 'react';
+import { PublicListing, SearchFilters } from '../../types/registry';
 import {
   Search,
   MapPin,
@@ -31,6 +31,28 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
   const [showFilters, setShowFilters] = useState(false);
   const [expandedListing, setExpandedListing] = useState<string | null>(null);
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
+
+  // Compute available filter options from actual listings
+  const availableNeighborhoods = useMemo(() => {
+    const neighborhoods = new Set<string>();
+    listings.forEach(listing => {
+      if (listing.neighborhood) {
+        neighborhoods.add(listing.neighborhood);
+      }
+    });
+    return Array.from(neighborhoods).sort();
+  }, [listings]);
+
+  const availableLanguages = useMemo(() => {
+    const languages = new Set<string>();
+    listings.forEach(listing => {
+      const langs = Array.isArray(listing.languages)
+        ? listing.languages
+        : JSON.parse(listing.languages as unknown as string);
+      langs.forEach((lang: string) => languages.add(lang));
+    });
+    return Array.from(languages).sort();
+  }, [listings]);
 
   // Apply filters to all listings first
   const applyFilters = (listing: PublicListing) => {
@@ -165,7 +187,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
                   >
                     <option value="">{t('common.any')}</option>
-                    {SF_NEIGHBORHOODS.map(n => (
+                    {availableNeighborhoods.map(n => (
                       <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
@@ -203,7 +225,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
                   >
                     <option value="">{t('common.any')}</option>
-                    {LANGUAGES.map(l => (
+                    {availableLanguages.map(l => (
                       <option key={l} value={l}>{l}</option>
                     ))}
                   </select>

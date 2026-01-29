@@ -230,6 +230,54 @@ export async function getPublicListings(): Promise<PublicListing[]> {
 // Re-export ELFA check for external use
 export { checkElfaStatus } from './elfa';
 
+// Admin: Refresh ELFA status for all providers
+export async function refreshAllElfaStatus(): Promise<{ updated: number; total: number; errors: string[] }> {
+  console.log('[Supabase] refreshAllElfaStatus started');
+  const errors: string[] = [];
+  let updated = 0;
+
+  try {
+    // Get all providers
+    const { data: providers, error: fetchError } = await supabase
+      .from('providers')
+      .select('id, license_number, is_elfa_network, business_name');
+
+    if (fetchError) {
+      console.error('[Supabase] refreshAllElfaStatus fetch error:', fetchError);
+      return { updated: 0, total: 0, errors: [fetchError.message] };
+    }
+
+    const total = providers?.length || 0;
+    console.log(`[Supabase] Checking ELFA status for ${total} providers`);
+
+    // Check and update each provider
+    for (const provider of providers || []) {
+      const shouldBeElfa = await checkElfaStatus(provider.license_number);
+
+      if (shouldBeElfa !== provider.is_elfa_network) {
+        console.log(`[Supabase] Updating ${provider.business_name}: ${provider.is_elfa_network} -> ${shouldBeElfa}`);
+
+        const { error: updateError } = await supabase
+          .from('providers')
+          .update({ is_elfa_network: shouldBeElfa })
+          .eq('id', provider.id);
+
+        if (updateError) {
+          errors.push(`${provider.business_name}: ${updateError.message}`);
+        } else {
+          updated++;
+        }
+      }
+    }
+
+    console.log(`[Supabase] refreshAllElfaStatus complete: ${updated}/${total} updated`);
+    return { updated, total, errors };
+  } catch (err) {
+    console.error('[Supabase] refreshAllElfaStatus exception:', err);
+    return { updated, total: 0, errors: [err instanceof Error ? err.message : 'Unknown error'] };
+  }
+}
+
 // Organization types
 export interface Organization {
   id: string;

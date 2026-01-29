@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { LANGUAGES, SF_NEIGHBORHOODS } from '../../types/registry';
-import { Building2, MapPin, Phone, Globe, CheckCircle, AlertCircle, Shield, Baby } from 'lucide-react';
-import { supabase, checkElfaStatus } from '../../lib/supabase';
+import { Building2, MapPin, Phone, Globe, CheckCircle, AlertCircle, Shield, Baby, RefreshCw } from 'lucide-react';
+import { supabase, checkElfaStatus, refreshAllElfaStatus } from '../../lib/supabase';
 
 interface AdminAddProviderProps {
   onComplete: () => void;
@@ -12,6 +12,8 @@ export function AdminAddProvider({ onComplete, onCancel }: AdminAddProviderProps
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [elfaRefreshing, setElfaRefreshing] = useState(false);
+  const [elfaResult, setElfaResult] = useState<{ updated: number; total: number } | null>(null);
 
   const [formData, setFormData] = useState({
     license_number: '',
@@ -53,6 +55,22 @@ export function AdminAddProvider({ onComplete, onCancel }: AdminAddProviderProps
       const isElfa = await checkElfaStatus(license);
       setFormData(prev => ({ ...prev, is_elfa_network: isElfa }));
     }
+  };
+
+  // Refresh ELFA status for all providers
+  const handleRefreshElfa = async () => {
+    setElfaRefreshing(true);
+    setElfaResult(null);
+    try {
+      const result = await refreshAllElfaStatus();
+      setElfaResult({ updated: result.updated, total: result.total });
+      if (result.errors.length > 0) {
+        setError(`ELFA refresh had errors: ${result.errors.join(', ')}`);
+      }
+    } catch (err) {
+      setError('Failed to refresh ELFA status');
+    }
+    setElfaRefreshing(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,15 +174,33 @@ export function AdminAddProvider({ onComplete, onCancel }: AdminAddProviderProps
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Shield size={24} className="text-purple-600" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Shield size={24} className="text-purple-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Admin: Add Provider</h2>
+                <p className="text-sm text-gray-500">Manually add a provider listing</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Admin: Add Provider</h2>
-              <p className="text-sm text-gray-500">Manually add a provider listing</p>
-            </div>
+            <button
+              type="button"
+              onClick={handleRefreshElfa}
+              disabled={elfaRefreshing}
+              className="flex items-center gap-2 px-3 py-2 text-sm bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 disabled:opacity-50"
+            >
+              <RefreshCw size={16} className={elfaRefreshing ? 'animate-spin' : ''} />
+              {elfaRefreshing ? 'Refreshing...' : 'Refresh ELFA'}
+            </button>
           </div>
+
+          {elfaResult && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+              <CheckCircle size={16} className="inline mr-2" />
+              ELFA status refreshed: {elfaResult.updated} of {elfaResult.total} providers updated
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* License & Business Info */}

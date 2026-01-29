@@ -230,51 +230,39 @@ export async function getPublicListings(): Promise<PublicListing[]> {
 // Re-export ELFA check for external use
 export { checkElfaStatus } from './elfa';
 
-// Admin: Refresh ELFA status for all providers
+// Admin: Refresh ELFA status for all providers (via Edge Function to bypass RLS)
 export async function refreshAllElfaStatus(): Promise<{ updated: number; total: number; errors: string[] }> {
-  console.log('[Supabase] refreshAllElfaStatus started');
-  const errors: string[] = [];
-  let updated = 0;
+  console.log('[Supabase] refreshAllElfaStatus started (calling Edge Function)');
 
   try {
-    // Get all providers
-    const { data: providers, error: fetchError } = await supabase
-      .from('providers')
-      .select('id, license_number, is_elfa_network, business_name');
+    const { data, error } = await supabase.functions.invoke('refresh-elfa', {
+      body: { admin_password: 'fccasf2024' },
+    });
 
-    if (fetchError) {
-      console.error('[Supabase] refreshAllElfaStatus fetch error:', fetchError);
-      return { updated: 0, total: 0, errors: [fetchError.message] };
+    if (error) {
+      console.error('[Supabase] refreshAllElfaStatus error:', error);
+      return { updated: 0, total: 0, errors: [error.message] };
     }
 
-    const total = providers?.length || 0;
-    console.log(`[Supabase] Checking ELFA status for ${total} providers`);
+    console.log('[Supabase] refreshAllElfaStatus result:', data);
 
-    // Check and update each provider
-    for (const provider of providers || []) {
-      const shouldBeElfa = await checkElfaStatus(provider.license_number);
-
-      if (shouldBeElfa !== provider.is_elfa_network) {
-        console.log(`[Supabase] Updating ${provider.business_name}: ${provider.is_elfa_network} -> ${shouldBeElfa}`);
-
-        const { error: updateError } = await supabase
-          .from('providers')
-          .update({ is_elfa_network: shouldBeElfa })
-          .eq('id', provider.id);
-
-        if (updateError) {
-          errors.push(`${provider.business_name}: ${updateError.message}`);
-        } else {
-          updated++;
-        }
-      }
+    if (!data.success) {
+      return { updated: 0, total: 0, errors: [data.error || 'Unknown error'] };
     }
 
-    console.log(`[Supabase] refreshAllElfaStatus complete: ${updated}/${total} updated`);
-    return { updated, total, errors };
+    // Log changes
+    if (data.changes?.length > 0) {
+      console.log('[Supabase] ELFA changes:', data.changes);
+    }
+
+    return {
+      updated: data.updated || 0,
+      total: data.total || 0,
+      errors: data.errors || [],
+    };
   } catch (err) {
     console.error('[Supabase] refreshAllElfaStatus exception:', err);
-    return { updated, total: 0, errors: [err instanceof Error ? err.message : 'Unknown error'] };
+    return { updated: 0, total: 0, errors: [err instanceof Error ? err.message : 'Unknown error'] };
   }
 }
 

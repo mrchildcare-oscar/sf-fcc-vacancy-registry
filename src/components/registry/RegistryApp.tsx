@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
 import {
   supabase,
@@ -33,11 +33,47 @@ import { RosterSummary } from './RosterSummary';
 import { OrganizationDashboard } from './OrganizationDashboard';
 import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key } from 'lucide-react';
 import { useLanguage, LanguageSwitcher } from '../../i18n/LanguageContext';
+import { trackPageView, trackSignIn, trackSignUp, trackSignOut, trackAutoFillUsed, trackVacancyUpdated, ViewName } from '../../lib/analytics';
 
 // Admin password - in production, use environment variable
 const ADMIN_PASSWORD = 'fccasf2024';
 
 type View = 'public' | 'auth' | 'onboarding' | 'dashboard' | 'roster' | 'projections' | 'settings' | 'admin' | 'org-dashboard';
+
+// Hash to View mapping for URL routing
+const HASH_TO_VIEW: Record<string, View> = {
+  '': 'public',
+  '#': 'public',
+  '#public': 'public',
+  '#auth': 'auth',
+  '#vacancies': 'dashboard',
+  '#roster': 'roster',
+  '#projections': 'projections',
+  '#settings': 'settings',
+};
+
+const VIEW_TO_HASH: Partial<Record<View, string>> = {
+  'public': '#public',
+  'auth': '#auth',
+  'dashboard': '#vacancies',
+  'roster': '#roster',
+  'projections': '#projections',
+  'settings': '#settings',
+  'org-dashboard': '#org',
+};
+
+// Map internal view names to analytics view names
+const VIEW_TO_ANALYTICS: Record<View, ViewName> = {
+  'public': 'public',
+  'auth': 'auth',
+  'onboarding': 'onboarding',
+  'dashboard': 'vacancies',
+  'roster': 'roster',
+  'projections': 'projections',
+  'settings': 'settings',
+  'admin': 'admin',
+  'org-dashboard': 'org-dashboard',
+};
 
 export function RegistryApp() {
   const { t } = useLanguage();
@@ -59,6 +95,60 @@ export function RegistryApp() {
   const [showChildForm, setShowChildForm] = useState(false);
   const [editingChild, setEditingChild] = useState<Child | null>(null);
   const [showImport, setShowImport] = useState(false);
+
+  // Track if view change is from hash (to avoid circular updates)
+  const isHashChange = useRef(false);
+  const lastTrackedView = useRef<View | null>(null);
+
+  // Custom setView that updates hash and tracks analytics
+  const navigateTo = useCallback((newView: View) => {
+    setView(newView);
+
+    // Update URL hash (only for views that should be in URL)
+    const hash = VIEW_TO_HASH[newView];
+    if (hash && !isHashChange.current) {
+      window.history.pushState(null, '', hash);
+    }
+    isHashChange.current = false;
+
+    // Track page view (only if different from last tracked)
+    if (lastTrackedView.current !== newView) {
+      trackPageView(VIEW_TO_ANALYTICS[newView]);
+      lastTrackedView.current = newView;
+    }
+  }, []);
+
+  // Read hash on mount and set initial view
+  useEffect(() => {
+    const hash = window.location.hash;
+    const viewFromHash = HASH_TO_VIEW[hash];
+    if (viewFromHash && viewFromHash !== 'public') {
+      isHashChange.current = true;
+      setView(viewFromHash);
+    }
+    // Track initial page view
+    const initialView = viewFromHash || 'public';
+    trackPageView(VIEW_TO_ANALYTICS[initialView]);
+    lastTrackedView.current = initialView;
+  }, []);
+
+  // Listen for hash changes (back/forward buttons)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const viewFromHash = HASH_TO_VIEW[hash] || 'public';
+      isHashChange.current = true;
+      setView(viewFromHash);
+      // Track page view
+      if (lastTrackedView.current !== viewFromHash) {
+        trackPageView(VIEW_TO_ANALYTICS[viewFromHash]);
+        lastTrackedView.current = viewFromHash;
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Get capacity config from provider
   const getCapacityConfig = useCallback((): CapacityConfig => {
@@ -330,6 +420,12 @@ export function RegistryApp() {
     if (result.error) {
       return { error: result.error.message };
     }
+    // Track successful auth
+    if (isSignUp) {
+      trackSignUp('email');
+    } else {
+      trackSignIn('email');
+    }
     return {};
   };
 
@@ -338,6 +434,7 @@ export function RegistryApp() {
     if (result.error) {
       return { error: result.error.message };
     }
+    trackSignIn('google');
     return {};
   };
 
@@ -359,11 +456,15 @@ export function RegistryApp() {
       setVacancyData(data);
       // Reload public listings to show updated data
       await loadPublicListings();
+      // Track vacancy update
+      const totalSpots = data.infant_spots + data.toddler_spots + data.preschool_spots + data.school_age_spots;
+      trackVacancyUpdated(user.id, totalSpots);
     }
     return result;
   };
 
   const handleSignOut = async () => {
+    trackSignOut();
     // Clear all state first
     setUser(null);
     setProvider(null);
@@ -462,7 +563,7 @@ export function RegistryApp() {
               {navItems.map(item => (
                 <button
                   key={item.view}
-                  onClick={() => setView(item.view)}
+                  onClick={() => navigateTo(item.view)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
                     view === item.view
                       ? 'bg-blue-100 text-blue-700'
@@ -513,7 +614,7 @@ export function RegistryApp() {
             {navItems.map(item => (
               <button
                 key={item.view}
-                onClick={() => setView(item.view)}
+                onClick={() => navigateTo(item.view)}
                 className={`flex flex-col items-center gap-1 px-3 py-1 min-w-0 ${
                   view === item.view
                     ? 'text-blue-600'
@@ -540,7 +641,7 @@ export function RegistryApp() {
             <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
               <span className="whitespace-nowrap">{t('publicListings.areYouProvider')}</span>
               <button
-                onClick={() => setView('auth')}
+                onClick={() => navigateTo('auth')}
                 className="underline font-medium hover:text-blue-100 whitespace-nowrap"
               >
                 {t('publicListings.signInPrompt')}
@@ -549,7 +650,7 @@ export function RegistryApp() {
             </div>
           </div>
         )}
-        <PublicListings listings={publicListings} loading={listingsLoading} onSignIn={() => setView('auth')} />
+        <PublicListings listings={publicListings} loading={listingsLoading} onSignIn={() => navigateTo('auth')} />
       </div>
     );
   }
@@ -561,7 +662,7 @@ export function RegistryApp() {
         <div className="bg-white border-b py-3 px-4">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <button
-              onClick={() => setView('public')}
+              onClick={() => navigateTo('public')}
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
               <Home size={16} />
@@ -626,6 +727,8 @@ export function RegistryApp() {
         waitlist_available: prev?.waitlist_available ?? false,
         notes: prev?.notes || '',
       }));
+      // Track auto-fill usage
+      trackAutoFillUsed(user.id);
     };
 
     return (
@@ -894,7 +997,7 @@ export function RegistryApp() {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setView('public')}
+                onClick={() => navigateTo('public')}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
               >
                 <Eye size={16} />

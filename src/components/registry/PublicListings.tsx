@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { PublicListing, SearchFilters } from '../../types/registry';
 import {
   Search,
@@ -18,6 +18,12 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { EligibilityScreener } from './EligibilityScreener';
+import {
+  trackListingView,
+  trackContactClick,
+  trackFilterUsed,
+  trackSearchUsed,
+} from '../../lib/analytics';
 
 interface PublicListingsProps {
   listings: PublicListing[];
@@ -31,6 +37,24 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
   const [showFilters, setShowFilters] = useState(false);
   const [expandedListing, setExpandedListing] = useState<string | null>(null);
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
+
+  // Handle listing click with analytics tracking
+  const handleListingClick = useCallback((listing: PublicListing) => {
+    const isExpanding = expandedListing !== listing.provider_id;
+    setExpandedListing(isExpanding ? listing.provider_id : null);
+    // Track listing view when expanding
+    if (isExpanding) {
+      trackListingView(listing.provider_id, listing.business_name);
+    }
+  }, [expandedListing]);
+
+  // Handle contact click with analytics tracking
+  const handleContactClick = useCallback((listing: PublicListing, contactType: 'phone' | 'email' | 'website') => {
+    trackContactClick(listing.provider_id, listing.business_name, contactType);
+  }, []);
+
+  // Track filter changes
+  const prevFilters = useRef<SearchFilters>({});
 
   // Compute available filter options from actual listings
   const availableNeighborhoods = useMemo(() => {
@@ -102,6 +126,30 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
   const allFiltered = listings.filter(applyFilters);
   const listingsWithOpenings = allFiltered.filter(l => l.total_spots_available > 0);
   const fullWithWaitlist = allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available);
+
+  // Track filter changes
+  useEffect(() => {
+    // Track each filter that changed
+    if (filters.neighborhood !== prevFilters.current.neighborhood && filters.neighborhood) {
+      trackFilterUsed('neighborhood', filters.neighborhood);
+    }
+    if (filters.age_group !== prevFilters.current.age_group && filters.age_group) {
+      trackFilterUsed('age_group', filters.age_group);
+    }
+    if (filters.language !== prevFilters.current.language && filters.language) {
+      trackFilterUsed('language', filters.language);
+    }
+    if (filters.schedule !== prevFilters.current.schedule && filters.schedule) {
+      trackFilterUsed('schedule', filters.schedule);
+    }
+    if (filters.elfa_only !== prevFilters.current.elfa_only && filters.elfa_only) {
+      trackFilterUsed('elfa_only', 'true');
+    }
+    if (filters.zip_code !== prevFilters.current.zip_code && filters.zip_code && filters.zip_code.length >= 3) {
+      trackSearchUsed(filters.zip_code, listingsWithOpenings.length);
+    }
+    prevFilters.current = { ...filters };
+  }, [filters, listingsWithOpenings.length]);
 
   const clearFilters = () => {
     setFilters({});
@@ -306,9 +354,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
               >
                 <div
                   className="p-4 cursor-pointer"
-                  onClick={() => setExpandedListing(
-                    expandedListing === listing.provider_id ? null : listing.provider_id
-                  )}
+                  onClick={() => handleListingClick(listing)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -385,6 +431,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                           {listing.phone && (
                             <a
                               href={`tel:${listing.phone}`}
+                              onClick={() => handleContactClick(listing, 'phone')}
                               className="flex items-center gap-2 text-blue-600 hover:underline"
                             >
                               <Phone size={14} />
@@ -393,6 +440,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                           )}
                           <a
                             href={`mailto:${listing.contact_email}`}
+                            onClick={() => handleContactClick(listing, 'email')}
                             className="flex items-center gap-2 text-blue-600 hover:underline"
                           >
                             <Mail size={14} />
@@ -403,6 +451,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                               href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={() => handleContactClick(listing, 'website')}
                               className="flex items-center gap-2 text-blue-600 hover:underline"
                             >
                               <Globe size={14} />
@@ -536,6 +585,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                                   {listing.phone && (
                                     <a
                                       href={`tel:${listing.phone}`}
+                                      onClick={() => handleContactClick(listing, 'phone')}
                                       className="flex items-center gap-2 text-blue-600 hover:underline"
                                     >
                                       <Phone size={14} />
@@ -544,6 +594,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                                   )}
                                   <a
                                     href={`mailto:${listing.contact_email}`}
+                                    onClick={() => handleContactClick(listing, 'email')}
                                     className="flex items-center gap-2 text-blue-600 hover:underline"
                                   >
                                     <Mail size={14} />
@@ -554,6 +605,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                                       href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
+                                      onClick={() => handleContactClick(listing, 'website')}
                                       className="flex items-center gap-2 text-blue-600 hover:underline"
                                     >
                                       <Globe size={14} />

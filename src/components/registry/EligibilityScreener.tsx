@@ -6,6 +6,10 @@ import {
   getRelevantAgencies,
   EligibilityResult,
 } from '../../lib/eligibility';
+import {
+  trackEligibilityScreenerOpened,
+  trackEligibilityCheck,
+} from '../../lib/analytics';
 
 export function EligibilityScreener() {
   const { t, language } = useLanguage();
@@ -23,8 +27,12 @@ export function EligibilityScreener() {
     if (isNaN(incomeNum)) return;
 
     const annualIncome = incomeType === 'monthly' ? incomeNum * 12 : incomeNum;
-    setResult(checkEligibility(householdSize, annualIncome));
+    const eligibilityResult = checkEligibility(householdSize, annualIncome);
+    setResult(eligibilityResult);
     setShowResult(true);
+
+    // Track eligibility check
+    trackEligibilityCheck(householdSize, eligibilityResult.anyProgram);
   };
 
   const handleReset = () => {
@@ -58,7 +66,12 @@ export function EligibilityScreener() {
     <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200 mb-6 overflow-hidden">
       {/* Collapsed Header */}
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          if (!isExpanded) {
+            trackEligibilityScreenerOpened();
+          }
+          setIsExpanded(!isExpanded);
+        }}
         className="w-full px-4 py-4 flex items-center justify-between hover:bg-white/30 transition-colors"
       >
         <div className="flex items-center gap-3">

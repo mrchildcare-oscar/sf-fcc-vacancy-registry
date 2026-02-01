@@ -2,7 +2,7 @@
  * Analytics tracking utility
  *
  * Provides centralized tracking for user actions and page views.
- * Uses Vercel Analytics for tracking.
+ * Uses TruConversion for tracking.
  *
  * Future considerations:
  * - Track inquiry form submissions (when implemented)
@@ -10,7 +10,18 @@
  * - Track conversion funnels (listing view → contact → inquiry)
  */
 
-import { track } from '@vercel/analytics';
+// TruConversion global
+declare global {
+  interface Window {
+    _tip?: unknown[][];
+  }
+}
+
+function track(event: string, properties?: Record<string, unknown>) {
+  if (typeof window !== 'undefined' && window._tip) {
+    window._tip.push(['track', event, properties || {}]);
+  }
+}
 
 // View/Page tracking
 export type ViewName =

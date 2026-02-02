@@ -4,7 +4,6 @@ import {
   Search,
   MapPin,
   Phone,
-  Mail,
   Star,
   Filter,
   X,
@@ -14,10 +13,12 @@ import {
   ChevronUp,
   Globe,
   ClipboardList,
+  MessageSquare,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { EligibilityScreener } from './EligibilityScreener';
+import { ParentInquiryForm } from './ParentInquiryForm';
 import {
   trackListingView,
   trackContactClick,
@@ -37,6 +38,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
   const [showFilters, setShowFilters] = useState(false);
   const [expandedListing, setExpandedListing] = useState<string | null>(null);
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
+  const [inquiryListing, setInquiryListing] = useState<PublicListing | null>(null);
 
   // Handle listing click with analytics tracking
   const handleListingClick = useCallback((listing: PublicListing) => {
@@ -425,41 +427,47 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                 {expandedListing === listing.provider_id && (
                   <div className="px-4 pb-4 pt-2 border-t">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
-                        <div className="space-y-2 text-sm">
-                          {listing.phone && (
-                            <a
-                              href={`tel:${listing.phone}`}
-                              onClick={() => handleContactClick(listing, 'phone')}
-                              className="flex items-center gap-2 text-blue-600 hover:underline"
-                            >
-                              <Phone size={14} />
-                              {listing.phone}
-                            </a>
-                          )}
-                          <a
-                            href={`mailto:${listing.contact_email}`}
-                            onClick={() => handleContactClick(listing, 'email')}
-                            className="flex items-center gap-2 text-blue-600 hover:underline"
-                          >
-                            <Mail size={14} />
-                            {listing.contact_email}
-                          </a>
-                          {listing.website && (
-                            <a
-                              href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => handleContactClick(listing, 'website')}
-                              className="flex items-center gap-2 text-blue-600 hover:underline"
-                            >
-                              <Globe size={14} />
-                              {t('publicListings.visitWebsite')}
-                            </a>
-                          )}
+                      {(listing.phone || listing.website) && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
+                          <div className="space-y-2 text-sm">
+                            {listing.phone && (
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={`tel:${listing.phone}`}
+                                  onClick={() => handleContactClick(listing, 'phone')}
+                                  className="flex items-center gap-2 text-blue-600 hover:underline"
+                                >
+                                  <Phone size={14} />
+                                  {listing.phone}
+                                </a>
+                                {listing.phone_accepts_text === true && (
+                                  <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                                    {t('publicListings.textOk')}
+                                  </span>
+                                )}
+                                {listing.phone_accepts_text === false && (
+                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                    {t('publicListings.callOnly')}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            {listing.website && (
+                              <a
+                                href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => handleContactClick(listing, 'website')}
+                                className="flex items-center gap-2 text-blue-600 hover:underline"
+                              >
+                                <Globe size={14} />
+                                {t('publicListings.visitWebsite')}
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div>
                         <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
@@ -484,9 +492,22 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                       </div>
                     )}
 
-                    <p className="text-xs text-gray-400 mt-4">
-                      {t('publicListings.lastUpdated')} {formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true })}
-                    </p>
+                    {/* Send Inquiry Button */}
+                    <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                      <p className="text-xs text-gray-400">
+                        {t('publicListings.lastUpdated')} {formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true })}
+                      </p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setInquiryListing(listing);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        <MessageSquare size={16} />
+                        {t('inquiry.sendInquiry')}
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -579,41 +600,47 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                               </p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
-                                <div className="space-y-2 text-sm">
-                                  {listing.phone && (
-                                    <a
-                                      href={`tel:${listing.phone}`}
-                                      onClick={() => handleContactClick(listing, 'phone')}
-                                      className="flex items-center gap-2 text-blue-600 hover:underline"
-                                    >
-                                      <Phone size={14} />
-                                      {listing.phone}
-                                    </a>
-                                  )}
-                                  <a
-                                    href={`mailto:${listing.contact_email}`}
-                                    onClick={() => handleContactClick(listing, 'email')}
-                                    className="flex items-center gap-2 text-blue-600 hover:underline"
-                                  >
-                                    <Mail size={14} />
-                                    {listing.contact_email}
-                                  </a>
-                                  {listing.website && (
-                                    <a
-                                      href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={() => handleContactClick(listing, 'website')}
-                                      className="flex items-center gap-2 text-blue-600 hover:underline"
-                                    >
-                                      <Globe size={14} />
-                                      {t('publicListings.visitWebsite')}
-                                    </a>
-                                  )}
+                              {(listing.phone || listing.website) && (
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
+                                  <div className="space-y-2 text-sm">
+                                    {listing.phone && (
+                                      <div className="flex items-center gap-2">
+                                        <a
+                                          href={`tel:${listing.phone}`}
+                                          onClick={() => handleContactClick(listing, 'phone')}
+                                          className="flex items-center gap-2 text-blue-600 hover:underline"
+                                        >
+                                          <Phone size={14} />
+                                          {listing.phone}
+                                        </a>
+                                        {listing.phone_accepts_text === true && (
+                                          <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                                            {t('publicListings.textOk')}
+                                          </span>
+                                        )}
+                                        {listing.phone_accepts_text === false && (
+                                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                            {t('publicListings.callOnly')}
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                    {listing.website && (
+                                      <a
+                                        href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={() => handleContactClick(listing, 'website')}
+                                        className="flex items-center gap-2 text-blue-600 hover:underline"
+                                      >
+                                        <Globe size={14} />
+                                        {t('publicListings.visitWebsite')}
+                                      </a>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
+                              )}
 
                               <div>
                                 <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
@@ -638,9 +665,22 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                               </div>
                             )}
 
-                            <p className="text-xs text-gray-400 mt-4">
-                              {t('publicListings.lastUpdated')} {formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true })}
-                            </p>
+                            {/* Send Inquiry Button for waitlist */}
+                            <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                              <p className="text-xs text-gray-400">
+                                {t('publicListings.lastUpdated')} {formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true })}
+                              </p>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setInquiryListing(listing);
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                <MessageSquare size={16} />
+                                {t('inquiry.sendInquiry')}
+                              </button>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -653,6 +693,14 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
         )}
         </div>
       </div>
+
+      {/* Parent Inquiry Form Modal */}
+      {inquiryListing && (
+        <ParentInquiryForm
+          listing={inquiryListing}
+          onClose={() => setInquiryListing(null)}
+        />
+      )}
 
       {/* Footer */}
       <div className="bg-white border-t mt-8 py-6">

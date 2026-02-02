@@ -31,14 +31,15 @@ import { Dashboard } from '../Dashboard';
 import { CsvImport } from '../CsvImport';
 import { RosterSummary } from './RosterSummary';
 import { OrganizationDashboard } from './OrganizationDashboard';
-import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key } from 'lucide-react';
+import { ProviderInquiries } from './ProviderInquiries';
+import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key, MessageSquare } from 'lucide-react';
 import { useLanguage, LanguageSwitcher } from '../../i18n/LanguageContext';
 import { trackPageView, trackSignIn, trackSignUp, trackSignOut, trackAutoFillUsed, trackVacancyUpdated, ViewName } from '../../lib/analytics';
 
 // Admin password - in production, use environment variable
 const ADMIN_PASSWORD = 'fccasf2024';
 
-type View = 'public' | 'auth' | 'onboarding' | 'dashboard' | 'roster' | 'projections' | 'settings' | 'admin' | 'org-dashboard';
+type View = 'public' | 'auth' | 'onboarding' | 'dashboard' | 'inquiries' | 'roster' | 'projections' | 'settings' | 'admin' | 'org-dashboard';
 
 // Hash to View mapping for URL routing
 const HASH_TO_VIEW: Record<string, View> = {
@@ -47,6 +48,7 @@ const HASH_TO_VIEW: Record<string, View> = {
   '#public': 'public',
   '#auth': 'auth',
   '#vacancies': 'dashboard',
+  '#inquiries': 'inquiries',
   '#roster': 'roster',
   '#projections': 'projections',
   '#settings': 'settings',
@@ -56,6 +58,7 @@ const VIEW_TO_HASH: Partial<Record<View, string>> = {
   'public': '#public',
   'auth': '#auth',
   'dashboard': '#vacancies',
+  'inquiries': '#inquiries',
   'roster': '#roster',
   'projections': '#projections',
   'settings': '#settings',
@@ -68,6 +71,7 @@ const VIEW_TO_ANALYTICS: Record<View, ViewName> = {
   'auth': 'auth',
   'onboarding': 'onboarding',
   'dashboard': 'vacancies',
+  'inquiries': 'vacancies', // Track inquiries under vacancies for now
   'roster': 'roster',
   'projections': 'projections',
   'settings': 'settings',
@@ -549,6 +553,7 @@ export function RegistryApp() {
     const navItems = [
       { view: 'public' as View, icon: Eye, labelKey: 'nav.publicView' },
       { view: 'dashboard' as View, icon: Edit3, labelKey: 'nav.vacancies' },
+      { view: 'inquiries' as View, icon: MessageSquare, labelKey: 'nav.inquiries' },
       { view: 'roster' as View, icon: Users, labelKey: 'nav.roster' },
       { view: 'projections' as View, icon: BarChart3, labelKey: 'nav.projections' },
       { view: 'settings' as View, icon: Settings, labelKey: 'nav.settings' },
@@ -771,6 +776,21 @@ export function RegistryApp() {
               {t('vacancy.listingLiveDesc', { location: provider.neighborhood || provider.zip_code })}
             </p>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Inquiries view
+  if (view === 'inquiries' && user && provider) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <ProviderNav />
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8 mobile-bottom-padding">
+          <ProviderInquiries
+            providerId={user.id}
+            providerEmail={provider.contact_email}
+          />
         </div>
       </div>
     );

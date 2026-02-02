@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Provider, Vacancy, PublicListing } from '../types/registry';
+import { Provider, Vacancy, PublicListing, ParentInquiry, ParentInquiryFormData, InquiryStatus } from '../types/registry';
 import { ProviderFormData } from '../components/registry/ProviderOnboarding';
 import { VacancyFormData } from '../components/registry/VacancyForm';
 import { checkElfaStatus } from './elfa';
@@ -385,4 +385,146 @@ export async function updateProviderVacancy(providerId: string, vacancyData: Vac
     return { error: error.message };
   }
   return {};
+}
+
+// Parent Inquiry operations
+
+// Submit a new inquiry (public - no auth required)
+export async function submitInquiry(
+  providerId: string,
+  inquiryData: ParentInquiryFormData
+): Promise<{ data?: ParentInquiry; error?: string }> {
+  console.log('[Supabase] submitInquiry called for provider:', providerId);
+  try {
+    // Rate limit: Check if this email already contacted this provider in last 24 hours
+    const twentyFourHoursAgo = new Date();
+    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+    const { data: existingInquiry } = await supabase
+      .from('parent_inquiries')
+      .select('id')
+      .eq('provider_id', providerId)
+      .eq('parent_email', inquiryData.parent_email.toLowerCase().trim())
+      .gte('created_at', twentyFourHoursAgo.toISOString())
+      .limit(1)
+      .single();
+
+    if (existingInquiry) {
+      console.log('[Supabase] Rate limit hit: duplicate inquiry within 24 hours');
+      return { error: 'You have already sent an inquiry to this provider recently. Please wait 24 hours before sending another.' };
+    }
+
+    const { data, error } = await supabase
+      .from('parent_inquiries')
+      .insert({
+        provider_id: providerId,
+        parent_name: inquiryData.parent_name,
+        parent_email: inquiryData.parent_email.toLowerCase().trim(),
+        parent_phone: inquiryData.parent_phone || null,
+        message: inquiryData.message,
+        age_group_interested: inquiryData.age_group_interested,
+        status: 'new',
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[Supabase] submitInquiry error:', error);
+      return { error: error.message };
+    }
+
+    console.log('[Supabase] submitInquiry success:', data?.id);
+
+    // Trigger email notification via Edge Function
+    try {
+      await supabase.functions.invoke('send-inquiry-notification', {
+        body: { inquiry_id: data.id },
+      });
+    } catch (emailErr) {
+      // Don't fail the inquiry submission if email fails
+      console.error('[Supabase] Email notification failed:', emailErr);
+    }
+
+    return { data };
+  } catch (err) {
+    console.error('[Supabase] submitInquiry exception:', err);
+    return { error: err instanceof Error ? err.message : 'Unknown error' };
+  }
+}
+
+// Get inquiries for a provider
+export async function getInquiries(providerId: string): Promise<ParentInquiry[]> {
+  console.log('[Supabase] getInquiries called for provider:', providerId);
+  try {
+    const { data, error } = await supabase
+      .from('parent_inquiries')
+      .select('*')
+      .eq('provider_id', providerId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('[Supabase] getInquiries error:', error);
+      return [];
+    }
+
+    console.log('[Supabase] getInquiries success, count:', data?.length || 0);
+    return data || [];
+  } catch (err) {
+    console.error('[Supabase] getInquiries exception:', err);
+    return [];
+  }
+}
+
+// Get inquiry count (for badge display)
+export async function getInquiryCount(providerId: string): Promise<{ total: number; unread: number }> {
+  try {
+    const { data, error } = await supabase
+      .from('parent_inquiries')
+      .select('status')
+      .eq('provider_id', providerId);
+
+    if (error || !data) {
+      return { total: 0, unread: 0 };
+    }
+
+    return {
+      total: data.length,
+      unread: data.filter(i => i.status === 'new').length,
+    };
+  } catch {
+    return { total: 0, unread: 0 };
+  }
+}
+
+// Update inquiry status
+export async function updateInquiryStatus(
+  inquiryId: string,
+  status: InquiryStatus
+): Promise<{ error?: string }> {
+  console.log('[Supabase] updateInquiryStatus:', inquiryId, status);
+  try {
+    const updates: Record<string, unknown> = { status };
+
+    // Set timestamps based on status
+    if (status === 'read') {
+      updates.read_at = new Date().toISOString();
+    } else if (status === 'replied') {
+      updates.replied_at = new Date().toISOString();
+    }
+
+    const { error } = await supabase
+      .from('parent_inquiries')
+      .update(updates)
+      .eq('id', inquiryId);
+
+    if (error) {
+      console.error('[Supabase] updateInquiryStatus error:', error);
+      return { error: error.message };
+    }
+
+    return {};
+  } catch (err) {
+    console.error('[Supabase] updateInquiryStatus exception:', err);
+    return { error: err instanceof Error ? err.message : 'Unknown error' };
+  }
 }

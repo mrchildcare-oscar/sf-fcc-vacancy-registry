@@ -29,6 +29,7 @@ CREATE TABLE providers (
 
   -- Contact
   phone TEXT,
+  phone_accepts_text BOOLEAN DEFAULT FALSE,
   contact_email TEXT NOT NULL,
   website TEXT,
 
@@ -84,7 +85,8 @@ SELECT
   p.neighborhood,
   p.zip_code,
   p.phone,
-  p.contact_email,
+  p.phone_accepts_text,
+  p.website,
   p.program_type,
   p.is_elfa_network,
   p.languages,
@@ -104,6 +106,8 @@ SELECT
 
   COALESCE(v.full_time_available, TRUE) AS full_time_available,
   COALESCE(v.part_time_available, FALSE) AS part_time_available,
+  COALESCE(v.waitlist_available, FALSE) AS waitlist_available,
+  v.notes,
 
   COALESCE(v.available_date, CURRENT_DATE) AS available_date,
   COALESCE(v.updated_at, p.created_at) AS last_updated,
@@ -120,6 +124,7 @@ WHERE
     v.accepting_toddlers = TRUE OR
     v.accepting_preschool = TRUE OR
     v.accepting_school_age = TRUE OR
+    v.waitlist_available = TRUE OR
     COALESCE(v.infant_spots, 0) + COALESCE(v.toddler_spots, 0) +
     COALESCE(v.preschool_spots, 0) + COALESCE(v.school_age_spots, 0) > 0
   );
@@ -188,3 +193,62 @@ CREATE TRIGGER update_vacancies_updated_at
   BEFORE UPDATE ON vacancies
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- Parent Inquiries table (inquiries from parents to providers)
+CREATE TABLE parent_inquiries (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  provider_id UUID NOT NULL REFERENCES providers(id) ON DELETE CASCADE,
+
+  -- Parent info
+  parent_name TEXT NOT NULL,
+  parent_email TEXT NOT NULL,
+  parent_phone TEXT,
+
+  -- Inquiry
+  message TEXT NOT NULL,
+  age_group_interested TEXT NOT NULL CHECK (age_group_interested IN ('infant', 'toddler', 'preschool', 'school_age', 'multiple')),
+
+  -- Status
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'read', 'replied', 'archived')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  read_at TIMESTAMPTZ,
+  replied_at TIMESTAMPTZ
+);
+
+-- RLS for parent_inquiries
+ALTER TABLE parent_inquiries ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can insert (public form submission)
+CREATE POLICY "Anyone can submit inquiry" ON parent_inquiries
+  FOR INSERT WITH CHECK (true);
+
+-- Providers can view their own inquiries
+CREATE POLICY "Providers can view own inquiries" ON parent_inquiries
+  FOR SELECT USING (
+    auth.uid() = provider_id OR
+    EXISTS (
+      SELECT 1 FROM providers p
+      WHERE p.id = provider_id
+      AND p.organization_id IN (
+        SELECT id FROM organizations WHERE owner_user_id = auth.uid()
+      )
+    )
+  );
+
+-- Providers can update their own inquiries (mark as read, replied, archived)
+CREATE POLICY "Providers can update own inquiries" ON parent_inquiries
+  FOR UPDATE USING (
+    auth.uid() = provider_id OR
+    EXISTS (
+      SELECT 1 FROM providers p
+      WHERE p.id = provider_id
+      AND p.organization_id IN (
+        SELECT id FROM organizations WHERE owner_user_id = auth.uid()
+      )
+    )
+  );
+
+-- Indexes for performance
+CREATE INDEX idx_inquiries_provider ON parent_inquiries(provider_id);
+CREATE INDEX idx_inquiries_status ON parent_inquiries(status);
+CREATE INDEX idx_inquiries_created ON parent_inquiries(created_at DESC);

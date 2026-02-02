@@ -17,6 +17,7 @@ export interface ProviderFormData {
   zip_code: string;
   neighborhood?: string;
   phone?: string;
+  phone_accepts_text?: boolean;
   contact_email: string;
   website?: string;
   languages: string[];
@@ -38,6 +39,7 @@ export function ProviderOnboarding({ onComplete }: ProviderOnboardingProps) {
     zip_code: '',
     neighborhood: '',
     phone: '',
+    phone_accepts_text: false,
     contact_email: '',
     website: '',
     languages: ['English'],
@@ -291,6 +293,15 @@ export function ProviderOnboarding({ onComplete }: ProviderOnboardingProps) {
                       placeholder="(415) 555-1234"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
+                    <label className="flex items-center gap-2 mt-2 text-sm text-gray-600 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.phone_accepts_text || false}
+                        onChange={e => setFormData(prev => ({ ...prev, phone_accepts_text: e.target.checked }))}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      {t('onboarding.phoneAcceptsText')}
+                    </label>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

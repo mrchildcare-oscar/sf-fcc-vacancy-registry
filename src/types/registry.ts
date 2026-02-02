@@ -26,6 +26,7 @@ export interface Provider {
 
   // Contact
   phone?: string;
+  phone_accepts_text?: boolean;
   contact_email: string;
   website?: string;
 
@@ -84,7 +85,7 @@ export interface PublicListing {
 
   // Contact
   phone?: string;
-  contact_email: string;
+  phone_accepts_text?: boolean;
   website?: string;
 
   // Program Info
@@ -166,3 +167,35 @@ export const LANGUAGES = [
   'French',
   'Other',
 ] as const;
+
+// Parent Inquiry
+export type AgeGroupInterested = 'infant' | 'toddler' | 'preschool' | 'school_age' | 'multiple';
+export type InquiryStatus = 'new' | 'read' | 'replied' | 'archived';
+
+export interface ParentInquiry {
+  id: string;
+  provider_id: string;
+
+  // Parent info
+  parent_name: string;
+  parent_email: string;
+  parent_phone?: string;
+
+  // Inquiry
+  message: string;
+  age_group_interested: AgeGroupInterested;
+
+  // Status
+  status: InquiryStatus;
+  created_at: string;
+  read_at?: string;
+  replied_at?: string;
+}
+
+export interface ParentInquiryFormData {
+  parent_name: string;
+  parent_email: string;
+  parent_phone?: string;
+  message: string;
+  age_group_interested: AgeGroupInterested;
+}

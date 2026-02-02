@@ -23,6 +23,7 @@ export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa }
     zip_code: provider.zip_code,
     neighborhood: provider.neighborhood || '',
     phone: provider.phone || '',
+    phone_accepts_text: provider.phone_accepts_text || false,
     contact_email: provider.contact_email,
     website: provider.website || '',
     languages: provider.languages,
@@ -97,6 +98,7 @@ export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa }
       zip_code: formData.zip_code,
       neighborhood: formData.neighborhood || undefined,
       phone: formData.phone || undefined,
+      phone_accepts_text: formData.phone_accepts_text,
       contact_email: formData.contact_email,
       website: formData.website || undefined,
       languages: formData.languages,
@@ -351,6 +353,15 @@ export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa }
               placeholder="(415) 555-1234"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
+            <label className="flex items-center gap-2 mt-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.phone_accepts_text || false}
+                onChange={e => setFormData(prev => ({ ...prev, phone_accepts_text: e.target.checked }))}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              {t('onboarding.phoneAcceptsText')}
+            </label>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

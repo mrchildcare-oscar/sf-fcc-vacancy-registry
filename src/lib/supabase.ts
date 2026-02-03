@@ -396,56 +396,46 @@ export async function submitInquiry(
 ): Promise<{ data?: ParentInquiry; error?: string }> {
   console.log('[Supabase] submitInquiry called for provider:', providerId);
   try {
-    // Rate limit: Check if this email already contacted this provider in last 24 hours
-    const twentyFourHoursAgo = new Date();
-    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+    // Use database function to bypass RLS safely
+    // This handles rate limiting and returns the new inquiry ID
+    const { data: result, error: rpcError } = await supabase.rpc('submit_parent_inquiry', {
+      p_provider_id: providerId,
+      p_parent_name: inquiryData.parent_name,
+      p_parent_email: inquiryData.parent_email,
+      p_parent_phone: inquiryData.parent_phone || '',
+      p_message: inquiryData.message,
+      p_age_group_interested: inquiryData.age_group_interested,
+    });
 
-    const { data: existingInquiry } = await supabase
-      .from('parent_inquiries')
-      .select('id')
-      .eq('provider_id', providerId)
-      .eq('parent_email', inquiryData.parent_email.toLowerCase().trim())
-      .gte('created_at', twentyFourHoursAgo.toISOString())
-      .limit(1)
-      .single();
+    if (rpcError) {
+      console.error('[Supabase] submitInquiry RPC error:', rpcError);
+      return { error: rpcError.message };
+    }
 
-    if (existingInquiry) {
+    if (result?.error === 'rate_limited') {
       console.log('[Supabase] Rate limit hit: duplicate inquiry within 24 hours');
       return { error: 'You have already sent an inquiry to this provider recently. Please wait 24 hours before sending another.' };
     }
 
-    const { data, error } = await supabase
-      .from('parent_inquiries')
-      .insert({
-        provider_id: providerId,
-        parent_name: inquiryData.parent_name,
-        parent_email: inquiryData.parent_email.toLowerCase().trim(),
-        parent_phone: inquiryData.parent_phone || null,
-        message: inquiryData.message,
-        age_group_interested: inquiryData.age_group_interested,
-        status: 'new',
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('[Supabase] submitInquiry error:', error);
-      return { error: error.message };
+    if (!result?.id) {
+      console.error('[Supabase] submitInquiry: No ID returned');
+      return { error: 'Failed to submit inquiry' };
     }
 
-    console.log('[Supabase] submitInquiry success:', data?.id);
+    const inquiryId = result.id;
+    console.log('[Supabase] submitInquiry success:', inquiryId);
 
     // Trigger email notification via Edge Function
     try {
       await supabase.functions.invoke('send-inquiry-notification', {
-        body: { inquiry_id: data.id },
+        body: { inquiry_id: inquiryId },
       });
     } catch (emailErr) {
       // Don't fail the inquiry submission if email fails
       console.error('[Supabase] Email notification failed:', emailErr);
     }
 
-    return { data };
+    return { data: { id: inquiryId } as ParentInquiry };
   } catch (err) {
     console.error('[Supabase] submitInquiry exception:', err);
     return { error: err instanceof Error ? err.message : 'Unknown error' };

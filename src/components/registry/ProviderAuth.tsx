@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Lock, Chrome, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, Lock, Chrome, ArrowRight, AlertCircle, CheckCircle, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
 
@@ -11,12 +11,39 @@ interface ProviderAuthProps {
 export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
   const { t } = useLanguage();
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
+  const [authMethod, setAuthMethod] = useState<'magic' | 'password'>('magic');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (!email) {
+      setError(t('auth.enterEmail'));
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: window.location.origin,
+      },
+    });
+    setLoading(false);
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setMagicLinkSent(true);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,8 +183,85 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
                 {t('common.back')} {t('common.signIn').toLowerCase()}
               </button>
             </form>
+          ) : authMethod === 'magic' && mode === 'signin' ? (
+            // Magic Link Form
+            <form onSubmit={handleMagicLink} className="space-y-4">
+              {magicLinkSent ? (
+                <div className="text-center py-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Mail size={24} className="text-green-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-900 mb-1">{t('auth.checkEmail')}</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {t('auth.magicLinkSent', { email })}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => { setMagicLinkSent(false); setEmail(''); }}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    {t('auth.useDifferentEmail')}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('common.email')}
+                    </label>
+                    <div className="relative">
+                      <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder={t('auth.emailPlaceholder')}
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+                      <AlertCircle size={16} />
+                      <span>{error}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium"
+                  >
+                    {loading ? (
+                      t('common.loading')
+                    ) : (
+                      <>
+                        <Sparkles size={18} />
+                        {t('auth.sendMagicLink')}
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-xs text-gray-500 text-center">
+                    {t('auth.magicLinkHelp')}
+                  </p>
+                </>
+              )}
+
+              {!magicLinkSent && (
+                <button
+                  type="button"
+                  onClick={() => setAuthMethod('password')}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700"
+                >
+                  {t('auth.usePassword')}
+                </button>
+              )}
+            </form>
           ) : (
-            // Sign In / Sign Up Form
+            // Sign In / Sign Up with Password Form
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -244,16 +348,26 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
                   </>
                 )}
               </button>
+
+              {mode === 'signin' && (
+                <button
+                  type="button"
+                  onClick={() => { setAuthMethod('magic'); setError(''); }}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700"
+                >
+                  {t('auth.useMagicLink')}
+                </button>
+              )}
             </form>
           )}
 
-          {mode !== 'forgot' && (
+          {mode !== 'forgot' && !magicLinkSent && (
             <div className="mt-6 text-center text-sm">
               {mode === 'signin' ? (
                 <p className="text-gray-600">
                   {t('auth.noAccount')}{' '}
                   <button
-                    onClick={() => setMode('signup')}
+                    onClick={() => { setMode('signup'); setAuthMethod('password'); }}
                     className="text-blue-600 hover:underline font-medium"
                   >
                     {t('common.signUp')}
@@ -263,7 +377,7 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
                 <p className="text-gray-600">
                   {t('auth.hasAccount')}{' '}
                   <button
-                    onClick={() => setMode('signin')}
+                    onClick={() => { setMode('signin'); setAuthMethod('magic'); }}
                     className="text-blue-600 hover:underline font-medium"
                   >
                     {t('common.signIn')}

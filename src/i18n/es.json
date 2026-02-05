@@ -47,7 +47,14 @@
     "forgotPasswordHelp": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
     "sendResetLink": "Enviar enlace",
     "resetEmailSent": "Revise su correo electrónico para el enlace de restablecimiento de contraseña.",
-    "enterEmail": "Por favor ingrese su correo electrónico"
+    "enterEmail": "Por favor ingrese su correo electrónico",
+    "sendMagicLink": "Enviar enlace mágico",
+    "magicLinkHelp": "Le enviaremos un enlace para iniciar sesión - sin contraseña",
+    "magicLinkSent": "Enviamos un enlace de inicio de sesión a {{email}}",
+    "checkEmail": "Revise su correo",
+    "useDifferentEmail": "Usar otro correo",
+    "usePassword": "Iniciar sesión con contraseña",
+    "useMagicLink": "Iniciar sesión con enlace mágico"
   },
   "onboarding": {
     "title": "Complete su perfil de proveedor",

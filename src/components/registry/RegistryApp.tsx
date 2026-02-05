@@ -365,7 +365,8 @@ export function RegistryApp() {
         const providers = await getProvidersByOrganization(org.id);
         console.log('[Organization] Found providers:', providers.length);
         setOrgProviders(providers);
-        setView('org-dashboard');
+        // Don't override if user is accessing admin page
+        setView(prev => prev === 'admin' ? 'admin' : 'org-dashboard');
         return;
       }
 
@@ -397,14 +398,14 @@ export function RegistryApp() {
           });
         }
         console.log('[Provider] Setting view to dashboard');
-        setView('dashboard');
+        setView(prev => prev === 'admin' ? 'admin' : 'dashboard');
       } else {
         console.log('[Provider] No provider found, setting view to onboarding');
-        setView('onboarding');
+        setView(prev => prev === 'admin' ? 'admin' : 'onboarding');
       }
     } catch (err) {
       console.error('[Provider] Exception loading provider data:', err);
-      setView('onboarding');
+      setView(prev => prev === 'admin' ? 'admin' : 'onboarding');
     }
   };
 

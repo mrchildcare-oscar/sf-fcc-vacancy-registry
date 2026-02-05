@@ -657,7 +657,7 @@ export function RegistryApp() {
             </div>
           </div>
         )}
-        <PublicListings listings={publicListings} loading={listingsLoading} onSignIn={() => navigateTo('auth')} />
+        <PublicListings listings={publicListings} loading={listingsLoading} onSignIn={() => navigateTo('auth')} isProvider={!!provider} />
       </div>
     );
   }

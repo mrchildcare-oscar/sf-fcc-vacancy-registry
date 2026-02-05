@@ -32,9 +32,10 @@ interface PublicListingsProps {
   listings: PublicListing[];
   loading?: boolean;
   onSignIn?: () => void;
+  isProvider?: boolean; // Whether viewer is a signed-in provider
 }
 
-export function PublicListings({ listings, loading, onSignIn }: PublicListingsProps) {
+export function PublicListings({ listings, loading, onSignIn, isProvider = false }: PublicListingsProps) {
   const { t } = useLanguage();
   const [filters, setFilters] = useState<SearchFilters>({});
   const [showFilters, setShowFilters] = useState(false);
@@ -225,36 +226,42 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                   <span className="text-xl sm:text-2xl font-bold text-blue-600">{listingsWithOpenings.length}</span>
                   <span className="text-xs sm:text-sm text-gray-500">{t('publicListings.programsWithOpenings')}</span>
                 </div>
-                <span className="text-gray-300">•</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-xl sm:text-2xl font-bold text-green-600">{vacancyStats.totalSlots}</span>
-                  <span className="text-xs sm:text-sm text-gray-500">{t('publicListings.totalSlots')}</span>
-                </div>
+                {isProvider && (
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xl sm:text-2xl font-bold text-green-600">{vacancyStats.totalSlots}</span>
+                      <span className="text-xs sm:text-sm text-gray-500">{t('publicListings.totalSlots')}</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-            {/* Age group breakdown - wraps on mobile */}
-            <div className="flex flex-wrap gap-2 sm:gap-3 mt-2 sm:justify-end text-xs">
-              {vacancyStats.infantSlots > 0 && (
-                <span className="px-2 py-0.5 bg-pink-50 text-pink-600 rounded">
-                  {t('vacancy.infant')}: {vacancyStats.infantSlots}
-                </span>
-              )}
-              {vacancyStats.toddlerSlots > 0 && (
-                <span className="px-2 py-0.5 bg-orange-50 text-orange-600 rounded">
-                  {t('vacancy.toddler')}: {vacancyStats.toddlerSlots}
-                </span>
-              )}
-              {vacancyStats.preschoolSlots > 0 && (
-                <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded">
-                  {t('vacancy.preschool')}: {vacancyStats.preschoolSlots}
-                </span>
-              )}
-              {vacancyStats.schoolAgeSlots > 0 && (
-                <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
-                  {t('vacancy.schoolAge')}: {vacancyStats.schoolAgeSlots}
-                </span>
-              )}
-            </div>
+            {/* Age group breakdown - only shown to providers */}
+            {isProvider && (
+              <div className="flex flex-wrap gap-2 sm:gap-3 mt-2 sm:justify-end text-xs">
+                {vacancyStats.infantSlots > 0 && (
+                  <span className="px-2 py-0.5 bg-pink-50 text-pink-600 rounded">
+                    {t('vacancy.infant')}: {vacancyStats.infantSlots}
+                  </span>
+                )}
+                {vacancyStats.toddlerSlots > 0 && (
+                  <span className="px-2 py-0.5 bg-orange-50 text-orange-600 rounded">
+                    {t('vacancy.toddler')}: {vacancyStats.toddlerSlots}
+                  </span>
+                )}
+                {vacancyStats.preschoolSlots > 0 && (
+                  <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded">
+                    {t('vacancy.preschool')}: {vacancyStats.preschoolSlots}
+                  </span>
+                )}
+                {vacancyStats.schoolAgeSlots > 0 && (
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
+                    {t('vacancy.schoolAge')}: {vacancyStats.schoolAgeSlots}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -475,10 +482,18 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
 
                     <div className="text-right flex items-center gap-4">
                       <div>
-                        <p className="text-2xl font-bold text-green-600">
-                          {listing.total_spots_available}
-                        </p>
-                        <p className="text-xs text-gray-500">{t('publicListings.spotsOpen')}</p>
+                        {isProvider ? (
+                          <>
+                            <p className="text-2xl font-bold text-green-600">
+                              {listing.total_spots_available}
+                            </p>
+                            <p className="text-xs text-gray-500">{t('publicListings.spotsOpen')}</p>
+                          </>
+                        ) : (
+                          <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                            {t('publicListings.hasOpenings')}
+                          </span>
+                        )}
                       </div>
                       {expandedListing === listing.provider_id ? (
                         <ChevronUp size={20} className="text-gray-400" />
@@ -488,26 +503,26 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
                     </div>
                   </div>
 
-                  {/* Quick spots overview */}
+                  {/* Quick spots overview - counts only shown to providers */}
                   <div className="flex gap-2 mt-3 flex-wrap">
                     {listing.accepting_infants && (
                       <span className="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded">
-                        {t('vacancy.infant')}{listing.infant_spots > 0 && ` (${listing.infant_spots})`}
+                        {t('vacancy.infant')}{isProvider && listing.infant_spots > 0 && ` (${listing.infant_spots})`}
                       </span>
                     )}
                     {listing.accepting_toddlers && (
                       <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">
-                        {t('vacancy.toddler')}{listing.toddler_spots > 0 && ` (${listing.toddler_spots})`}
+                        {t('vacancy.toddler')}{isProvider && listing.toddler_spots > 0 && ` (${listing.toddler_spots})`}
                       </span>
                     )}
                     {listing.accepting_preschool && (
                       <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
-                        {t('vacancy.preschool')}{listing.preschool_spots > 0 && ` (${listing.preschool_spots})`}
+                        {t('vacancy.preschool')}{isProvider && listing.preschool_spots > 0 && ` (${listing.preschool_spots})`}
                       </span>
                     )}
                     {listing.accepting_school_age && (
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
-                        {t('vacancy.schoolAge')}{listing.school_age_spots > 0 && ` (${listing.school_age_spots})`}
+                        {t('vacancy.schoolAge')}{isProvider && listing.school_age_spots > 0 && ` (${listing.school_age_spots})`}
                       </span>
                     )}
                   </div>

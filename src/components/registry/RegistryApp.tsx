@@ -32,12 +32,15 @@ import { CsvImport } from '../CsvImport';
 import { RosterSummary } from './RosterSummary';
 import { OrganizationDashboard } from './OrganizationDashboard';
 import { ProviderInquiries } from './ProviderInquiries';
-import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key, MessageSquare } from 'lucide-react';
+import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key, MessageSquare, Shield } from 'lucide-react';
 import { useLanguage, LanguageSwitcher } from '../../i18n/LanguageContext';
 import { trackPageView, trackSignIn, trackSignUp, trackSignOut, trackAutoFillUsed, trackVacancyUpdated, ViewName } from '../../lib/analytics';
 
-// Admin password - in production, use environment variable
-const ADMIN_PASSWORD = 'fccasf2024';
+// Admin emails - comma-separated list from environment variable
+const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || '')
+  .split(',')
+  .map((e: string) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 type View = 'public' | 'auth' | 'onboarding' | 'dashboard' | 'inquiries' | 'roster' | 'projections' | 'settings' | 'admin' | 'org-dashboard';
 
@@ -165,16 +168,18 @@ export function RegistryApp() {
     };
   }, [provider]);
 
-  // Check for admin access via URL parameter
+  // Check for admin access via URL parameter (?admin)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const adminParam = params.get('admin');
-    if (adminParam === ADMIN_PASSWORD) {
+    if (params.has('admin')) {
       setView('admin');
       // Clean URL without reloading
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
+
+  // Check if current user is an admin
+  const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
 
   // Load children from localStorage for this provider
   const loadChildren = useCallback((providerId: string) => {
@@ -501,8 +506,60 @@ export function RegistryApp() {
     await loadProviderData(user.id);
   };
 
-  // Admin view - accessible via URL ?admin=fccasf2024
+  // Admin view - requires login + email in ADMIN_EMAILS
   if (view === 'admin') {
+    // Not logged in - show login prompt
+    if (!user) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <div className="text-center max-w-md">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield size={24} className="text-blue-600" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Admin Login Required</h2>
+            <p className="text-gray-600 mb-4">Please sign in with an authorized admin account to access this page.</p>
+            <button
+              onClick={() => navigateTo('auth')}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Logged in but not an admin
+    if (!isAdmin) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <div className="text-center max-w-md">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield size={24} className="text-red-600" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h2>
+            <p className="text-gray-600 mb-2">Your account ({user.email}) is not authorized for admin access.</p>
+            <p className="text-sm text-gray-500 mb-4">Contact the system administrator if you need access.</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => navigateTo('public')}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Go to Public View
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Authorized admin
     return (
       <AdminAddProvider
         onComplete={() => {

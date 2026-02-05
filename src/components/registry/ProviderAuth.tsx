@@ -11,7 +11,7 @@ interface ProviderAuthProps {
 export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
   const { t } = useLanguage();
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
-  const [authMethod, setAuthMethod] = useState<'magic' | 'password'>('magic');
+  const [authMethod, setAuthMethod] = useState<'magic' | 'password'>('password');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

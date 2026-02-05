@@ -235,9 +235,7 @@ export async function refreshAllElfaStatus(): Promise<{ updated: number; total: 
   console.log('[Supabase] refreshAllElfaStatus started (calling Edge Function)');
 
   try {
-    const { data, error } = await supabase.functions.invoke('refresh-elfa', {
-      body: { admin_password: 'fccasf2024' },
-    });
+    const { data, error } = await supabase.functions.invoke('refresh-elfa');
 
     if (error) {
       console.error('[Supabase] refreshAllElfaStatus error:', error);

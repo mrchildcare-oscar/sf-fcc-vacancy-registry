@@ -80,19 +80,47 @@ serve(async (req) => {
   }
 
   try {
-    // Verify admin password from request
-    const { admin_password } = await req.json()
+    // Get Supabase credentials
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
-    if (admin_password !== 'fccasf2024') {
+    // Get allowed admin emails from environment (comma-separated)
+    const adminEmails = (Deno.env.get('ADMIN_EMAILS') || '').split(',').map(e => e.trim().toLowerCase())
+
+    // Verify user is authenticated and is an admin
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
       return new Response(
-        JSON.stringify({ success: false, error: 'Unauthorized' }),
+        JSON.stringify({ success: false, error: 'Not authenticated' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       )
     }
 
+    // Create client with user's auth to get their identity
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    })
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser()
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid authentication' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    // Check if user's email is in admin list
+    const userEmail = user.email?.toLowerCase() || ''
+    if (!adminEmails.includes(userEmail)) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Not authorized. Admin access required.' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+      )
+    }
+
     // Create Supabase client with service role key (bypasses RLS)
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 

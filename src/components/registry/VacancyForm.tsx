@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Baby, Clock, Calendar, Save, AlertCircle, CheckCircle, AlertTriangle, ClipboardList, Code, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { Baby, Clock, Calendar, Save, AlertCircle, CheckCircle, AlertTriangle, ClipboardList, Code, Copy, Check, ChevronDown, ChevronUp, Shuffle } from 'lucide-react';
 import { getMaxInfantsAllowed } from '../../utils/compliance';
 import { useLanguage } from '../../i18n/LanguageContext';
 
@@ -366,6 +366,21 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
           <br />
           {t('vacancy.keepUpdatedNote')}
         </p>
+
+        {/* Listing Order Info */}
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+          <div className="flex items-start gap-2.5">
+            <Shuffle size={16} className="text-blue-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-medium text-blue-900">
+                {t('vacancy.listingOrderTitle')}
+              </h4>
+              <p className="text-xs text-blue-700 mt-0.5">
+                {t('vacancy.listingOrderDesc')}
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Embed Code Section */}
         {licenseNumber && (

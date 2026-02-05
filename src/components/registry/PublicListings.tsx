@@ -14,6 +14,7 @@ import {
   Globe,
   ClipboardList,
   MessageSquare,
+  Shuffle,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -25,6 +26,7 @@ import {
   trackFilterUsed,
   trackSearchUsed,
 } from '../../lib/analytics';
+import { shuffleListingsForUser } from '../../lib/randomOrder';
 
 interface PublicListingsProps {
   listings: PublicListing[];
@@ -39,6 +41,7 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
   const [expandedListing, setExpandedListing] = useState<string | null>(null);
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
   const [inquiryListing, setInquiryListing] = useState<PublicListing | null>(null);
+  const [eligibilityOpen, setEligibilityOpen] = useState(false);
 
   // Handle listing click with analytics tracking
   const handleListingClick = useCallback((listing: PublicListing) => {
@@ -126,8 +129,49 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
 
   // Separate listings: with openings vs full with waitlist
   const allFiltered = listings.filter(applyFilters);
-  const listingsWithOpenings = allFiltered.filter(l => l.total_spots_available > 0);
+  const listingsWithOpenings = useMemo(() => {
+    const filtered = allFiltered.filter(l => l.total_spots_available > 0);
+    return shuffleListingsForUser(filtered);
+  }, [allFiltered]);
   const fullWithWaitlist = allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available);
+
+  // Calculate vacancy statistics
+  const vacancyStats = useMemo(() => {
+    const stats = {
+      totalSlots: 0,
+      infantSlots: 0,
+      toddlerSlots: 0,
+      preschoolSlots: 0,
+      schoolAgeSlots: 0,
+      // ELFA-specific stats
+      elfaPrograms: 0,
+      elfaTotalSlots: 0,
+      elfaInfantSlots: 0,
+      elfaToddlerSlots: 0,
+      elfaPreschoolSlots: 0,
+      elfaSchoolAgeSlots: 0,
+    };
+
+    listingsWithOpenings.forEach(listing => {
+      stats.totalSlots += listing.total_spots_available;
+      stats.infantSlots += listing.infant_spots || 0;
+      stats.toddlerSlots += listing.toddler_spots || 0;
+      stats.preschoolSlots += listing.preschool_spots || 0;
+      stats.schoolAgeSlots += listing.school_age_spots || 0;
+
+      // ELFA stats
+      if (listing.is_elfa_network) {
+        stats.elfaPrograms += 1;
+        stats.elfaTotalSlots += listing.total_spots_available;
+        stats.elfaInfantSlots += listing.infant_spots || 0;
+        stats.elfaToddlerSlots += listing.toddler_spots || 0;
+        stats.elfaPreschoolSlots += listing.preschool_spots || 0;
+        stats.elfaSchoolAgeSlots += listing.school_age_spots || 0;
+      }
+    });
+
+    return stats;
+  }, [listingsWithOpenings]);
 
   // Track filter changes
   useEffect(() => {
@@ -164,18 +208,52 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {t('publicListings.title')}
-              </h1>
-              <p className="text-gray-600 text-sm">
-                {t('publicListings.subtitle')}
-              </p>
+          {/* Title and Stats - stacked on mobile, side-by-side on desktop */}
+          <div className="mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  {t('publicListings.title')}
+                </h1>
+                <p className="text-gray-600 text-sm hidden sm:block">
+                  {t('publicListings.subtitle')}
+                </p>
+              </div>
+              {/* Stats - horizontal on desktop, compact on mobile */}
+              <div className="flex items-center gap-4 sm:gap-2">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{listingsWithOpenings.length}</span>
+                  <span className="text-xs sm:text-sm text-gray-500">{t('publicListings.programsWithOpenings')}</span>
+                </div>
+                <span className="text-gray-300">•</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl sm:text-2xl font-bold text-green-600">{vacancyStats.totalSlots}</span>
+                  <span className="text-xs sm:text-sm text-gray-500">{t('publicListings.totalSlots')}</span>
+                </div>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-blue-600">{listingsWithOpenings.length}</p>
-              <p className="text-sm text-gray-500">{t('publicListings.programsWithOpenings')}</p>
+            {/* Age group breakdown - wraps on mobile */}
+            <div className="flex flex-wrap gap-2 sm:gap-3 mt-2 sm:justify-end text-xs">
+              {vacancyStats.infantSlots > 0 && (
+                <span className="px-2 py-0.5 bg-pink-50 text-pink-600 rounded">
+                  {t('vacancy.infant')}: {vacancyStats.infantSlots}
+                </span>
+              )}
+              {vacancyStats.toddlerSlots > 0 && (
+                <span className="px-2 py-0.5 bg-orange-50 text-orange-600 rounded">
+                  {t('vacancy.toddler')}: {vacancyStats.toddlerSlots}
+                </span>
+              )}
+              {vacancyStats.preschoolSlots > 0 && (
+                <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded">
+                  {t('vacancy.preschool')}: {vacancyStats.preschoolSlots}
+                </span>
+              )}
+              {vacancyStats.schoolAgeSlots > 0 && (
+                <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
+                  {t('vacancy.schoolAge')}: {vacancyStats.schoolAgeSlots}
+                </span>
+              )}
             </div>
           </div>
 
@@ -323,8 +401,20 @@ export function PublicListings({ listings, loading, onSignIn }: PublicListingsPr
 
       {/* Listings */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Eligibility Screener */}
-        <EligibilityScreener />
+        {/* Eligibility Screener (merged with ELFA stats) */}
+        <div id="eligibility-screener">
+          <EligibilityScreener
+            isOpen={eligibilityOpen}
+            onToggle={setEligibilityOpen}
+            elfaStats={vacancyStats}
+          />
+        </div>
+
+        {/* Fairness Notice */}
+        <div className="mb-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+          <Shuffle size={13} className="text-gray-400" />
+          <span>{t('publicListings.fairnessNotice')}</span>
+        </div>
 
         {/* Provider Listings */}
         <div id="provider-listings">

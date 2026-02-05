@@ -469,15 +469,17 @@ export function RegistryApp() {
 
   const handleSignOut = async () => {
     trackSignOut();
-    // Clear all state first
+    // Sign out from Supabase FIRST (so refresh won't restore session)
+    await signOut();
+    // Then clear all state
     setUser(null);
     setProvider(null);
     setVacancyData(undefined);
     setOrganization(null);
     setOrgProviders([]);
+    // Clear URL hash so refresh goes to public view
+    window.history.replaceState(null, '', window.location.pathname);
     setView('public');
-    // Then sign out from Supabase
-    await signOut();
   };
 
   const handleUpdateProvider = async (updates: Partial<Provider>) => {

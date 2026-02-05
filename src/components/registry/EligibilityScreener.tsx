@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Star } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import {
   checkEligibility,
@@ -11,9 +12,27 @@ import {
   trackEligibilityCheck,
 } from '../../lib/analytics';
 
-export function EligibilityScreener() {
+interface ElfaStats {
+  elfaPrograms: number;
+  elfaTotalSlots: number;
+  elfaInfantSlots: number;
+  elfaToddlerSlots: number;
+  elfaPreschoolSlots: number;
+  elfaSchoolAgeSlots: number;
+}
+
+interface EligibilityScreenerProps {
+  isOpen?: boolean;
+  onToggle?: (open: boolean) => void;
+  elfaStats?: ElfaStats;
+}
+
+export function EligibilityScreener({ isOpen, onToggle, elfaStats }: EligibilityScreenerProps) {
   const { t, language } = useLanguage();
-  const [isExpanded, setIsExpanded] = useState(false);
+  // Support both controlled and uncontrolled modes
+  const [internalExpanded, setInternalExpanded] = useState(false);
+  const isExpanded = isOpen !== undefined ? isOpen : internalExpanded;
+  const setIsExpanded = onToggle || setInternalExpanded;
   const [householdSize, setHouseholdSize] = useState<number>(0);
   const [income, setIncome] = useState<string>('');
   const [incomeType, setIncomeType] = useState<'monthly' | 'annual'>('annual');
@@ -62,8 +81,14 @@ export function EligibilityScreener() {
 
   const thresholds = householdSize ? getThresholds(householdSize) : null;
 
+  const hasElfaPrograms = elfaStats && elfaStats.elfaPrograms > 0;
+
   return (
-    <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200 mb-6 overflow-hidden">
+    <div className={`rounded-xl border mb-6 overflow-hidden ${
+      hasElfaPrograms
+        ? 'bg-gradient-to-r from-yellow-50 to-green-50 border-yellow-200'
+        : 'bg-gradient-to-r from-green-50 to-blue-50 border-green-200'
+    }`}>
       {/* Collapsed Header */}
       <button
         onClick={() => {
@@ -72,27 +97,64 @@ export function EligibilityScreener() {
           }
           setIsExpanded(!isExpanded);
         }}
-        className="w-full px-4 py-4 flex items-center justify-between hover:bg-white/30 transition-colors"
+        className="w-full px-3 sm:px-4 py-3 sm:py-4 flex items-start sm:items-center justify-between hover:bg-white/30 transition-colors gap-2"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">💰</span>
-          <div className="text-left">
-            <div className="font-semibold text-gray-800">
-              {t('eligibility.title')}
+        <div className="flex-1 min-w-0">
+          {/* ELFA Stats Row */}
+          {hasElfaPrograms && (
+            <div className="flex items-start sm:items-center gap-1.5 sm:gap-2 mb-2 flex-wrap">
+              <Star size={16} className="text-yellow-600 fill-yellow-600 flex-shrink-0 mt-0.5 sm:mt-0" />
+              <span className="font-semibold text-yellow-800 text-sm sm:text-base">
+                {elfaStats.elfaPrograms} {t('publicListings.elfaBannerTitle')}
+              </span>
+              <span className="text-yellow-700 text-xs sm:text-sm">
+                ({elfaStats.elfaTotalSlots} {t('publicListings.slots')})
+              </span>
             </div>
-            <div className="text-sm text-gray-600">
-              {t('eligibility.subtitle')}
+          )}
+          {/* ELFA Age Breakdown */}
+          {hasElfaPrograms && (
+            <div className="flex flex-wrap gap-2 mb-2 text-xs">
+              {elfaStats.elfaInfantSlots > 0 && (
+                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.infant')}: {elfaStats.elfaInfantSlots}</span>
+              )}
+              {elfaStats.elfaToddlerSlots > 0 && (
+                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.toddler')}: {elfaStats.elfaToddlerSlots}</span>
+              )}
+              {elfaStats.elfaPreschoolSlots > 0 && (
+                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.preschool')}: {elfaStats.elfaPreschoolSlots}</span>
+              )}
+              {elfaStats.elfaSchoolAgeSlots > 0 && (
+                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.schoolAge')}: {elfaStats.elfaSchoolAgeSlots}</span>
+              )}
+            </div>
+          )}
+          {/* Eligibility Check CTA */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-xl sm:text-2xl">{hasElfaPrograms ? '✨' : '💰'}</span>
+            <div className="text-left">
+              <div className="font-semibold text-gray-800 text-sm sm:text-base">
+                {hasElfaPrograms ? t('publicListings.elfaBannerSubtext') : t('eligibility.title')}
+              </div>
+              <div className="text-xs sm:text-sm text-gray-600">
+                {t('eligibility.subtitle')}
+              </div>
             </div>
           </div>
         </div>
-        <svg
-          className={`w-5 h-5 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          <span className={`hidden sm:inline text-sm font-medium ${hasElfaPrograms ? 'text-yellow-700' : 'text-green-700'}`}>
+            {t('publicListings.checkEligibility')}
+          </span>
+          <svg
+            className={`w-5 h-5 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </button>
 
       {/* Expanded Content */}

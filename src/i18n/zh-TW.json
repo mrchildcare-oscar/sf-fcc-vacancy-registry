@@ -128,7 +128,9 @@
     "waitlistHelp": "如果您在滿額時有候補名單，請勾選此項。家長可以聯繫您加入候補。",
     "embedOnWebsite": "嵌入您的網站",
     "embedDescription": "將此代碼添加到您的網站，向家庭展示您目前的空缺狀況。當您更改空缺狀態時，它會自動更新。",
-    "embedNote": "適用於任何允許自定義 HTML 的網站建設工具。"
+    "embedNote": "適用於任何允許自定義 HTML 的網站建設工具。",
+    "listingOrderTitle": "您的列表位置每日更新",
+    "listingOrderDesc": "為確保公平，每位家長看到的服務提供者順序都不同，且每日更新。這確保所有機構獲得平等的曝光機會。"
   },
   "roster": {
     "title": "已註冊兒童",
@@ -186,6 +188,7 @@
     "title": "舊金山家庭托兒空缺",
     "subtitle": "尋找舊金山可用的托兒名額",
     "programsWithOpenings": "個機構有空缺",
+    "totalSlots": "個空缺名額",
     "searchPlaceholder": "按郵遞區號搜尋（例如：94110）",
     "filterResults": "篩選結果",
     "neighborhood": "社區",
@@ -218,7 +221,14 @@
     "waitlist": "候補",
     "full": "已滿",
     "joinWaitlist": "加入候補",
-    "waitlistInfo": "此機構目前已滿，但有候補名單。請聯繫他們詢問加入候補名單。"
+    "waitlistInfo": "此機構目前已滿，但有候補名單。請聯繫他們詢問加入候補名單。",
+    "elfaProgramsCount": "個 ELFA 機構",
+    "elfaBannerTitle": "個機構透過 Early Learning For All (ELFA) 提供免費或減價托兒服務",
+    "elfaBannerSubtext": "收入符合資格的舊金山家庭可能符合條件",
+    "checkEligibility": "查看資格",
+    "slots": "個名額",
+    "elfaFreeNote": "符合資格的家庭可能獲得免費托兒服務",
+    "fairnessNotice": "列表以隨機順序顯示，每日輪換以確保公平"
   },
   "settings": {
     "title": "機構設定",

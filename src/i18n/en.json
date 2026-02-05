@@ -128,7 +128,9 @@
     "waitlistHelp": "Check this if you maintain a waitlist when full. Parents can contact you to join.",
     "embedOnWebsite": "Embed on your website",
     "embedDescription": "Add this code to your website to show your current availability to families. It updates automatically when you change your vacancy status.",
-    "embedNote": "Works with any website builder that allows custom HTML."
+    "embedNote": "Works with any website builder that allows custom HTML.",
+    "listingOrderTitle": "Your listing position changes daily",
+    "listingOrderDesc": "To ensure fairness, each parent sees providers in a different random order that changes daily. This gives all programs equal visibility over time."
   },
   "roster": {
     "title": "Enrolled Children",
@@ -186,6 +188,7 @@
     "title": "SF Family Child Care Vacancies",
     "subtitle": "Find available childcare spots in San Francisco",
     "programsWithOpenings": "programs with openings",
+    "totalSlots": "total slots",
     "searchPlaceholder": "Search by ZIP code (e.g., 94110)",
     "filterResults": "Filter Results",
     "neighborhood": "Neighborhood",
@@ -218,7 +221,14 @@
     "waitlist": "Waitlist",
     "full": "Full",
     "joinWaitlist": "Join waitlist",
-    "waitlistInfo": "This program is currently full but maintains a waitlist. Contact them to inquire about joining their waitlist."
+    "waitlistInfo": "This program is currently full but maintains a waitlist. Contact them to inquire about joining their waitlist.",
+    "elfaProgramsCount": "ELFA programs",
+    "elfaBannerTitle": "programs offer FREE or reduced-cost care through Early Learning For All (ELFA)",
+    "elfaBannerSubtext": "SF families under certain income limits may qualify",
+    "checkEligibility": "Check Eligibility",
+    "slots": "slots",
+    "elfaFreeNote": "May offer FREE care for qualifying families",
+    "fairnessNotice": "Listings shown in random order, rotating daily for fairness"
   },
   "settings": {
     "title": "Program Settings",

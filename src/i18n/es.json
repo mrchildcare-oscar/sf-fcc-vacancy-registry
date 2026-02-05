@@ -128,7 +128,9 @@
     "waitlistHelp": "Marque esto si mantiene una lista de espera cuando está lleno. Los padres pueden contactarlo para unirse.",
     "embedOnWebsite": "Insertar en su sitio web",
     "embedDescription": "Agregue este código a su sitio web para mostrar su disponibilidad actual a las familias. Se actualiza automáticamente cuando cambia su estado de vacantes.",
-    "embedNote": "Funciona con cualquier creador de sitios web que permita HTML personalizado."
+    "embedNote": "Funciona con cualquier creador de sitios web que permita HTML personalizado.",
+    "listingOrderTitle": "La posición de su listado cambia diariamente",
+    "listingOrderDesc": "Para garantizar la equidad, cada familia ve a los proveedores en un orden aleatorio diferente que cambia diariamente. Esto brinda visibilidad equitativa a todos los programas."
   },
   "roster": {
     "title": "Niños inscritos",
@@ -186,6 +188,7 @@
     "title": "Vacantes de cuidado infantil familiar en SF",
     "subtitle": "Encuentre espacios disponibles de cuidado infantil en San Francisco",
     "programsWithOpenings": "programas con vacantes",
+    "totalSlots": "espacios totales",
     "searchPlaceholder": "Buscar por código postal (ej., 94110)",
     "filterResults": "Filtrar resultados",
     "neighborhood": "Vecindario",
@@ -218,7 +221,14 @@
     "waitlist": "Lista de espera",
     "full": "Lleno",
     "joinWaitlist": "Unirse a lista de espera",
-    "waitlistInfo": "Este programa está actualmente lleno pero mantiene una lista de espera. Contáctelos para preguntar sobre unirse a su lista de espera."
+    "waitlistInfo": "Este programa está actualmente lleno pero mantiene una lista de espera. Contáctelos para preguntar sobre unirse a su lista de espera.",
+    "elfaProgramsCount": "programas ELFA",
+    "elfaBannerTitle": "programas ofrecen cuidado GRATIS o de costo reducido a través de Early Learning For All (ELFA)",
+    "elfaBannerSubtext": "Familias de SF bajo ciertos límites de ingresos pueden calificar",
+    "checkEligibility": "Ver Elegibilidad",
+    "slots": "espacios",
+    "elfaFreeNote": "Puede ofrecer cuidado GRATIS para familias que califiquen",
+    "fairnessNotice": "Listados en orden aleatorio, rotando diariamente por equidad"
   },
   "settings": {
     "title": "Configuración del programa",

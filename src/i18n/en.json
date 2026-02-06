@@ -189,7 +189,13 @@
     "autoFillHelp": "This will update the form below based on your current roster",
     "addChildrenHelp": "Add children to your Roster to see capacity analysis",
     "capacityLimited": "Capacity limited",
-    "needSchoolAge": "To reach {licensed} capacity, you need at least 1 child age 6+ and 1 child in K-12. Current effective capacity: {effective}."
+    "needSchoolAge": "To reach {licensed} capacity, you need at least 1 child age 6+ and 1 child in K-12. Current effective capacity: {effective}.",
+    "confirmTitle": "Confirm Vacancies",
+    "confirmMessage": "You are about to report the following vacancies:",
+    "spot": "spot",
+    "spots": "spots",
+    "noVacancies": "No vacancies to report",
+    "confirmButton": "Yes, Update Vacancies"
   },
   "publicListings": {
     "title": "SF Family Child Care Vacancies",

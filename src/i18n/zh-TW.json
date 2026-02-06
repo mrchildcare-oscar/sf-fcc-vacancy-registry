@@ -189,7 +189,13 @@
     "autoFillHelp": "這將根據您目前的名冊更新下方表單",
     "addChildrenHelp": "將兒童加入名冊以查看容量分析",
     "capacityLimited": "容量受限",
-    "needSchoolAge": "要達到 {licensed} 的容量，您需要至少1名6歲以上兒童和1名就讀K-12的兒童。目前有效容量：{effective}。"
+    "needSchoolAge": "要達到 {licensed} 的容量，您需要至少1名6歲以上兒童和1名就讀K-12的兒童。目前有效容量：{effective}。",
+    "confirmTitle": "確認空缺",
+    "confirmMessage": "您即將報告以下空缺：",
+    "spot": "個名額",
+    "spots": "個名額",
+    "noVacancies": "沒有空缺可報告",
+    "confirmButton": "是的，更新空缺"
   },
   "publicListings": {
     "title": "舊金山家庭托兒空缺",

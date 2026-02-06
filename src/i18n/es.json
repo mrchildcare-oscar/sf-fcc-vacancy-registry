@@ -189,7 +189,13 @@
     "autoFillHelp": "Esto actualizará el formulario a continuación basado en su lista actual",
     "addChildrenHelp": "Agregue niños a su lista para ver el análisis de capacidad",
     "capacityLimited": "Capacidad limitada",
-    "needSchoolAge": "Para alcanzar la capacidad de {licensed}, necesita al menos 1 niño de 6+ años y 1 niño en K-12. Capacidad efectiva actual: {effective}."
+    "needSchoolAge": "Para alcanzar la capacidad de {licensed}, necesita al menos 1 niño de 6+ años y 1 niño en K-12. Capacidad efectiva actual: {effective}.",
+    "confirmTitle": "Confirmar vacantes",
+    "confirmMessage": "Está a punto de reportar las siguientes vacantes:",
+    "spot": "espacio",
+    "spots": "espacios",
+    "noVacancies": "No hay vacantes para reportar",
+    "confirmButton": "Sí, actualizar vacantes"
   },
   "publicListings": {
     "title": "Vacantes de cuidado infantil familiar en SF",

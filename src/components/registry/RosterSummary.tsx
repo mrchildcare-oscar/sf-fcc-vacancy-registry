@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Child, CapacityConfig } from '../../types';
 import { calculateProjectedOpenings } from '../../utils/projections';
-import { Users, TrendingUp, Wand2 } from 'lucide-react';
+import { Users, TrendingUp, Wand2, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
 
@@ -135,8 +136,17 @@ function calculateInfantSpotsAvailable(
   return maxNewInfants;
 }
 
+type VacancyData = {
+  infant_spots: number;
+  toddler_spots: number;
+  preschool_spots: number;
+  school_age_spots: number;
+};
+
 export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSummaryProps) {
   const { t } = useLanguage();
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingData, setPendingData] = useState<VacancyData | null>(null);
   const projections = calculateProjectedOpenings(children, 6);
   const programType = capacityConfig.programType;
 
@@ -201,12 +211,29 @@ export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSu
     const extraSpots = remainingSpots % 3;
 
     // Distribute evenly: toddler gets extras first, then preschool
-    onAutoFill({
+    const data: VacancyData = {
       infant_spots: infantSpotsForAutoFill,
       toddler_spots: spotsPerGroup + (extraSpots >= 1 ? 1 : 0),
       preschool_spots: spotsPerGroup + (extraSpots >= 2 ? 1 : 0),
       school_age_spots: spotsPerGroup,
-    });
+    };
+
+    // Show confirmation dialog instead of immediately submitting
+    setPendingData(data);
+    setShowConfirmation(true);
+  };
+
+  const handleConfirm = () => {
+    if (pendingData && onAutoFill) {
+      onAutoFill(pendingData);
+    }
+    setShowConfirmation(false);
+    setPendingData(null);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+    setPendingData(null);
   };
 
   return (
@@ -334,6 +361,77 @@ export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSu
       {children.length === 0 && (
         <div className="text-center py-2 text-gray-500 text-sm border-t mt-4 pt-4">
           <p>{t('rosterSummary.addChildrenHelp')}</p>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmation && pendingData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">
+                {t('rosterSummary.confirmTitle')}
+              </h3>
+              <button
+                onClick={handleCancel}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              {t('rosterSummary.confirmMessage')}
+            </p>
+
+            <div className="space-y-2 mb-6">
+              {pendingData.infant_spots > 0 && (
+                <div className="flex justify-between items-center p-2 bg-pink-50 rounded-lg">
+                  <span className="text-sm text-pink-700">{t('vacancy.infant')}</span>
+                  <span className="font-bold text-pink-700">{pendingData.infant_spots} {pendingData.infant_spots === 1 ? t('rosterSummary.spot') : t('rosterSummary.spots')}</span>
+                </div>
+              )}
+              {pendingData.toddler_spots > 0 && (
+                <div className="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
+                  <span className="text-sm text-orange-700">{t('vacancy.toddler')}</span>
+                  <span className="font-bold text-orange-700">{pendingData.toddler_spots} {pendingData.toddler_spots === 1 ? t('rosterSummary.spot') : t('rosterSummary.spots')}</span>
+                </div>
+              )}
+              {pendingData.preschool_spots > 0 && (
+                <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                  <span className="text-sm text-green-700">{t('vacancy.preschool')}</span>
+                  <span className="font-bold text-green-700">{pendingData.preschool_spots} {pendingData.preschool_spots === 1 ? t('rosterSummary.spot') : t('rosterSummary.spots')}</span>
+                </div>
+              )}
+              {pendingData.school_age_spots > 0 && (
+                <div className="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                  <span className="text-sm text-blue-700">{t('vacancy.schoolAge')}</span>
+                  <span className="font-bold text-blue-700">{pendingData.school_age_spots} {pendingData.school_age_spots === 1 ? t('rosterSummary.spot') : t('rosterSummary.spots')}</span>
+                </div>
+              )}
+              {pendingData.infant_spots === 0 && pendingData.toddler_spots === 0 &&
+               pendingData.preschool_spots === 0 && pendingData.school_age_spots === 0 && (
+                <div className="text-center text-gray-500 py-2">
+                  {t('rosterSummary.noVacancies')}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleCancel}
+                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="flex-1 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+              >
+                {t('rosterSummary.confirmButton')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

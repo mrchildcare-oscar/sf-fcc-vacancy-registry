@@ -376,6 +376,38 @@
       "fsa": "Dependent Care FSA (save on taxes)"
     }
   },
+  "landing": {
+    "brand": {
+      "name": "FamilyChildCareSF",
+      "providerLogin": "Provider login"
+    },
+    "welcomeSubtitle": "Licensed family child care homes with openings in your neighborhood",
+    "elfa": {
+      "incomeSnapshot": "Many SF families qualify for free or reduced tuition",
+      "family2": "Family of 2: up to $249,400",
+      "family4": "Family of 4: up to $311,700",
+      "family6": "Family of 6: up to $361,600",
+      "checkBelow": "Check your eligibility below"
+    },
+    "whyFcc": {
+      "title": "Why Family Child Care?",
+      "licensed": "Licensed Experts",
+      "licensedDesc": "State-licensed professionals with ongoing training and oversight",
+      "smallGroups": "Small Groups",
+      "smallGroupsDesc": "Low child-to-adult ratios for more individual attention",
+      "diverse": "Culturally Diverse",
+      "diverseDesc": "Multilingual providers reflecting SF's diverse communities",
+      "schoolReady": "School Readiness",
+      "schoolReadyDesc": "Age-appropriate learning in a nurturing home environment",
+      "bannerSubtitle": "Small, licensed home programs where your child gets the individual attention they deserve",
+      "watchVideo": "Watch: What is Family Child Care?",
+      "gotIt": "Got it — show me providers"
+    },
+    "footer": {
+      "moreProviders": "Looking for more options? Browse 900+ licensed providers on",
+      "moreProvidersLink": "mychildcareplan.org"
+    }
+  },
   "inquiry": {
     "title": "Send Inquiry",
     "sendInquiry": "Send Inquiry",

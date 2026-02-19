@@ -376,6 +376,38 @@
       "fsa": "受扶養人照護 FSA（節省稅款）"
     }
   },
+  "landing": {
+    "brand": {
+      "name": "FamilyChildCareSF",
+      "providerLogin": "服務提供者登入"
+    },
+    "welcomeSubtitle": "您的社區中有空缺的持照家庭托兒所",
+    "elfa": {
+      "incomeSnapshot": "許多舊金山家庭有資格獲得免費或減價的托兒服務",
+      "family2": "2人家庭：收入上限 $249,400",
+      "family4": "4人家庭：收入上限 $311,700",
+      "family6": "6人家庭：收入上限 $361,600",
+      "checkBelow": "在下方查看您的資格"
+    },
+    "whyFcc": {
+      "title": "為什麼選擇家庭托兒？",
+      "licensed": "持照專業人員",
+      "licensedDesc": "經州政府核准、持續接受培訓和監督的專業人員",
+      "smallGroups": "小班制",
+      "smallGroupsDesc": "低師生比，讓每個孩子獲得更多個別關注",
+      "diverse": "多元文化",
+      "diverseDesc": "多語言服務提供者，反映舊金山多元社區特色",
+      "schoolReady": "入學準備",
+      "schoolReadyDesc": "在溫馨的家庭環境中提供適齡學習",
+      "bannerSubtitle": "小型持照家庭托兒計劃，讓您的孩子獲得應有的個別關注",
+      "watchVideo": "觀看：什麼是家庭托兒？",
+      "gotIt": "了解了 — 瀏覽托兒服務"
+    },
+    "footer": {
+      "moreProviders": "想要更多選擇？在以下網站瀏覽900多家持照托兒服務",
+      "moreProvidersLink": "mychildcareplan.org"
+    }
+  },
   "inquiry": {
     "title": "發送詢問",
     "sendInquiry": "發送詢問",

@@ -1,27 +1,23 @@
-# Fallback cron for vacancy expiry reminders
-# Primary: pg_cron + pg_net (if available on Supabase plan)
-# Fallback: This GitHub Actions workflow
-#
+# Daily diagnostic report to track onboarding funnel and parent engagement
 # Runs daily at 5:00 PM UTC (9:00 AM PST / 10:00 AM PDT)
-# Invokes the send-vacancy-reminders edge function
+# Sends email with metrics to help identify barriers and track real usage
 
-name: Send Vacancy Reminders (DISABLED)
+name: Send Daily Diagnostic Report
 
 on:
-  # DISABLED - Commented out to pause reminders
-  # schedule:
-  #   - cron: '0 17 * * *'
+  schedule:
+    - cron: '0 17 * * *'  # Daily at 5PM UTC
   workflow_dispatch: # Allow manual trigger
 
 jobs:
-  send-reminders:
+  send-report:
     runs-on: ubuntu-latest
     steps:
-      - name: Invoke send-vacancy-reminders edge function
+      - name: Send daily diagnostic report
         run: |
           response=$(curl -s -w "\n%{http_code}" \
             -X POST \
-            "${{ secrets.SUPABASE_URL }}/functions/v1/send-vacancy-reminders" \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/send-daily-report" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
             -H "Content-Type: application/json")
 
@@ -31,6 +27,6 @@ jobs:
           echo "Response ($http_code): $body"
 
           if [ "$http_code" -ne 200 ]; then
-            echo "::error::Edge function returned HTTP $http_code"
+            echo "::error::Daily report function returned HTTP $http_code"
             exit 1
           fi

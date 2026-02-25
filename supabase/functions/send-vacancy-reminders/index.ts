@@ -71,6 +71,9 @@ serve(async (req) => {
       results.errors.push(`Query error (40-day): ${err40.message}`)
     }
 
+    // Helper function to add delay between emails to respect rate limits
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    
     // Process 30-day reminders (friendly)
     for (const vacancy of (reminder30Vacancies || [])) {
       try {
@@ -96,6 +99,9 @@ serve(async (req) => {
           .eq('id', vacancy.id)
 
         results.sent_30++
+        
+        // Add 500ms delay between emails to stay under Resend's 2 requests/second limit
+        await delay(500)
       } catch (err) {
         const msg = `Failed 30-day reminder for vacancy ${vacancy.id}: ${err instanceof Error ? err.message : err}`
         console.error(msg)
@@ -128,6 +134,9 @@ serve(async (req) => {
           .eq('id', vacancy.id)
 
         results.sent_40++
+        
+        // Add 500ms delay between emails to stay under Resend's 2 requests/second limit
+        await delay(500)
       } catch (err) {
         const msg = `Failed 40-day reminder for vacancy ${vacancy.id}: ${err instanceof Error ? err.message : err}`
         console.error(msg)

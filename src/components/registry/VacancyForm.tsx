@@ -411,14 +411,14 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
                 <div className="relative">
                   <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto">
 {`<div id="fcc-vacancy-widget" data-provider="${licenseNumber}"></div>
-<script src="https://beta.familychildcaresf.com/widget.js"></script>`}
+<script src="https://familychildcaresf.com/widget.js"></script>`}
                   </pre>
                   <button
                     type="button"
                     onClick={() => {
                       navigator.clipboard.writeText(
 `<div id="fcc-vacancy-widget" data-provider="${licenseNumber}"></div>
-<script src="https://beta.familychildcaresf.com/widget.js"></script>`
+<script src="https://familychildcaresf.com/widget.js"></script>`
                       );
                       setCopied(true);
                       setTimeout(() => setCopied(false), 2000);

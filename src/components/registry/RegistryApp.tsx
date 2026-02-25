@@ -423,20 +423,25 @@ export function RegistryApp() {
   };
 
   const handleEmailAuth = async (email: string, password: string, isSignUp: boolean) => {
-    const result = isSignUp
-      ? await signUpWithEmail(email, password)
-      : await signInWithEmail(email, password);
+    try {
+      const result = isSignUp
+        ? await signUpWithEmail(email, password)
+        : await signInWithEmail(email, password);
 
-    if (result.error) {
-      return { error: result.error.message };
+      if (result.error) {
+        return { error: result.error.message };
+      }
+      // Track successful auth
+      if (isSignUp) {
+        trackSignUp('email');
+      } else {
+        trackSignIn('email');
+      }
+      return {};
+    } catch (err) {
+      console.error('[Auth] Email auth error:', err);
+      return { error: err instanceof Error ? err.message : 'Something went wrong. Please try again.' };
     }
-    // Track successful auth
-    if (isSignUp) {
-      trackSignUp('email');
-    } else {
-      trackSignIn('email');
-    }
-    return {};
   };
 
   const handleGoogleAuth = async () => {
@@ -450,12 +455,16 @@ export function RegistryApp() {
 
   const handleOnboardingComplete = async (data: ProviderFormData) => {
     if (!user) return { error: 'Not authenticated' };
-
-    const result = await createProvider(user.id, data);
-    if (!result.error) {
-      await loadProviderData(user.id);
+    try {
+      const result = await createProvider(user.id, data);
+      if (!result.error) {
+        await loadProviderData(user.id);
+      }
+      return result;
+    } catch (err) {
+      console.error('[Onboarding] Complete error:', err);
+      return { error: err instanceof Error ? err.message : 'Something went wrong. Please try again.' };
     }
-    return result;
   };
 
   const handleVacancySubmit = async (data: VacancyFormData) => {
@@ -702,16 +711,15 @@ export function RegistryApp() {
       <div>
         {user && provider && <ProviderNav />}
         {!user && (
-          <div className="bg-blue-600 text-white py-2 px-4">
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
-              <span className="whitespace-nowrap">{t('publicListings.areYouProvider')}</span>
+          <div className="bg-gray-100 border-b border-gray-200">
+            <div className="max-w-6xl mx-auto px-4 h-8 flex items-center justify-between">
+              <LanguageSwitcher compact />
               <button
                 onClick={() => navigateTo('auth')}
-                className="underline font-medium hover:text-blue-100 whitespace-nowrap"
+                className="text-xs text-gray-500 hover:text-gray-700"
               >
-                {t('publicListings.signInPrompt')}
+                {t('landing.brand.providerLogin')}
               </button>
-              <LanguageSwitcher compact className="ml-2" />
             </div>
           </div>
         )}

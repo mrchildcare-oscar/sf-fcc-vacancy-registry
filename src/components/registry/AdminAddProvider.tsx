@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LANGUAGES, SF_NEIGHBORHOODS } from '../../types/registry';
 import { Building2, MapPin, Phone, Globe, CheckCircle, AlertCircle, Shield, Baby, RefreshCw } from 'lucide-react';
 import { supabase, checkElfaStatus, refreshAllElfaStatus } from '../../lib/supabase';
+import { computeExpiresAt } from '../../lib/vacancyTtl';
 
 interface AdminAddProviderProps {
   onComplete: () => void;
@@ -111,8 +112,6 @@ export function AdminAddProvider({ onComplete, onCancel }: AdminAddProviderProps
 
       // Insert vacancy
       const now = new Date().toISOString();
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 30);
 
       const { error: vacancyError } = await supabase
         .from('vacancies')
@@ -132,7 +131,7 @@ export function AdminAddProvider({ onComplete, onCancel }: AdminAddProviderProps
           waitlist_available: formData.waitlist_available,
           notes: formData.notes || null,
           updated_at: now,
-          expires_at: expiresAt.toISOString(),
+          expires_at: computeExpiresAt(formData),
         });
 
       if (vacancyError) {

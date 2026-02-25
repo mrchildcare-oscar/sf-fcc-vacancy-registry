@@ -3,6 +3,7 @@ import { Provider, Vacancy, PublicListing, ParentInquiry, ParentInquiryFormData,
 import { ProviderFormData } from '../components/registry/ProviderOnboarding';
 import { VacancyFormData } from '../components/registry/VacancyForm';
 import { checkElfaStatus } from './elfa';
+import { computeExpiresAt } from './vacancyTtl';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -167,8 +168,6 @@ export async function getVacancy(providerId: string): Promise<Vacancy | null> {
 
 export async function upsertVacancy(providerId: string, vacancyData: VacancyFormData): Promise<{ error?: string }> {
   const now = new Date().toISOString();
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 30); // Expire after 30 days
 
   const { error } = await supabase
     .from('vacancies')
@@ -188,7 +187,12 @@ export async function upsertVacancy(providerId: string, vacancyData: VacancyForm
       waitlist_available: vacancyData.waitlist_available,
       notes: vacancyData.notes || null,
       updated_at: now,
-      expires_at: expiresAt.toISOString(),
+      expires_at: computeExpiresAt(vacancyData),
+      // Reset reminder state on manual update
+      reminder_30_sent_at: null,
+      reminder_40_sent_at: null,
+      confirmation_token: null,
+      token_expires_at: null,
     }, {
       onConflict: 'provider_id',
     });
@@ -352,8 +356,6 @@ export async function getVacanciesByProviderIds(providerIds: string[]): Promise<
 // Update vacancy for a specific provider (used by org owner)
 export async function updateProviderVacancy(providerId: string, vacancyData: VacancyFormData): Promise<{ error?: string }> {
   const now = new Date().toISOString();
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 30);
 
   const { error } = await supabase
     .from('vacancies')
@@ -373,7 +375,12 @@ export async function updateProviderVacancy(providerId: string, vacancyData: Vac
       waitlist_available: vacancyData.waitlist_available,
       notes: vacancyData.notes || null,
       updated_at: now,
-      expires_at: expiresAt.toISOString(),
+      expires_at: computeExpiresAt(vacancyData),
+      // Reset reminder state on manual update
+      reminder_30_sent_at: null,
+      reminder_40_sent_at: null,
+      confirmation_token: null,
+      token_expires_at: null,
     }, {
       onConflict: 'provider_id',
     });

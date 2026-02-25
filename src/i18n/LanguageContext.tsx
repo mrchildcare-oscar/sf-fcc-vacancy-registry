@@ -20,14 +20,33 @@ const translations: Record<Language, Translations> = {
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
+// Map short URL param values to Language codes
+const LANG_PARAM_MAP: Record<string, Language> = {
+  'en': 'en',
+  'es': 'es',
+  'zh': 'zh-TW',
+  'zh-TW': 'zh-TW',
+  'zh-tw': 'zh-TW',
+};
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    // Check localStorage first
+    // 1. Check URL param first (?lang=es, ?lang=zh) — for QR codes on flyers
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    if (langParam && LANG_PARAM_MAP[langParam]) {
+      const lang = LANG_PARAM_MAP[langParam];
+      localStorage.setItem('language', lang);
+      return lang;
+    }
+
+    // 2. Check localStorage
     const saved = localStorage.getItem('language');
     if (saved === 'en' || saved === 'zh-TW' || saved === 'es') {
       return saved;
     }
-    // Check browser language
+
+    // 3. Fallback to browser language
     const browserLang = navigator.language;
     if (browserLang.startsWith('zh')) {
       return 'zh-TW';

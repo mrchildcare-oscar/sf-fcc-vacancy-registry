@@ -70,10 +70,19 @@ CREATE TABLE vacancies (
   -- Notes
   notes TEXT,
 
+  -- Waitlist
+  waitlist_available BOOLEAN DEFAULT FALSE,
+
   -- Timestamps
   reported_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '30 days')
+  expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '45 days'),
+
+  -- Expiry reminder tracking
+  confirmation_token TEXT,
+  token_expires_at TIMESTAMPTZ,
+  reminder_30_sent_at TIMESTAMPTZ,  -- Friendly reminder (~15 days before expiry)
+  reminder_40_sent_at TIMESTAMPTZ   -- Urgent reminder (~5 days before expiry)
 );
 
 -- Public listings view (combines provider and vacancy data for public display)

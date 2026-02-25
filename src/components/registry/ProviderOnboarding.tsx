@@ -80,14 +80,17 @@ export function ProviderOnboarding({ onComplete }: ProviderOnboardingProps) {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    const result = await onComplete(formData);
-
-    if (result.error) {
-      setError(result.error);
+    try {
+      const result = await onComplete(formData);
+      if (result.error) {
+        setError(result.error);
+      }
+    } catch (err) {
+      console.error('[Onboarding] Submit error:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

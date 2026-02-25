@@ -72,7 +72,7 @@ export interface Vacancy {
   // Timestamps
   reported_at: string;
   updated_at: string;
-  expires_at: string;        // Auto-expire stale listings (e.g., 30 days)
+  expires_at: string;        // Auto-expire stale listings (45 days default, 90 for waitlist-only)
 }
 
 export interface PublicListing {

@@ -30,18 +30,24 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
-    setLoading(false);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: window.location.origin,
+        },
+      });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      setMagicLinkSent(true);
+      if (error) {
+        setError(error.message);
+      } else {
+        setMagicLinkSent(true);
+      }
+    } catch (err) {
+      console.error('[Auth] Magic link error:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,14 +61,20 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
         return;
       }
       setLoading(true);
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin,
-      });
-      setLoading(false);
-      if (error) {
-        setError(error.message);
-      } else {
-        setResetSent(true);
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin,
+        });
+        if (error) {
+          setError(error.message);
+        } else {
+          setResetSent(true);
+        }
+      } catch (err) {
+        console.error('[Auth] Password reset error:', err);
+        setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      } finally {
+        setLoading(false);
       }
       return;
     }
@@ -78,22 +90,32 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
     }
 
     setLoading(true);
-    const result = await onEmailAuth(email, password, mode === 'signup');
-    setLoading(false);
-
-    if (result.error) {
-      setError(result.error);
+    try {
+      const result = await onEmailAuth(email, password, mode === 'signup');
+      if (result.error) {
+        setError(result.error);
+      }
+    } catch (err) {
+      console.error('[Auth] Submit error:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleAuth = async () => {
     setError('');
     setLoading(true);
-    const result = await onGoogleAuth();
-    setLoading(false);
-
-    if (result.error) {
-      setError(result.error);
+    try {
+      const result = await onGoogleAuth();
+      if (result.error) {
+        setError(result.error);
+      }
+    } catch (err) {
+      console.error('[Auth] Google auth error:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,0 +1,35 @@
+# Fallback cron for vacancy expiry reminders
+# Primary: pg_cron + pg_net (if available on Supabase plan)
+# Fallback: This GitHub Actions workflow
+#
+# Runs daily at 5:00 PM UTC (9:00 AM PST / 10:00 AM PDT)
+# Invokes the send-vacancy-reminders edge function
+
+name: Send Vacancy Reminders
+
+on:
+  schedule:
+    - cron: '0 17 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke send-vacancy-reminders edge function
+        run: |
+          response=$(curl -s -w "\n%{http_code}" \
+            -X POST \
+            "${{ secrets.SUPABASE_URL }}/functions/v1/send-vacancy-reminders" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "Response ($http_code): $body"
+
+          if [ "$http_code" -ne 200 ]; then
+            echo "::error::Edge function returned HTTP $http_code"
+            exit 1
+          fi

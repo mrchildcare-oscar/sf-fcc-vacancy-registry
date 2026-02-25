@@ -231,6 +231,36 @@ export async function getPublicListings(): Promise<PublicListing[]> {
   }
 }
 
+// Delete account (calls edge function that uses admin API)
+export async function deleteAccount(): Promise<{ error?: string }> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      return { error: 'Not authenticated' };
+    }
+
+    const { data, error } = await supabase.functions.invoke('delete-account', {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (error) {
+      console.error('[Supabase] deleteAccount error:', error);
+      return { error: error.message };
+    }
+
+    if (!data?.success) {
+      return { error: data?.error || 'Failed to delete account' };
+    }
+
+    return {};
+  } catch (err) {
+    console.error('[Supabase] deleteAccount exception:', err);
+    return { error: err instanceof Error ? err.message : 'Unknown error' };
+  }
+}
+
 // Re-export ELFA check for external use
 export { checkElfaStatus } from './elfa';
 

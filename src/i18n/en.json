@@ -267,7 +267,15 @@
     "updatePassword": "Update Password",
     "passwordUpdated": "Password updated successfully!",
     "passwordTooShort": "Password must be at least 6 characters",
-    "passwordsDoNotMatch": "Passwords do not match"
+    "passwordsDoNotMatch": "Passwords do not match",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDesc": "Permanently delete your account, provider profile, and all vacancy listings. This action cannot be undone.",
+    "deleteButton": "Delete My Account",
+    "deleteConfirmTitle": "Delete Your Account?",
+    "deleteConfirmMessage": "This will permanently delete your account, provider profile, all vacancy listings, and inquiry history. Type your email address to confirm.",
+    "deleteConfirmPlaceholder": "Type your email to confirm",
+    "deleteDeleting": "Deleting account..."
   },
   "projections": {
     "title": "Capacity Projections",

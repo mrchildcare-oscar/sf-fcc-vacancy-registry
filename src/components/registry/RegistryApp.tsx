@@ -6,6 +6,7 @@ import {
   signUpWithEmail,
   signInWithGoogle,
   signOut,
+  deleteAccount,
   getProvider,
   createProvider,
   updateProvider,
@@ -516,6 +517,23 @@ export function RegistryApp() {
     await loadProviderData(user.id);
   };
 
+  const handleDeleteAccount = async (): Promise<{ error?: string }> => {
+    const result = await deleteAccount();
+    if (result.error) {
+      return result;
+    }
+    // Same cleanup as handleSignOut
+    await signOut();
+    setUser(null);
+    setProvider(null);
+    setVacancyData(undefined);
+    setOrganization(null);
+    setOrgProviders([]);
+    window.history.replaceState(null, '', window.location.pathname);
+    setView('public');
+    return {};
+  };
+
   // Admin view - requires login + email in ADMIN_EMAILS
   if (view === 'admin') {
     // Not logged in - show login prompt
@@ -940,6 +958,7 @@ export function RegistryApp() {
             userEmail={user.email || ''}
             onSave={handleUpdateProvider}
             onReverifyElfa={handleReverifyElfa}
+            onDeleteAccount={handleDeleteAccount}
           />
         </div>
       </div>

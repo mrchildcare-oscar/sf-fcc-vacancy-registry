@@ -267,7 +267,15 @@
     "updatePassword": "Actualizar contraseña",
     "passwordUpdated": "¡Contraseña actualizada con éxito!",
     "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
-    "passwordsDoNotMatch": "Las contraseñas no coinciden"
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "dangerZone": "Zona de peligro",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountDesc": "Eliminar permanentemente su cuenta, perfil de proveedor y todos los listados de vacantes. Esta acción no se puede deshacer.",
+    "deleteButton": "Eliminar mi cuenta",
+    "deleteConfirmTitle": "¿Eliminar su cuenta?",
+    "deleteConfirmMessage": "Esto eliminará permanentemente su cuenta, perfil de proveedor, todos los listados de vacantes y el historial de consultas. Escriba su correo electrónico para confirmar.",
+    "deleteConfirmPlaceholder": "Escriba su correo electrónico para confirmar",
+    "deleteDeleting": "Eliminando cuenta..."
   },
   "projections": {
     "title": "Proyecciones de capacidad",

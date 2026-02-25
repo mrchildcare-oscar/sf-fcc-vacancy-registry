@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Provider } from '../../types/registry';
 import { LANGUAGES, SF_NEIGHBORHOODS } from '../../types/registry';
-import { Save, AlertCircle, CheckCircle, Shield, MapPin, Phone, Globe, FileCheck, User, Key } from 'lucide-react';
+import { Save, AlertCircle, CheckCircle, Shield, MapPin, Phone, Globe, FileCheck, User, Key, Trash2 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
 
@@ -10,9 +10,10 @@ interface ProviderSettingsProps {
   userEmail: string;
   onSave: (updates: Partial<Provider>) => Promise<{ error?: string }>;
   onReverifyElfa?: () => Promise<void>;
+  onDeleteAccount?: () => Promise<{ error?: string }>;
 }
 
-export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa }: ProviderSettingsProps) {
+export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa, onDeleteAccount }: ProviderSettingsProps) {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
     license_number: provider.license_number,
@@ -32,6 +33,12 @@ export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // Delete account state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmEmail, setDeleteConfirmEmail] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   // Password change state
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -437,6 +444,94 @@ export function ProviderSettings({ provider, userEmail, onSave, onReverifyElfa }
           {loading ? t('common.saving') : t('settings.saveSettings')}
         </button>
       </form>
+
+      {/* Danger Zone */}
+      {onDeleteAccount && (
+        <div className="mt-8 border-2 border-red-200 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-red-50 rounded-lg">
+              <Trash2 size={20} className="text-red-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-red-900">{t('settings.dangerZone')}</h3>
+            </div>
+          </div>
+          <p className="text-sm text-gray-600 mb-4">{t('settings.deleteAccountDesc')}</p>
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+          >
+            {t('settings.deleteButton')}
+          </button>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-red-100 rounded-full">
+                  <Trash2 size={20} className="text-red-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">{t('settings.deleteConfirmTitle')}</h3>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-4">{t('settings.deleteConfirmMessage')}</p>
+
+              <input
+                type="email"
+                value={deleteConfirmEmail}
+                onChange={e => setDeleteConfirmEmail(e.target.value)}
+                placeholder={t('settings.deleteConfirmPlaceholder')}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 mb-4"
+                autoFocus
+              />
+
+              {deleteError && (
+                <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg mb-4">
+                  <AlertCircle size={16} />
+                  <span>{deleteError}</span>
+                </div>
+              )}
+
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteConfirmEmail('');
+                    setDeleteError('');
+                  }}
+                  disabled={deleteLoading}
+                  className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  type="button"
+                  disabled={deleteLoading || deleteConfirmEmail.toLowerCase() !== userEmail.toLowerCase()}
+                  onClick={async () => {
+                    setDeleteLoading(true);
+                    setDeleteError('');
+                    const result = await onDeleteAccount!();
+                    if (result.error) {
+                      setDeleteError(result.error);
+                      setDeleteLoading(false);
+                    }
+                    // On success, RegistryApp handles sign-out and navigation
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {deleteLoading ? t('settings.deleteDeleting') : t('settings.deleteButton')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

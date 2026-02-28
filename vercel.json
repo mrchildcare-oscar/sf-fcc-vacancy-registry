@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/newsletter",
+      "destination": "https://xchildcare.com/survey",
+      "permanent": false
+    }
+  ]
+}

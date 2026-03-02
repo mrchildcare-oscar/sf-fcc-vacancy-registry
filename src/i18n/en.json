@@ -242,7 +242,15 @@
     "checkEligibility": "Check Eligibility",
     "slots": "slots",
     "elfaFreeNote": "May offer FREE care for qualifying families",
-    "fairnessNotice": "Listings shown in random order, rotating daily for fairness"
+    "fairnessNotice": "Listings shown in random order, rotating daily for fairness",
+    "providerCta": {
+      "headline": "Are you a Family Child Care provider?",
+      "description": "Report your vacancies for free on this registry provided by the SF Family Child Care Association. Your data helps include the family child care voice in local child care planning decisions.",
+      "benefit1": "Free listing — reach local families",
+      "benefit2": "Takes under 5 minutes",
+      "benefit3": "Supports FCC advocacy & planning",
+      "button": "Report Your Vacancies"
+    }
   },
   "settings": {
     "title": "Program Settings",

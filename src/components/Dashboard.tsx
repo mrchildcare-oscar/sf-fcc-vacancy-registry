@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Child, CapacityConfig, ProjectedOpening } from '../types';
 import { calculateProjectedOpenings, getNextOpeningByAgeGroup } from '../utils/projections';
 import { calculateComplianceStatus, getCapacityRuleDescription } from '../utils/compliance';
@@ -13,8 +14,15 @@ interface DashboardProps {
 
 export function Dashboard({ children, capacityConfig }: DashboardProps) {
   const { t } = useLanguage();
-  const compliance = calculateComplianceStatus(children, capacityConfig);
-  const projections = calculateProjectedOpenings(children, 12);
+  const compliance = useMemo(() => calculateComplianceStatus(children, capacityConfig), [children, capacityConfig]);
+  const projections = useMemo(() => calculateProjectedOpenings(children, 12), [children]);
+
+  const reasonLabels: Record<ProjectedOpening['reason'], string> = {
+    aging_into_next_group: t('projections.reasonTurns2'),
+    aging_out: t('projections.reasonAgingOut'),
+    kindergarten: t('projections.reasonKindergarten'),
+    scheduled_departure: t('projections.reasonScheduledDeparture'),
+  };
 
   return (
     <div className="space-y-6">
@@ -212,12 +220,6 @@ export function Dashboard({ children, capacityConfig }: DashboardProps) {
           <div className="space-y-3">
             {projections.map((opening, index) => {
               const groupConfig = getAgeGroupConfig(opening.ageGroup);
-              const reasonLabels: Record<ProjectedOpening['reason'], string> = {
-                aging_into_next_group: t('projections.reasonTurns2'),
-                aging_out: t('projections.reasonAgingOut'),
-                kindergarten: t('projections.reasonKindergarten'),
-                scheduled_departure: t('projections.reasonScheduledDeparture'),
-              };
 
               return (
                 <div

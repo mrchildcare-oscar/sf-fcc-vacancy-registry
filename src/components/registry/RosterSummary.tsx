@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Child, CapacityConfig } from '../../types';
 import { calculateProjectedOpenings } from '../../utils/projections';
 import { Users, TrendingUp, Wand2, X } from 'lucide-react';
@@ -147,42 +147,45 @@ export function RosterSummary({ children, capacityConfig, onAutoFill }: RosterSu
   const { t } = useLanguage();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingData, setPendingData] = useState<VacancyData | null>(null);
-  const projections = calculateProjectedOpenings(children, 6);
   const programType = capacityConfig.programType;
-
-  // Count children by detailed age groups
-  const ageCounts = {
-    infant: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'infant').length,
-    toddler: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'toddler').length,
-    preschool: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'preschool').length,
-    school_age: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'school_age').length,
-  };
-
   const totalEnrolled = children.length;
   const licensedCapacity = capacityConfig.totalCapacity;
 
-  // Check if roster qualifies for extended capacity (7-8 for small, 13-14 for large)
-  const schoolAgeStatus = checkSchoolAgeCriteria(children);
+  const { projections, ageCounts, schoolAgeStatus, effectiveCapacity, infantAvailable } = useMemo(() => {
+    const proj = calculateProjectedOpenings(children, 6);
 
-  // Calculate effective capacity based on school-age criteria
-  // Without qualifying school-age children, capacity is limited:
-  // - Small Family: max 6 (not 8)
-  // - Large Family: max 12 (not 14)
-  const effectiveCapacity = getEffectiveCapacity(
-    programType,
-    licensedCapacity,
-    schoolAgeStatus.qualifies
-  );
+    const counts = {
+      infant: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'infant').length,
+      toddler: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'toddler').length,
+      preschool: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'preschool').length,
+      school_age: children.filter(c => getDetailedAgeGroup(c.dateOfBirth) === 'school_age').length,
+    };
+
+    const saStatus = checkSchoolAgeCriteria(children);
+
+    const effCap = getEffectiveCapacity(
+      programType,
+      licensedCapacity,
+      saStatus.qualifies
+    );
+
+    const infantAvail = calculateInfantSpotsAvailable(
+      programType,
+      counts.infant,
+      totalEnrolled,
+      effCap
+    );
+
+    return {
+      projections: proj,
+      ageCounts: counts,
+      schoolAgeStatus: saStatus,
+      effectiveCapacity: effCap,
+      infantAvailable: infantAvail,
+    };
+  }, [children, capacityConfig]);
 
   const totalAvailable = Math.max(0, effectiveCapacity - totalEnrolled);
-
-  // Calculate infant spots using progressive simulation
-  const infantAvailable = calculateInfantSpotsAvailable(
-    programType,
-    ageCounts.infant,
-    totalEnrolled,
-    effectiveCapacity
-  );
 
   const handleAutoFill = () => {
     if (!onAutoFill) return;

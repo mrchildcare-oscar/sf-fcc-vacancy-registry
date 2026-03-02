@@ -7,8 +7,9 @@ import { computeExpiresAt } from './vacancyTtl';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const isDev = import.meta.env.DEV;
 
-console.log('[Supabase] Initializing...', {
+if (isDev) console.log('[Supabase] Initializing...', {
   hasUrl: !!supabaseUrl,
   hasKey: !!supabaseAnonKey,
   urlPrefix: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING',
@@ -66,7 +67,7 @@ export function onAuthStateChange(callback: (event: string, session: unknown) =>
 
 // Provider operations
 export async function getProvider(userId: string): Promise<Provider | null> {
-  console.log('[Supabase] getProvider called for:', userId);
+  if (isDev) console.log('[Supabase] getProvider called for:', userId);
   try {
     const { data, error } = await supabase
       .from('providers')
@@ -77,13 +78,13 @@ export async function getProvider(userId: string): Promise<Provider | null> {
     if (error) {
       // PGRST116 means no rows found - this is expected for new users
       if (error.code === 'PGRST116') {
-        console.log('[Supabase] getProvider: No provider found (new user)');
+        if (isDev) console.log('[Supabase] getProvider: No provider found (new user)');
         return null;
       }
       console.error('[Supabase] getProvider error:', error);
       return null;
     }
-    console.log('[Supabase] getProvider success:', data?.business_name);
+    if (isDev) console.log('[Supabase] getProvider success:', data?.business_name);
     return data;
   } catch (err) {
     console.error('[Supabase] getProvider exception:', err);
@@ -94,9 +95,9 @@ export async function getProvider(userId: string): Promise<Provider | null> {
 export async function createProvider(userId: string, providerData: ProviderFormData): Promise<{ error?: string }> {
   try {
     // Check if provider is in ELFA network
-    console.log('Starting provider creation for:', userId);
+    if (isDev) console.log('Starting provider creation for:', userId);
     const isElfa = await checkElfaStatus(providerData.license_number);
-    console.log(`ELFA check for ${providerData.license_number}: ${isElfa}`);
+    if (isDev) console.log(`ELFA check for ${providerData.license_number}: ${isElfa}`);
 
     const insertData = {
       id: userId,
@@ -118,7 +119,7 @@ export async function createProvider(userId: string, providerData: ProviderFormD
       is_approved: true,
     };
 
-    console.log('Inserting provider data:', insertData);
+    if (isDev) console.log('Inserting provider data:', insertData);
 
     const { error } = await supabase
       .from('providers')
@@ -129,7 +130,7 @@ export async function createProvider(userId: string, providerData: ProviderFormD
       return { error: error.message };
     }
 
-    console.log('Provider created successfully');
+    if (isDev) console.log('Provider created successfully');
     return {};
   } catch (err) {
     console.error('Exception in createProvider:', err);
@@ -206,7 +207,7 @@ export async function upsertVacancy(providerId: string, vacancyData: VacancyForm
 
 // Public listings
 export async function getPublicListings(): Promise<PublicListing[]> {
-  console.log('[Supabase] getPublicListings called');
+  if (isDev) console.log('[Supabase] getPublicListings called');
   try {
     const { data, error } = await supabase
       .from('public_listings')
@@ -217,13 +218,13 @@ export async function getPublicListings(): Promise<PublicListing[]> {
     if (error) {
       // Ignore AbortError - happens in React 18 StrictMode double-mount
       if (error.message?.includes('AbortError')) {
-        console.log('[Supabase] getPublicListings aborted (StrictMode re-mount)');
+        if (isDev) console.log('[Supabase] getPublicListings aborted (StrictMode re-mount)');
         return [];
       }
       console.error('[Supabase] getPublicListings error:', error);
       return [];
     }
-    console.log('[Supabase] getPublicListings success, count:', data?.length || 0);
+    if (isDev) console.log('[Supabase] getPublicListings success, count:', data?.length || 0);
     return data || [];
   } catch (err) {
     console.error('[Supabase] getPublicListings exception:', err);
@@ -266,7 +267,7 @@ export { checkElfaStatus } from './elfa';
 
 // Admin: Refresh ELFA status for all providers (via Edge Function to bypass RLS)
 export async function refreshAllElfaStatus(): Promise<{ updated: number; total: number; errors: string[] }> {
-  console.log('[Supabase] refreshAllElfaStatus started (calling Edge Function)');
+  if (isDev) console.log('[Supabase] refreshAllElfaStatus started (calling Edge Function)');
 
   try {
     const { data, error } = await supabase.functions.invoke('refresh-elfa');
@@ -276,7 +277,7 @@ export async function refreshAllElfaStatus(): Promise<{ updated: number; total: 
       return { updated: 0, total: 0, errors: [error.message] };
     }
 
-    console.log('[Supabase] refreshAllElfaStatus result:', data);
+    if (isDev) console.log('[Supabase] refreshAllElfaStatus result:', data);
 
     if (!data.success) {
       return { updated: 0, total: 0, errors: [data.error || 'Unknown error'] };
@@ -284,7 +285,7 @@ export async function refreshAllElfaStatus(): Promise<{ updated: number; total: 
 
     // Log changes
     if (data.changes?.length > 0) {
-      console.log('[Supabase] ELFA changes:', data.changes);
+      if (isDev) console.log('[Supabase] ELFA changes:', data.changes);
     }
 
     return {
@@ -310,7 +311,7 @@ export interface Organization {
 
 // Get organization owned by user
 export async function getOrganizationByOwner(userId: string): Promise<Organization | null> {
-  console.log('[Supabase] getOrganizationByOwner called for:', userId);
+  if (isDev) console.log('[Supabase] getOrganizationByOwner called for:', userId);
   try {
     const { data, error } = await supabase
       .from('organizations')
@@ -320,13 +321,13 @@ export async function getOrganizationByOwner(userId: string): Promise<Organizati
 
     if (error) {
       if (error.code === 'PGRST116') {
-        console.log('[Supabase] No organization found for user');
+        if (isDev) console.log('[Supabase] No organization found for user');
         return null;
       }
       console.error('[Supabase] getOrganizationByOwner error:', error);
       return null;
     }
-    console.log('[Supabase] getOrganizationByOwner success:', data?.name);
+    if (isDev) console.log('[Supabase] getOrganizationByOwner success:', data?.name);
     return data;
   } catch (err) {
     console.error('[Supabase] getOrganizationByOwner exception:', err);
@@ -336,7 +337,7 @@ export async function getOrganizationByOwner(userId: string): Promise<Organizati
 
 // Get all providers in an organization
 export async function getProvidersByOrganization(organizationId: string): Promise<Provider[]> {
-  console.log('[Supabase] getProvidersByOrganization called for:', organizationId);
+  if (isDev) console.log('[Supabase] getProvidersByOrganization called for:', organizationId);
   try {
     const { data, error } = await supabase
       .from('providers')
@@ -348,7 +349,7 @@ export async function getProvidersByOrganization(organizationId: string): Promis
       console.error('[Supabase] getProvidersByOrganization error:', error);
       return [];
     }
-    console.log('[Supabase] getProvidersByOrganization success, count:', data?.length || 0);
+    if (isDev) console.log('[Supabase] getProvidersByOrganization success, count:', data?.length || 0);
     return data || [];
   } catch (err) {
     console.error('[Supabase] getProvidersByOrganization exception:', err);
@@ -358,7 +359,7 @@ export async function getProvidersByOrganization(organizationId: string): Promis
 
 // Get vacancies for multiple providers
 export async function getVacanciesByProviderIds(providerIds: string[]): Promise<Record<string, Vacancy>> {
-  console.log('[Supabase] getVacanciesByProviderIds called for:', providerIds.length, 'providers');
+  if (isDev) console.log('[Supabase] getVacanciesByProviderIds called for:', providerIds.length, 'providers');
   try {
     const { data, error } = await supabase
       .from('vacancies')
@@ -375,7 +376,7 @@ export async function getVacanciesByProviderIds(providerIds: string[]): Promise<
     for (const v of data || []) {
       vacancyMap[v.provider_id] = v;
     }
-    console.log('[Supabase] getVacanciesByProviderIds success, count:', Object.keys(vacancyMap).length);
+    if (isDev) console.log('[Supabase] getVacanciesByProviderIds success, count:', Object.keys(vacancyMap).length);
     return vacancyMap;
   } catch (err) {
     console.error('[Supabase] getVacanciesByProviderIds exception:', err);
@@ -429,7 +430,7 @@ export async function submitInquiry(
   providerId: string,
   inquiryData: ParentInquiryFormData
 ): Promise<{ data?: ParentInquiry; error?: string }> {
-  console.log('[Supabase] submitInquiry called for provider:', providerId);
+  if (isDev) console.log('[Supabase] submitInquiry called for provider:', providerId);
   try {
     // Use database function to bypass RLS safely
     // This handles rate limiting and returns the new inquiry ID
@@ -448,7 +449,7 @@ export async function submitInquiry(
     }
 
     if (result?.error === 'rate_limited') {
-      console.log('[Supabase] Rate limit hit: duplicate inquiry within 24 hours');
+      if (isDev) console.log('[Supabase] Rate limit hit: duplicate inquiry within 24 hours');
       return { error: 'You have already sent an inquiry to this provider recently. Please wait 24 hours before sending another.' };
     }
 
@@ -458,7 +459,7 @@ export async function submitInquiry(
     }
 
     const inquiryId = result.id;
-    console.log('[Supabase] submitInquiry success:', inquiryId);
+    if (isDev) console.log('[Supabase] submitInquiry success:', inquiryId);
 
     // Trigger email notification via Edge Function
     try {
@@ -479,7 +480,7 @@ export async function submitInquiry(
 
 // Get inquiries for a provider
 export async function getInquiries(providerId: string): Promise<ParentInquiry[]> {
-  console.log('[Supabase] getInquiries called for provider:', providerId);
+  if (isDev) console.log('[Supabase] getInquiries called for provider:', providerId);
   try {
     const { data, error } = await supabase
       .from('parent_inquiries')
@@ -492,7 +493,7 @@ export async function getInquiries(providerId: string): Promise<ParentInquiry[]>
       return [];
     }
 
-    console.log('[Supabase] getInquiries success, count:', data?.length || 0);
+    if (isDev) console.log('[Supabase] getInquiries success, count:', data?.length || 0);
     return data || [];
   } catch (err) {
     console.error('[Supabase] getInquiries exception:', err);
@@ -526,7 +527,7 @@ export async function updateInquiryStatus(
   inquiryId: string,
   status: InquiryStatus
 ): Promise<{ error?: string }> {
-  console.log('[Supabase] updateInquiryStatus:', inquiryId, status);
+  if (isDev) console.log('[Supabase] updateInquiryStatus:', inquiryId, status);
   try {
     const updates: Record<string, unknown> = { status };
 

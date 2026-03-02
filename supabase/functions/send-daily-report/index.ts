@@ -51,6 +51,7 @@ serve(async (req) => {
 })
 
 async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date) {
+  const now = endDate // Use endDate as the current time reference
   const metrics: any = {
     providers: {},
     inquiries: {},
@@ -60,7 +61,9 @@ async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date)
   // === PROVIDER FUNNEL ANALYSIS ===
   
   // Get all auth users (SSO signups)
-  const { data: authUsers, count: totalAuthUsers } = await supabase.auth.admin.listUsers()
+  const authResponse = await supabase.auth.admin.listUsers()
+  const authUsers = authResponse.data?.users || []
+  const totalAuthUsers = authUsers.length
   
   // Total providers with profiles (completed basic onboarding)
   const { data: allProviders, count: totalProviders } = await supabase
@@ -87,10 +90,10 @@ async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date)
   const providersWithVacancies = new Set(activeVacancies?.map(v => v.provider_id) || [])
 
   // New signups in last 24 hours
-  const newAuthUsers = authUsers?.filter((u: any) => {
+  const newAuthUsers = authUsers.filter((u: any) => {
     const createdAt = new Date(u.created_at)
     return createdAt >= startDate && createdAt <= endDate
-  }) || []
+  })
 
   const { data: newProviders } = await supabase
     .from('providers')
@@ -100,7 +103,7 @@ async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date)
 
   metrics.providers = {
     // Totals
-    totalSSOSignups: authUsers?.length || 0,
+    totalSSOSignups: totalAuthUsers,
     totalProvidersStarted: totalProviders || 0,
     totalProvidersComplete: completeProviders.length,
     totalWithVacancies: providersWithVacancies.size,
@@ -111,7 +114,7 @@ async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date)
     newVacanciesPosted: 0, // will calculate below
     
     // Conversion rates
-    ssoToProfileRate: totalProviders && authUsers ? ((totalProviders / authUsers.length) * 100).toFixed(1) : '0',
+    ssoToProfileRate: totalAuthUsers > 0 ? ((totalProviders || 0) / totalAuthUsers * 100).toFixed(1) : '0',
     profileToCompleteRate: totalProviders ? ((completeProviders.length / totalProviders) * 100).toFixed(1) : '0',
     completeToVacancyRate: completeProviders.length ? ((providersWithVacancies.size / completeProviders.length) * 100).toFixed(1) : '0',
   }
@@ -172,9 +175,9 @@ async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date)
   // === BARRIER DETECTION ===
   
   // Find providers stuck at each stage
-  const stuckAtSSO = authUsers?.filter((u: any) => 
+  const stuckAtSSO = authUsers.filter((u: any) => 
     !allProviders?.find(p => p.id === u.id)
-  ) || []
+  )
 
   const stuckAtProfile = allProviders?.filter(p => 
     !completeProviders.find(cp => cp.id === p.id)

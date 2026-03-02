@@ -242,7 +242,15 @@
     "checkEligibility": "Ver Elegibilidad",
     "slots": "espacios",
     "elfaFreeNote": "Puede ofrecer cuidado GRATIS para familias que califiquen",
-    "fairnessNotice": "Listados en orden aleatorio, rotando diariamente por equidad"
+    "fairnessNotice": "Listados en orden aleatorio, rotando diariamente por equidad",
+    "providerCta": {
+      "headline": "¿Es usted proveedor de cuidado infantil familiar?",
+      "description": "Reporte sus vacantes gratis en este registro proporcionado por la Asociación de Cuidado Infantil Familiar de SF. Sus datos ayudan a incluir la voz del cuidado infantil familiar en las decisiones de planificación local.",
+      "benefit1": "Listado gratuito — llegue a familias locales",
+      "benefit2": "Toma menos de 5 minutos",
+      "benefit3": "Apoya la defensa y planificación de FCC",
+      "button": "Reporte sus vacantes"
+    }
   },
   "settings": {
     "title": "Configuración del programa",

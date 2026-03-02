@@ -17,6 +17,8 @@ import {
   Shuffle,
   DollarSign,
   ExternalLink,
+  Home,
+  Check,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -132,12 +134,13 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   };
 
   // Separate listings: with openings vs full with waitlist
-  const allFiltered = listings.filter(applyFilters);
+  // Memoize allFiltered so expand/collapse doesn't re-filter + re-shuffle
+  const allFiltered = useMemo(() => listings.filter(applyFilters), [listings, filters]);
   const listingsWithOpenings = useMemo(() => {
     const filtered = allFiltered.filter(l => l.total_spots_available > 0);
     return shuffleListingsForUser(filtered);
   }, [allFiltered]);
-  const fullWithWaitlist = allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available);
+  const fullWithWaitlist = useMemo(() => allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available), [allFiltered]);
 
   // Calculate vacancy statistics
   const vacancyStats = useMemo(() => {
@@ -861,15 +864,33 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
               <ExternalLink size={12} />
             </a>
           </p>
-          <p className="mt-2">
-            {t('publicListings.areYouProvider')}{' '}
-            <button
-              onClick={onSignIn}
-              className="text-blue-600 hover:underline"
-            >
-              {t('landing.brand.providerLogin')}
-            </button>
-          </p>
+          <div className="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 text-left max-w-lg mx-auto">
+            <div className="flex items-center gap-2 mb-2">
+              <Home size={20} className="text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">
+                {t('publicListings.providerCta.headline')}
+              </h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">
+              {t('publicListings.providerCta.description')}
+            </p>
+            <ul className="space-y-1 mb-4">
+              {(['benefit1', 'benefit2', 'benefit3'] as const).map((key) => (
+                <li key={key} className="flex items-center gap-2 text-sm text-gray-700">
+                  <Check size={16} className="text-green-600 flex-shrink-0" />
+                  {t(`publicListings.providerCta.${key}`)}
+                </li>
+              ))}
+            </ul>
+            <div className="text-center">
+              <button
+                onClick={onSignIn}
+                className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
+              >
+                {t('publicListings.providerCta.button')} →
+              </button>
+            </div>
+          </div>
           <p className="mt-2 text-xs text-gray-400">
             v{__APP_VERSION__}
           </p>

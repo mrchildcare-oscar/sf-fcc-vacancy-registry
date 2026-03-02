@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { User } from '@supabase/supabase-js';
 import {
   supabase,
@@ -36,6 +36,8 @@ import { ProviderInquiries } from './ProviderInquiries';
 import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key, MessageSquare, Shield } from 'lucide-react';
 import { useLanguage, LanguageSwitcher } from '../../i18n/LanguageContext';
 import { trackPageView, trackSignIn, trackSignUp, trackSignOut, trackAutoFillUsed, trackVacancyUpdated, ViewName } from '../../lib/analytics';
+
+const isDev = import.meta.env.DEV;
 
 // Admin emails - comma-separated list from environment variable
 const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || '')
@@ -169,6 +171,16 @@ export function RegistryApp() {
     };
   }, [provider]);
 
+  // Memoize current enrollment calculation (avoids Date math on every render)
+  const currentEnrollment = useMemo(() => ({
+    total: children.length,
+    infants: children.filter(c => {
+      const months = (new Date().getFullYear() - new Date(c.dateOfBirth).getFullYear()) * 12 +
+        (new Date().getMonth() - new Date(c.dateOfBirth).getMonth());
+      return months < 24;
+    }).length,
+  }), [children]);
+
   // Check for admin access via URL parameter (?admin)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -254,7 +266,7 @@ export function RegistryApp() {
     let isMounted = true;
 
     const checkAuth = async () => {
-      console.log('[Auth] Starting auth check...');
+      if (isDev) console.log('[Auth] Starting auth check...');
 
       // Set a timeout to prevent infinite loading
       timeoutId = setTimeout(() => {
@@ -267,7 +279,7 @@ export function RegistryApp() {
 
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        console.log('[Auth] getSession completed', { hasSession: !!session, error });
+        if (isDev) console.log('[Auth] getSession completed', { hasSession: !!session, error });
 
         if (!isMounted) return;
 
@@ -280,16 +292,16 @@ export function RegistryApp() {
         }
 
         if (session?.user) {
-          console.log('[Auth] User found:', session.user.email);
+          if (isDev) console.log('[Auth] User found:', session.user.email);
           setUser(session.user);
           await loadProviderData(session.user.id);
         } else {
-          console.log('[Auth] No session found');
+          if (isDev) console.log('[Auth] No session found');
         }
       } catch (err) {
         // Ignore AbortError - happens in React 18 StrictMode double-mount
         if (err instanceof Error && err.name === 'AbortError') {
-          console.log('[Auth] Request aborted (StrictMode re-mount)');
+          if (isDev) console.log('[Auth] Request aborted (StrictMode re-mount)');
           return;
         }
         console.error('[Auth] Exception during auth check:', err);
@@ -298,7 +310,7 @@ export function RegistryApp() {
         }
       } finally {
         if (isMounted) {
-          console.log('[Auth] Setting loading to false');
+          if (isDev) console.log('[Auth] Setting loading to false');
           clearTimeout(timeoutId);
           setLoading(false);
           isInitialLoad = false;
@@ -310,17 +322,17 @@ export function RegistryApp() {
 
     // Subscribe to auth changes (but skip during initial load to avoid race condition)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('[Auth] Auth state changed:', event, { hasSession: !!session, isInitialLoad });
+      if (isDev) console.log('[Auth] Auth state changed:', event, { hasSession: !!session, isInitialLoad });
 
       // Skip INITIAL_SESSION event as we handle it in checkAuth
       if (event === 'INITIAL_SESSION') {
-        console.log('[Auth] Skipping INITIAL_SESSION (handled by checkAuth)');
+        if (isDev) console.log('[Auth] Skipping INITIAL_SESSION (handled by checkAuth)');
         return;
       }
 
       // Skip USER_UPDATED event (password change, etc.) - no need to reload data
       if (event === 'USER_UPDATED') {
-        console.log('[Auth] Skipping USER_UPDATED (no data reload needed)');
+        if (isDev) console.log('[Auth] Skipping USER_UPDATED (no data reload needed)');
         if (session?.user) {
           setUser(session.user);
         }
@@ -356,15 +368,15 @@ export function RegistryApp() {
   }, []);
 
   const loadProviderData = async (userId: string) => {
-    console.log('[Provider] Loading provider data for:', userId);
+    if (isDev) console.log('[Provider] Loading provider data for:', userId);
     try {
       // First, check if user owns an organization
       const org = await getOrganizationByOwner(userId);
       if (org) {
-        console.log('[Organization] User owns organization:', org.name);
+        if (isDev) console.log('[Organization] User owns organization:', org.name);
         setOrganization(org);
         const providers = await getProvidersByOrganization(org.id);
-        console.log('[Organization] Found providers:', providers.length);
+        if (isDev) console.log('[Organization] Found providers:', providers.length);
         setOrgProviders(providers);
         // Don't override if user is accessing admin page
         setView(prev => prev === 'admin' ? 'admin' : 'org-dashboard');
@@ -373,14 +385,14 @@ export function RegistryApp() {
 
       // Otherwise, check for single provider account
       const providerData = await getProvider(userId);
-      console.log('[Provider] getProvider result:', providerData ? 'found' : 'not found');
+      if (isDev) console.log('[Provider] getProvider result:', providerData ? 'found' : 'not found');
 
       if (providerData) {
         setProvider(providerData);
         loadChildren(userId);
-        console.log('[Provider] Loading vacancy data...');
+        if (isDev) console.log('[Provider] Loading vacancy data...');
         const vacancy = await getVacancy(userId);
-        console.log('[Provider] getVacancy result:', vacancy ? 'found' : 'not found');
+        if (isDev) console.log('[Provider] getVacancy result:', vacancy ? 'found' : 'not found');
         if (vacancy) {
           setVacancyData({
             infant_spots: vacancy.infant_spots,
@@ -398,10 +410,10 @@ export function RegistryApp() {
             notes: vacancy.notes || '',
           });
         }
-        console.log('[Provider] Setting view to dashboard');
+        if (isDev) console.log('[Provider] Setting view to dashboard');
         setView(prev => prev === 'admin' ? 'admin' : 'dashboard');
       } else {
-        console.log('[Provider] No provider found, setting view to onboarding');
+        if (isDev) console.log('[Provider] No provider found, setting view to onboarding');
         setView(prev => prev === 'admin' ? 'admin' : 'onboarding');
       }
     } catch (err) {
@@ -734,8 +746,9 @@ export function RegistryApp() {
               <LanguageSwitcher compact />
               <button
                 onClick={() => navigateTo('auth')}
-                className="text-xs text-gray-500 hover:text-gray-700"
+                className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 border border-blue-300 hover:border-blue-400 rounded-full px-3 py-0.5 transition-colors"
               >
+                <LogOut size={12} className="rotate-180" />
                 {t('landing.brand.providerLogin')}
               </button>
             </div>
@@ -794,34 +807,34 @@ export function RegistryApp() {
     );
   }
 
+  const handleAutoFill = (data: {
+    infant_spots: number;
+    toddler_spots: number;
+    preschool_spots: number;
+    school_age_spots: number;
+  }) => {
+    setVacancyData(prev => ({
+      ...prev,
+      infant_spots: data.infant_spots,
+      toddler_spots: data.toddler_spots,
+      preschool_spots: data.preschool_spots,
+      school_age_spots: data.school_age_spots,
+      accepting_infants: data.infant_spots > 0,
+      accepting_toddlers: data.toddler_spots > 0,
+      accepting_preschool: data.preschool_spots > 0,
+      accepting_school_age: data.school_age_spots > 0,
+      available_date: prev?.available_date || new Date().toISOString().split('T')[0],
+      full_time_available: prev?.full_time_available ?? true,
+      part_time_available: prev?.part_time_available ?? false,
+      waitlist_available: prev?.waitlist_available ?? false,
+      notes: prev?.notes || '',
+    }));
+    // Track auto-fill usage
+    if (user) trackAutoFillUsed(user.id);
+  };
+
   // Provider dashboard view
   if (view === 'dashboard' && user && provider) {
-    const handleAutoFill = (data: {
-      infant_spots: number;
-      toddler_spots: number;
-      preschool_spots: number;
-      school_age_spots: number;
-    }) => {
-      setVacancyData(prev => ({
-        ...prev,
-        infant_spots: data.infant_spots,
-        toddler_spots: data.toddler_spots,
-        preschool_spots: data.preschool_spots,
-        school_age_spots: data.school_age_spots,
-        accepting_infants: data.infant_spots > 0,
-        accepting_toddlers: data.toddler_spots > 0,
-        accepting_preschool: data.preschool_spots > 0,
-        accepting_school_age: data.school_age_spots > 0,
-        available_date: prev?.available_date || new Date().toISOString().split('T')[0],
-        full_time_available: prev?.full_time_available ?? true,
-        part_time_available: prev?.part_time_available ?? false,
-        waitlist_available: prev?.waitlist_available ?? false,
-        notes: prev?.notes || '',
-      }));
-      // Track auto-fill usage
-      trackAutoFillUsed(user.id);
-    };
-
     return (
       <div className="min-h-screen bg-gray-50">
         <ProviderNav />
@@ -834,25 +847,11 @@ export function RegistryApp() {
             </p>
           </div>
 
-          {/* Roster Summary - shows current capacity based on enrolled children */}
-          <RosterSummary
-            children={children}
-            capacityConfig={getCapacityConfig()}
-            onAutoFill={handleAutoFill}
-          />
-
           <VacancyForm
             initialData={vacancyData}
             onSubmit={handleVacancySubmit}
             programType={provider.program_type}
-            currentEnrollment={{
-              total: children.length,
-              infants: children.filter(c => {
-                const months = (new Date().getFullYear() - new Date(c.dateOfBirth).getFullYear()) * 12 +
-                  (new Date().getMonth() - new Date(c.dateOfBirth).getMonth());
-                return months < 24;
-              }).length,
-            }}
+            currentEnrollment={currentEnrollment}
             licenseNumber={provider.license_number}
           />
 
@@ -903,6 +902,13 @@ export function RegistryApp() {
             onRemove={removeChild}
             onAdd={() => setShowChildForm(true)}
             onClearAll={clearChildren}
+          />
+
+          {/* Roster Summary - shows current capacity based on enrolled children */}
+          <RosterSummary
+            children={children}
+            capacityConfig={getCapacityConfig()}
+            onAutoFill={handleAutoFill}
           />
         </div>
 

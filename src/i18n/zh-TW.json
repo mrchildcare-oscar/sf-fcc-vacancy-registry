@@ -242,7 +242,15 @@
     "checkEligibility": "查看資格",
     "slots": "個名額",
     "elfaFreeNote": "符合資格的家庭可能獲得免費托兒服務",
-    "fairnessNotice": "列表以隨機順序顯示，每日輪換以確保公平"
+    "fairnessNotice": "列表以隨機順序顯示，每日輪換以確保公平",
+    "providerCta": {
+      "headline": "您是家庭托兒服務提供者嗎？",
+      "description": "在舊金山家庭托兒協會提供的這個登記處免費報告您的空缺。您的數據有助於在當地托兒規劃決策中納入家庭托兒的聲音。",
+      "benefit1": "免費刊登 — 讓當地家庭找到您",
+      "benefit2": "只需不到 5 分鐘",
+      "benefit3": "支持家庭托兒倡導與規劃",
+      "button": "報告您的空缺"
+    }
   },
   "settings": {
     "title": "機構設定",

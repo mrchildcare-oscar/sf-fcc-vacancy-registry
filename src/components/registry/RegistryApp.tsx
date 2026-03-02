@@ -261,7 +261,7 @@ export function RegistryApp() {
 
   // Check auth state on mount
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     let isInitialLoad = true;
     let isMounted = true;
 

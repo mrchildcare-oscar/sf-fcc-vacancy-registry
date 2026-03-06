@@ -30,7 +30,8 @@ serve(async (req) => {
   }
 
   try {
-    const { inquiry_id } = await req.json()
+    const { inquiry_id, source } = await req.json()
+    const isProviderSite = source === 'provider_site'
 
     if (!inquiry_id) {
       return new Response(
@@ -260,14 +261,22 @@ Please follow up with the provider to verify their email address.`,
     </div>
 
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-      <p style="margin: 0; color: #64748b; font-size: 14px;">
-        Looking for more options? <a href="https://familychildcaresf.com" style="color: #059669;">Browse more providers</a> on the SF Family Child Care Vacancy Registry.
-      </p>
+      ${isProviderSite
+        ? `<p style="margin: 0; color: #64748b; font-size: 14px;">
+            Thank you for reaching out to <strong>${provider.business_name}</strong>. They will respond to your inquiry directly.
+          </p>`
+        : `<p style="margin: 0; color: #64748b; font-size: 14px;">
+            Looking for more options? <a href="https://familychildcaresf.com" style="color: #059669;">Browse more providers</a> on the SF Family Child Care Vacancy Registry.
+          </p>`
+      }
     </div>
   </div>
 
   <div style="text-align: center; padding: 15px; color: #94a3b8; font-size: 12px;">
-    <p style="margin: 0;">SF Family Child Care Vacancy Registry</p>
+    ${isProviderSite
+      ? `<p style="margin: 0;">${provider.business_name}</p>`
+      : `<p style="margin: 0;">SF Family Child Care Vacancy Registry</p>`
+    }
     <p style="margin: 5px 0 0 0;">This is a confirmation of your inquiry submission.</p>
   </div>
 </body>
@@ -299,7 +308,10 @@ Your Message:
 ${inquiry.message}
 
 ---
-Looking for more options? Browse more providers at: https://familychildcaresf.com
+${isProviderSite
+  ? `Thank you for reaching out to ${provider.business_name}. They will respond to your inquiry directly.`
+  : `Looking for more options? Browse more providers at: https://familychildcaresf.com`
+}
 `
 
     // Send confirmation email to parent

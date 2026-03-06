@@ -126,7 +126,7 @@ serve(async (req) => {
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
       <p style="margin: 0; color: #64748b; font-size: 14px;">
         Reply directly to this email to respond to the parent, or view all inquiries in your
-        <a href="https://beta.familychildcaresf.com/#vacancies" style="color: #2563eb;">provider dashboard</a>.
+        <a href="https://familychildcaresf.com/#vacancies" style="color: #2563eb;">provider dashboard</a>.
       </p>
     </div>
   </div>
@@ -153,7 +153,7 @@ ${inquiry.message}
 
 ---
 Reply to this email to respond to the parent.
-View all inquiries at: https://beta.familychildcaresf.com/#vacancies
+View all inquiries at: https://familychildcaresf.com/#vacancies
 `
 
     // Send email to provider via Resend
@@ -261,7 +261,7 @@ Please follow up with the provider to verify their email address.`,
 
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
       <p style="margin: 0; color: #64748b; font-size: 14px;">
-        Looking for more options? <a href="https://beta.familychildcaresf.com" style="color: #059669;">Browse more providers</a> on the SF Family Child Care Vacancy Registry.
+        Looking for more options? <a href="https://familychildcaresf.com" style="color: #059669;">Browse more providers</a> on the SF Family Child Care Vacancy Registry.
       </p>
     </div>
   </div>
@@ -299,10 +299,13 @@ Your Message:
 ${inquiry.message}
 
 ---
-Looking for more options? Browse more providers at: https://beta.familychildcaresf.com
+Looking for more options? Browse more providers at: https://familychildcaresf.com
 `
 
     // Send confirmation email to parent
+    // Use provider's business name in the "from" display name so parents
+    // see the name they recognize, not "SF FCC Registry"
+    const parentFromName = `${provider.business_name} via Family Child Care SF`
     const parentEmailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -310,7 +313,7 @@ Looking for more options? Browse more providers at: https://beta.familychildcare
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'SF FCC Registry <noreply@notifications.familychildcaresf.com>',
+        from: `${parentFromName} <noreply@notifications.familychildcaresf.com>`,
         to: [inquiry.parent_email],
         reply_to: provider.contact_email,
         subject: `Inquiry Sent to ${provider.business_name} - Confirmation`,

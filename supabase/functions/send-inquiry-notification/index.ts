@@ -215,12 +215,9 @@ Please follow up with the provider to verify their email address.`,
     console.log('Provider email sent:', providerEmailResult.id)
 
     // Build provider details for parent email
-    const providerLocation = provider.neighborhood || provider.zip_code || ''
-    const providerPhone = provider.phone ? `<p><strong>Phone:</strong> <a href="tel:${provider.phone}" style="color: #059669;">${provider.phone}</a></p>` : ''
+    // Only include email and website — no phone, location, or languages
+    // to minimize personal data exposure if parent's inbox is compromised
     const providerWebsite = provider.website ? `<p><strong>Website:</strong> <a href="${provider.website.startsWith('http') ? provider.website : 'https://' + provider.website}" style="color: #059669;">${provider.website}</a></p>` : ''
-    const providerLanguages = provider.languages && provider.languages.length > 0
-      ? `<p><strong>Languages:</strong> ${Array.isArray(provider.languages) ? provider.languages.join(', ') : provider.languages}</p>`
-      : ''
 
     // Build confirmation email for parent
     const parentEmailHtml = `
@@ -244,11 +241,8 @@ Please follow up with the provider to verify their email address.`,
     <h2 style="color: #059669; font-size: 18px;">Provider Information</h2>
     <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
       <p style="margin: 0 0 5px 0;"><strong style="font-size: 16px;">${provider.business_name}</strong></p>
-      ${providerLocation ? `<p><strong>Location:</strong> ${providerLocation}</p>` : ''}
       <p><strong>Email:</strong> <a href="mailto:${provider.contact_email}" style="color: #059669;">${provider.contact_email}</a></p>
-      ${providerPhone}
       ${providerWebsite}
-      ${providerLanguages}
     </div>
 
     <h2 style="color: #059669; font-size: 18px;">Your Inquiry</h2>
@@ -283,10 +277,6 @@ Please follow up with the provider to verify their email address.`,
 </html>
 `
 
-    const providerLanguagesText = provider.languages && provider.languages.length > 0
-      ? `- Languages: ${Array.isArray(provider.languages) ? provider.languages.join(', ') : provider.languages}`
-      : ''
-
     const parentEmailText = `
 Hi ${inquiry.parent_name},
 
@@ -294,11 +284,8 @@ Your inquiry has been sent to ${provider.business_name}. They will respond direc
 
 Provider Information:
 - ${provider.business_name}
-${providerLocation ? `- Location: ${providerLocation}` : ''}
 - Email: ${provider.contact_email}
-${provider.phone ? `- Phone: ${provider.phone}` : ''}
 ${provider.website ? `- Website: ${provider.website}` : ''}
-${providerLanguagesText}
 
 Your Inquiry:
 - Age Group: ${ageGroupLabel}

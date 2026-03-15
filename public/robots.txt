@@ -1,0 +1,35 @@
+User-agent: *
+Allow: /
+Allow: /child-care-san-francisco
+Allow: /family-child-care-vs-centers
+Allow: /infant-care-san-francisco
+Allow: /financial-assistance
+Allow: /es/child-care-san-francisco
+Allow: /es/family-child-care-vs-centers
+Allow: /es/infant-care-san-francisco
+Allow: /es/financial-assistance
+Allow: /zh/child-care-san-francisco
+Allow: /zh/family-child-care-vs-centers
+Allow: /zh/infant-care-san-francisco
+Allow: /zh/financial-assistance
+Allow: /choose
+Allow: /zh/choose
+
+# Auth-protected routes (hash-based, but include for completeness)
+Disallow: /provider/
+Disallow: /dashboard/
+
+Sitemap: https://familychildcaresf.com/sitemap.xml
+
+# Explicitly allow AI crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /

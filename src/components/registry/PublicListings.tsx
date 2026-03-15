@@ -19,6 +19,7 @@ import {
   ExternalLink,
   Home,
   Check,
+  BookOpen,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -32,6 +33,13 @@ import {
   trackSearchUsed,
 } from '../../lib/analytics';
 import { shuffleListingsForUser } from '../../lib/randomOrder';
+
+const PARENT_RESOURCES = [
+  { key: 'childCareGuide', href: '/child-care-san-francisco/', icon: BookOpen },
+  { key: 'fccVsCenters', href: '/family-child-care-vs-centers/', icon: Home },
+  { key: 'infantCare', href: '/infant-care-san-francisco/', icon: Baby },
+  { key: 'financialAssistance', href: '/financial-assistance/', icon: DollarSign },
+] as const;
 
 interface PublicListingsProps {
   listings: PublicListing[];
@@ -48,6 +56,19 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
   const [inquiryListing, setInquiryListing] = useState<PublicListing | null>(null);
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
+
+  // Read neighborhood filter from URL hash on mount (e.g. #public?neighborhood=Mission)
+  useEffect(() => {
+    const hashParts = window.location.hash.split('?');
+    if (hashParts.length > 1) {
+      const params = new URLSearchParams(decodeURIComponent(hashParts[1]));
+      const neighborhood = params.get('neighborhood');
+      if (neighborhood) {
+        setFilters(prev => ({ ...prev, neighborhood }));
+        setShowFilters(true);
+      }
+    }
+  }, []);
 
   // Handle listing click with analytics tracking
   const handleListingClick = useCallback((listing: PublicListing) => {
@@ -91,8 +112,12 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
 
   // Apply filters to all listings first
   const applyFilters = (listing: PublicListing) => {
-    if (filters.zip_code && !listing.zip_code.startsWith(filters.zip_code)) {
-      return false;
+    if (filters.search) {
+      const q = filters.search.toLowerCase();
+      const matchesZip = listing.zip_code.startsWith(filters.search);
+      const matchesNeighborhood = listing.neighborhood?.toLowerCase().includes(q);
+      const matchesName = listing.business_name.toLowerCase().includes(q);
+      if (!matchesZip && !matchesNeighborhood && !matchesName) return false;
     }
     if (filters.neighborhood && listing.neighborhood !== filters.neighborhood) {
       return false;
@@ -141,6 +166,17 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
     return shuffleListingsForUser(filtered);
   }, [allFiltered]);
   const fullWithWaitlist = useMemo(() => allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available), [allFiltered]);
+
+  // Group listings by neighborhood for display
+  const groupedListings = useMemo(() => {
+    const groups = new Map<string, PublicListing[]>();
+    listingsWithOpenings.forEach(listing => {
+      const hood = listing.neighborhood || 'Other';
+      if (!groups.has(hood)) groups.set(hood, []);
+      groups.get(hood)!.push(listing);
+    });
+    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [listingsWithOpenings]);
 
   // Calculate vacancy statistics
   const vacancyStats = useMemo(() => {
@@ -198,8 +234,8 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
     if (filters.elfa_only !== prevFilters.current.elfa_only && filters.elfa_only) {
       trackFilterUsed('elfa_only', 'true');
     }
-    if (filters.zip_code !== prevFilters.current.zip_code && filters.zip_code && filters.zip_code.length >= 3) {
-      trackSearchUsed(filters.zip_code, listingsWithOpenings.length);
+    if (filters.search !== prevFilters.current.search && filters.search && filters.search.length >= 3) {
+      trackSearchUsed(filters.search, listingsWithOpenings.length);
     }
     prevFilters.current = { ...filters };
   }, [filters, listingsWithOpenings.length]);
@@ -222,8 +258,8 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                   {t('publicListings.title')}
                 </h1>
-                <p className="text-gray-600 text-sm hidden sm:block">
-                  {t('landing.welcomeSubtitle')}
+                <p className="text-gray-600 text-sm">
+                  {t('publicListings.introSentence')}
                 </p>
               </div>
               {/* Stats - horizontal on desktop, compact on mobile */}
@@ -277,8 +313,8 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
               <input
                 type="text"
                 placeholder={t('publicListings.searchPlaceholder')}
-                value={filters.zip_code || ''}
-                onChange={e => setFilters(prev => ({ ...prev, zip_code: e.target.value }))}
+                value={filters.search || ''}
+                onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -286,8 +322,8 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2.5 border rounded-lg transition-colors ${
                 hasActiveFilters
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-300 hover:bg-gray-50'
+                  ? 'border-blue-500 bg-blue-100 text-blue-700'
+                  : 'border-blue-300 bg-blue-50 text-blue-600 hover:bg-blue-100'
               }`}
             >
               <Filter size={18} />
@@ -450,6 +486,31 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
         {/* Why Family Child Care? — prominent for first visit, collapsible after */}
         <WhyFamilyChildCare />
 
+        {/* Parent Resources */}
+        <div className="mb-4">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+            {t('publicListings.resources.heading')}
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {PARENT_RESOURCES.map(({ key, href, icon: Icon }) => (
+              <a
+                key={key}
+                href={`${language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : ''}${href}`}
+                className="p-3 bg-white rounded-xl border border-gray-200
+                           hover:border-blue-300 hover:shadow-sm transition-all group"
+              >
+                <Icon size={18} className="text-blue-600 mb-1.5" />
+                <span className="text-sm font-medium text-gray-900 group-hover:text-blue-700 block">
+                  {t(`publicListings.resources.${key}.title`)}
+                </span>
+                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
+                  {t(`publicListings.resources.${key}.desc`)}
+                </p>
+              </a>
+            ))}
+          </div>
+        </div>
+
         {/* Fairness Notice */}
         <div className="mb-4 flex items-center justify-center gap-2 text-xs text-gray-500">
           <Shuffle size={13} className="text-gray-400" />
@@ -479,10 +540,17 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
           </div>
         ) : (
           <div className="space-y-4">
-            {listingsWithOpenings.map(listing => (
+            {groupedListings.map(([neighborhood, groupListings]) => (
+              <div key={neighborhood}>
+                <div className="flex items-center gap-2 mb-2 mt-2">
+                  <MapPin size={14} className="text-gray-400" />
+                  <h2 className="text-sm font-semibold text-gray-700">{neighborhood}</h2>
+                  <span className="text-xs text-gray-400">({groupListings.length})</span>
+                </div>
+                {groupListings.map(listing => (
               <div
                 key={listing.provider_id}
-                className="bg-white rounded-xl shadow hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl shadow hover:shadow-md transition-shadow mb-3"
               >
                 <div
                   className="p-4 cursor-pointer"
@@ -648,6 +716,8 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                     </div>
                   </div>
                 )}
+              </div>
+                ))}
               </div>
             ))}
 

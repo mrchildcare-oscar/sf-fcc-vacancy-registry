@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://familychildcaresf.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Child Care in San Francisco -->
+  <url>
+    <loc>https://familychildcaresf.com/child-care-san-francisco/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/child-care-san-francisco/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/es/child-care-san-francisco/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/child-care-san-francisco/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/child-care-san-francisco/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/child-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/child-care-san-francisco/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Financial Assistance -->
+  <url>
+    <loc>https://familychildcaresf.com/financial-assistance/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/financial-assistance/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/es/financial-assistance/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/financial-assistance/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/financial-assistance/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/financial-assistance/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/financial-assistance/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Family Child Care vs Centers -->
+  <url>
+    <loc>https://familychildcaresf.com/family-child-care-vs-centers/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/family-child-care-vs-centers/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/es/family-child-care-vs-centers/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/family-child-care-vs-centers/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/family-child-care-vs-centers/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/family-child-care-vs-centers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/family-child-care-vs-centers/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel Hub -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Trust Wheel: Safety & Licensing -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/safety-licensing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/safety-licensing/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/safety-licensing/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/safety-licensing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/safety-licensing/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/safety-licensing/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/safety-licensing/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/safety-licensing/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/safety-licensing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/safety-licensing/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Educational Quality -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/educational-quality/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/educational-quality/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/educational-quality/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/educational-quality/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/educational-quality/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/educational-quality/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/educational-quality/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/educational-quality/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/educational-quality/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/educational-quality/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Personal Connection -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/personal-connection/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/personal-connection/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/personal-connection/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/personal-connection/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/personal-connection/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/personal-connection/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/personal-connection/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/personal-connection/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/personal-connection/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/personal-connection/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Small Group Size -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/small-group-size/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/small-group-size/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/small-group-size/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/small-group-size/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/small-group-size/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/small-group-size/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/small-group-size/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/small-group-size/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/small-group-size/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/small-group-size/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Cultural & Language Match -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/cultural-language-match/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/cultural-language-match/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/cultural-language-match/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/cultural-language-match/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/cultural-language-match/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/cultural-language-match/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/cultural-language-match/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/cultural-language-match/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/cultural-language-match/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/cultural-language-match/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Warmth & Family Feel -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/warmth-family-feel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/warmth-family-feel/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/warmth-family-feel/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/warmth-family-feel/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/warmth-family-feel/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/warmth-family-feel/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/warmth-family-feel/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/warmth-family-feel/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/warmth-family-feel/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/warmth-family-feel/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Location & Convenience -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/location-convenience/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/location-convenience/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/location-convenience/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/location-convenience/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/location-convenience/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/location-convenience/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/location-convenience/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/location-convenience/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/location-convenience/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/location-convenience/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trust Wheel: Financial Assistance Programs -->
+  <url>
+    <loc>https://familychildcaresf.com/choose/financial-assistance-programs/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/financial-assistance-programs/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/financial-assistance-programs/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/financial-assistance-programs/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/financial-assistance-programs/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/choose/financial-assistance-programs/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/choose/financial-assistance-programs/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/choose/financial-assistance-programs/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/choose/financial-assistance-programs/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/choose/financial-assistance-programs/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Infant Care San Francisco -->
+  <url>
+    <loc>https://familychildcaresf.com/infant-care-san-francisco/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/infant-care-san-francisco/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/es/infant-care-san-francisco/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/infant-care-san-francisco/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/infant-care-san-francisco/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/infant-care-san-francisco/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/infant-care-san-francisco/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

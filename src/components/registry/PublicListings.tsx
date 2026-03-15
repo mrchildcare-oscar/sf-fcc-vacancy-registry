@@ -452,31 +452,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
 
       {/* Listings */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* ELFA Income Snapshot */}
-        {!eligibilityOpen && (
-          <button
-            onClick={() => setEligibilityOpen(true)}
-            className="w-full mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-left hover:bg-green-100 transition-colors group"
-          >
-            <div className="flex items-start gap-3">
-              <DollarSign size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-green-800">
-                  {t('landing.elfa.incomeSnapshot')}
-                </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-green-700">
-                  <span>{t('landing.elfa.family2')}</span>
-                  <span>{t('landing.elfa.family4')}</span>
-                </div>
-                <p className="text-xs text-green-600 mt-1 group-hover:underline">
-                  {t('landing.elfa.checkBelow')} &darr;
-                </p>
-              </div>
-            </div>
-          </button>
-        )}
-
-        {/* Eligibility Screener (merged with ELFA stats) */}
+        {/* Eligibility Screener */}
         <div id="eligibility-screener">
           <EligibilityScreener
             isOpen={eligibilityOpen}

@@ -100,41 +100,11 @@ export function EligibilityScreener({ isOpen, onToggle, elfaStats }: Eligibility
         className="w-full px-3 sm:px-4 py-3 sm:py-4 flex items-start sm:items-center justify-between hover:bg-white/30 transition-colors gap-2"
       >
         <div className="flex-1 min-w-0">
-          {/* ELFA Stats Row */}
-          {hasElfaPrograms && (
-            <div className="flex items-start sm:items-center gap-1.5 sm:gap-2 mb-2 flex-wrap">
-              <Star size={16} className="text-yellow-600 fill-yellow-600 flex-shrink-0 mt-0.5 sm:mt-0" />
-              <span className="font-semibold text-yellow-800 text-sm sm:text-base">
-                {elfaStats.elfaPrograms} {t('publicListings.elfaBannerTitle')}
-              </span>
-              <span className="text-yellow-700 text-xs sm:text-sm">
-                ({elfaStats.elfaTotalSlots} {t('publicListings.slots')})
-              </span>
-            </div>
-          )}
-          {/* ELFA Age Breakdown */}
-          {hasElfaPrograms && (
-            <div className="flex flex-wrap gap-2 mb-2 text-xs">
-              {elfaStats.elfaInfantSlots > 0 && (
-                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.infant')}: {elfaStats.elfaInfantSlots}</span>
-              )}
-              {elfaStats.elfaToddlerSlots > 0 && (
-                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.toddler')}: {elfaStats.elfaToddlerSlots}</span>
-              )}
-              {elfaStats.elfaPreschoolSlots > 0 && (
-                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.preschool')}: {elfaStats.elfaPreschoolSlots}</span>
-              )}
-              {elfaStats.elfaSchoolAgeSlots > 0 && (
-                <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded">{t('vacancy.schoolAge')}: {elfaStats.elfaSchoolAgeSlots}</span>
-              )}
-            </div>
-          )}
-          {/* Eligibility Check CTA */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-xl sm:text-2xl">{hasElfaPrograms ? '✨' : '💰'}</span>
+            <span className="text-xl sm:text-2xl">💰</span>
             <div className="text-left">
               <div className="font-semibold text-gray-800 text-sm sm:text-base">
-                {hasElfaPrograms ? t('publicListings.elfaBannerSubtext') : t('eligibility.title')}
+                {t('eligibility.title')}
               </div>
               <div className="text-xs sm:text-sm text-gray-600">
                 {t('eligibility.subtitle')}

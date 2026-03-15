@@ -13,6 +13,7 @@ Allow: /zh/family-child-care-vs-centers
 Allow: /zh/infant-care-san-francisco
 Allow: /zh/financial-assistance
 Allow: /choose
+Allow: /es/choose
 Allow: /zh/choose
 
 # Auth-protected routes (hash-based, but include for completeness)

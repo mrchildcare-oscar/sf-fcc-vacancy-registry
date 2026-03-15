@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Star } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import {
   checkEligibility,

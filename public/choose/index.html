@@ -236,6 +236,102 @@
     ul { margin-left: 24px; margin-bottom: 12px; }
     li { margin-bottom: 4px; }
 
+    /* Trust Wheel visualization */
+    .wheel-wrapper { text-align: center; margin: 40px 0 48px; }
+    .wheel-container {
+      position: relative;
+      width: 520px;
+      height: 520px;
+      margin: 0 auto;
+    }
+    .wheel-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 140px; height: 140px;
+      background: #2563eb;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.3;
+      z-index: 2;
+      box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+    }
+    .wheel-center .wheel-icon { font-size: 28px; margin-bottom: 4px; }
+    .wheel-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 340px; height: 340px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 50%;
+      z-index: 0;
+    }
+    .wheel-item {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 110px; height: 110px;
+      margin-left: -55px; margin-top: -55px;
+      z-index: 1;
+    }
+    .wheel-item a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 110px; height: 110px;
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #111827;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.3;
+      padding: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .wheel-item a:hover {
+      border-color: #2563eb;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.2);
+      transform: scale(1.08);
+      text-decoration: none;
+    }
+    .wheel-item .w-emoji { font-size: 24px; margin-bottom: 4px; }
+    .wheel-item:nth-child(1) { transform: translate(0, -210px); }           /* top */
+    .wheel-item:nth-child(2) { transform: translate(148px, -148px); }       /* top-right */
+    .wheel-item:nth-child(3) { transform: translate(210px, 0); }            /* right */
+    .wheel-item:nth-child(4) { transform: translate(148px, 148px); }        /* bottom-right */
+    .wheel-item:nth-child(5) { transform: translate(0, 210px); }            /* bottom */
+    .wheel-item:nth-child(6) { transform: translate(-148px, 148px); }       /* bottom-left */
+    .wheel-item:nth-child(7) { transform: translate(-210px, 0); }           /* left */
+    .wheel-item:nth-child(8) { transform: translate(-148px, -148px); }      /* top-left */
+
+    @media (max-width: 640px) {
+      .wheel-container { width: 340px; height: 340px; }
+      .wheel-center { width: 90px; height: 90px; font-size: 11px; }
+      .wheel-center .wheel-icon { font-size: 20px; }
+      .wheel-ring { width: 220px; height: 220px; }
+      .wheel-item { width: 76px; height: 76px; margin-left: -38px; margin-top: -38px; }
+      .wheel-item a { width: 76px; height: 76px; font-size: 9px; padding: 4px; }
+      .wheel-item .w-emoji { font-size: 18px; margin-bottom: 2px; }
+      .wheel-item:nth-child(1) { transform: translate(0, -138px); }
+      .wheel-item:nth-child(2) { transform: translate(98px, -98px); }
+      .wheel-item:nth-child(3) { transform: translate(138px, 0); }
+      .wheel-item:nth-child(4) { transform: translate(98px, 98px); }
+      .wheel-item:nth-child(5) { transform: translate(0, 138px); }
+      .wheel-item:nth-child(6) { transform: translate(-98px, 98px); }
+      .wheel-item:nth-child(7) { transform: translate(-138px, 0); }
+      .wheel-item:nth-child(8) { transform: translate(-98px, -98px); }
+    }
+
     /* Factor cards grid */
     .factor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
     .factor-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; transition: all 0.2s; text-decoration: none; display: block; color: inherit; }
@@ -339,6 +435,26 @@
         <p>Every family weighs different factors when choosing child care. In 2026, the Family Child Care Association of San Francisco surveyed 312 families across the city &mdash; English, Spanish, and Chinese-speaking &mdash; to learn what matters most. We found 8 recurring trust factors that shape how parents evaluate and choose care. We call this the <strong>Trust Wheel</strong>.</p>
         <p>Explore each factor below to see what the data says, how families in different communities prioritize it, and how to evaluate providers on the things that matter most to you.</p>
 
+        <!-- Trust Wheel Visualization -->
+        <div class="wheel-wrapper">
+          <div class="wheel-container">
+            <div class="wheel-center">
+              <span class="wheel-icon">&#x2728;</span>
+              Trust<br>Wheel
+            </div>
+            <div class="wheel-ring"></div>
+            <div class="wheel-item"><a href="/choose/safety-licensing/"><span class="w-emoji">&#x1F6E1;&#xFE0F;</span>Safety &amp;<br>Licensing</a></div>
+            <div class="wheel-item"><a href="/choose/educational-quality/"><span class="w-emoji">&#x1F4DA;</span>Educational<br>Quality</a></div>
+            <div class="wheel-item"><a href="/choose/personal-connection/"><span class="w-emoji">&#x1F91D;</span>Personal<br>Connection</a></div>
+            <div class="wheel-item"><a href="/choose/small-group-size/"><span class="w-emoji">&#x1F476;</span>Small Group<br>Size</a></div>
+            <div class="wheel-item"><a href="/choose/cultural-language-match/"><span class="w-emoji">&#x1F30D;</span>Cultural &amp;<br>Language</a></div>
+            <div class="wheel-item"><a href="/choose/warmth-family-feel/"><span class="w-emoji">&#x1F3E1;</span>Warmth &amp;<br>Family Feel</a></div>
+            <div class="wheel-item"><a href="/choose/location-convenience/"><span class="w-emoji">&#x1F4CD;</span>Location &amp;<br>Convenience</a></div>
+            <div class="wheel-item"><a href="/choose/financial-assistance-programs/"><span class="w-emoji">&#x1F4B0;</span>Financial<br>Assistance</a></div>
+          </div>
+        </div>
+
+        <h2>Explore Each Factor</h2>
         <div class="factor-grid">
 
           <a class="factor-card" href="/choose/safety-licensing/">

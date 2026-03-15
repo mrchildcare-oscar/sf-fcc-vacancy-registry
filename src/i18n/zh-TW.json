@@ -200,9 +200,10 @@
   "publicListings": {
     "title": "舊金山家庭托兒空缺",
     "subtitle": "尋找舊金山可用的托兒名額",
+    "introSentence": "您社區中有空缺的持照家庭托兒服務",
     "programsWithOpenings": "個機構有空缺",
     "totalSlots": "個空缺名額",
-    "searchPlaceholder": "按郵遞區號搜尋（例如：94110）",
+    "searchPlaceholder": "按名稱、社區或郵遞區號搜尋",
     "filterResults": "篩選結果",
     "neighborhood": "社區",
     "ageGroup": "年齡組",
@@ -223,7 +224,7 @@
     "smallFamily": "最多8名兒童",
     "largeFamily": "最多14名兒童",
     "license": "執照",
-    "footer": "舊金山家庭托兒協會服務",
+    "footer": "舊金山家庭托兒協會 (FCCASF) 服務",
     "areYouProvider": "您是持照家庭托兒服務提供者嗎？",
     "reportVacancies": "報告您的空缺",
     "signInPrompt": "登入以報告您的空缺",
@@ -243,6 +244,14 @@
     "slots": "個名額",
     "elfaFreeNote": "符合資格的家庭可能獲得免費托兒服務",
     "fairnessNotice": "列表以隨機順序顯示，每日輪換以確保公平",
+    "resources": {
+      "heading": "實用資源",
+      "trustWheel": { "title": "信任指南", "desc": "選擇托兒時什麼最重要" },
+      "childCareGuide": { "title": "舊金山托兒指南", "desc": "在舊金山尋找托兒服務" },
+      "fccVsCenters": { "title": "家庭托兒 vs. 中心", "desc": "比較您的選擇" },
+      "infantCare": { "title": "嬰兒托兒", "desc": "兩歲以下兒童的照護" },
+      "financialAssistance": { "title": "財務援助", "desc": "幫助支付托兒費用的計劃" }
+    },
     "providerCta": {
       "headline": "您是家庭托兒服務提供者嗎？",
       "description": "在舊金山家庭托兒協會提供的這個登記處免費報告您的空缺。您的數據有助於在當地托兒規劃決策中納入家庭托兒的聲音。",
@@ -355,9 +364,9 @@
       "eligible": "好消息！您可能符合免費托兒服務資格",
       "eligibleDesc": "根據您的家庭人數和收入，您可能有資格申請：",
       "discount": "您可能符合減價托兒服務資格",
-      "discountDesc": "從 2026 年 7 月起，您可能有資格獲得學費 50% 的折扣。",
-      "overIncome": "僅根據收入，您可能不符合資格",
-      "overIncomeDesc": "但是，資格取決於收入以外的許多因素。"
+      "discountDesc": "從2026年7月起，ELFA將提供學費抵免以補助部分托兒費用。您需要支付餘額。",
+      "overIncome": "您可能不符合ELFA財務援助資格",
+      "overIncomeDesc": "但您仍可使用空位登記冊尋找持牌托兒員，下方的資源與轉介機構也可幫助您找到托兒服務。"
     },
     "programs": {
       "elfaFree": {
@@ -369,8 +378,8 @@
         "desc": "為收入在 111-150% AMI 的舊金山居民提供 100% 學費抵免"
       },
       "elfaDiscount50": {
-        "title": "舊金山 ELFA - 50% 折扣",
-        "desc": "為收入在 151-200% AMI 的舊金山居民提供 50% 學費折扣"
+        "title": "舊金山 ELFA - 學費抵免",
+        "desc": "ELFA為收入在151-200% AMI的舊金山居民補助部分托兒費用。家庭支付餘額。"
       },
       "cspp": {
         "title": "加州州立學前班計劃 (CSPP)",

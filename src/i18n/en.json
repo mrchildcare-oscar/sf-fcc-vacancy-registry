@@ -200,9 +200,10 @@
   "publicListings": {
     "title": "SF Family Child Care Vacancies",
     "subtitle": "Find available childcare spots in San Francisco",
+    "introSentence": "Licensed home-based child care programs with openings in your neighborhood",
     "programsWithOpenings": "programs with openings",
     "totalSlots": "total slots",
-    "searchPlaceholder": "Search by ZIP code (e.g., 94110)",
+    "searchPlaceholder": "Search by name, neighborhood, or ZIP",
     "filterResults": "Filter Results",
     "neighborhood": "Neighborhood",
     "ageGroup": "Age Group",
@@ -223,7 +224,7 @@
     "smallFamily": "Up to 8 children",
     "largeFamily": "Up to 14 children",
     "license": "License",
-    "footer": "A service of the San Francisco Family Child Care Association",
+    "footer": "A service of the Family Child Care Association of San Francisco",
     "areYouProvider": "Are you a licensed FCC provider?",
     "reportVacancies": "Report your vacancies",
     "signInPrompt": "Sign in to report your vacancies",
@@ -243,6 +244,14 @@
     "slots": "slots",
     "elfaFreeNote": "May offer FREE care for qualifying families",
     "fairnessNotice": "Listings shown in random order, rotating daily for fairness",
+    "resources": {
+      "heading": "Helpful Resources",
+      "trustWheel": { "title": "Trust Wheel", "desc": "What matters most when choosing care" },
+      "childCareGuide": { "title": "SF Child Care Guide", "desc": "Finding child care in San Francisco" },
+      "fccVsCenters": { "title": "FCC vs. Centers", "desc": "Compare your options" },
+      "infantCare": { "title": "Infant Care", "desc": "Care for children under 2" },
+      "financialAssistance": { "title": "Financial Help", "desc": "Programs that help pay for care" }
+    },
     "providerCta": {
       "headline": "Are you a Family Child Care provider?",
       "description": "Report your vacancies for free on this registry provided by the SF Family Child Care Association. Your data helps include the family child care voice in local child care planning decisions.",
@@ -355,9 +364,9 @@
       "eligible": "Great news! You may qualify for FREE childcare",
       "eligibleDesc": "Based on your household size and income, you may be eligible for:",
       "discount": "You may qualify for reduced-cost childcare",
-      "discountDesc": "Starting July 2026, you may be eligible for 50% off tuition.",
-      "overIncome": "Based on income alone, you may not qualify",
-      "overIncomeDesc": "However, eligibility depends on many factors beyond income."
+      "discountDesc": "Starting July 2026, ELFA will contribute a tuition credit toward the cost of care. You would pay the remaining balance.",
+      "overIncome": "You may not qualify for ELFA financial assistance",
+      "overIncomeDesc": "But you can still use the vacancy registry to find licensed providers, and R&R agencies below can help you find care."
     },
     "programs": {
       "elfaFree": {
@@ -369,8 +378,8 @@
         "desc": "100% tuition credit for SF residents earning 111-150% AMI"
       },
       "elfaDiscount50": {
-        "title": "SF ELFA - 50% Discount",
-        "desc": "50% off tuition for SF residents earning 151-200% AMI"
+        "title": "SF ELFA - Tuition Credit",
+        "desc": "ELFA contributes toward cost of care for SF residents earning 151-200% AMI. Families pay the remaining balance."
       },
       "cspp": {
         "title": "CA State Preschool Program (CSPP)",

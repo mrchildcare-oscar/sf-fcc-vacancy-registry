@@ -200,9 +200,10 @@
   "publicListings": {
     "title": "Vacantes de cuidado infantil familiar en SF",
     "subtitle": "Encuentre espacios disponibles de cuidado infantil en San Francisco",
+    "introSentence": "Programas de cuidado infantil familiar con licencia y vacantes en su vecindario",
     "programsWithOpenings": "programas con vacantes",
     "totalSlots": "espacios totales",
-    "searchPlaceholder": "Buscar por código postal (ej., 94110)",
+    "searchPlaceholder": "Buscar por nombre, vecindario o código postal",
     "filterResults": "Filtrar resultados",
     "neighborhood": "Vecindario",
     "ageGroup": "Grupo de edad",
@@ -223,7 +224,7 @@
     "smallFamily": "Hasta 8 niños",
     "largeFamily": "Hasta 14 niños",
     "license": "Licencia",
-    "footer": "Un servicio de la Asociación de Cuidado Infantil Familiar de San Francisco",
+    "footer": "Un servicio de la Asociación de Cuidado Infantil Familiar de San Francisco (FCCASF)",
     "areYouProvider": "¿Es usted un proveedor FCC con licencia?",
     "reportVacancies": "Reporte sus vacantes",
     "signInPrompt": "Inicie sesión para reportar sus vacantes",
@@ -243,6 +244,14 @@
     "slots": "espacios",
     "elfaFreeNote": "Puede ofrecer cuidado GRATIS para familias que califiquen",
     "fairnessNotice": "Listados en orden aleatorio, rotando diariamente por equidad",
+    "resources": {
+      "heading": "Recursos útiles",
+      "trustWheel": { "title": "Guía de confianza", "desc": "Lo más importante al elegir cuidado" },
+      "childCareGuide": { "title": "Guía de cuidado infantil", "desc": "Cómo encontrar cuidado infantil en SF" },
+      "fccVsCenters": { "title": "Familiar vs. Centros", "desc": "Compare sus opciones" },
+      "infantCare": { "title": "Cuidado para bebés", "desc": "Para niños menores de 2 años" },
+      "financialAssistance": { "title": "Ayuda financiera", "desc": "Programas que ayudan a pagar" }
+    },
     "providerCta": {
       "headline": "¿Es usted proveedor de cuidado infantil familiar?",
       "description": "Reporte sus vacantes gratis en este registro proporcionado por la Asociación de Cuidado Infantil Familiar de SF. Sus datos ayudan a incluir la voz del cuidado infantil familiar en las decisiones de planificación local.",
@@ -356,9 +365,9 @@
       "eligible": "¡Buenas noticias! Puede calificar para cuidado infantil GRATIS",
       "eligibleDesc": "Basado en el tamaño de su hogar e ingresos, puede ser elegible para:",
       "discount": "Puede calificar para cuidado infantil de costo reducido",
-      "discountDesc": "A partir de julio 2026, puede ser elegible para 50% de descuento en la matrícula.",
-      "overIncome": "Basado solo en ingresos, puede que no califique",
-      "overIncomeDesc": "Sin embargo, la elegibilidad depende de muchos factores más allá de los ingresos."
+      "discountDesc": "A partir de julio 2026, ELFA contribuirá un crédito de matrícula hacia el costo del cuidado. Usted pagaría el saldo restante.",
+      "overIncome": "Es posible que no califique para asistencia financiera de ELFA",
+      "overIncomeDesc": "Pero aún puede usar el registro de vacantes para encontrar proveedores con licencia, y las agencias de R&R pueden ayudarle a encontrar cuidado."
     },
     "programs": {
       "elfaFree": {
@@ -370,8 +379,8 @@
         "desc": "100% de crédito de matrícula para residentes de SF que ganan 111-150% AMI"
       },
       "elfaDiscount50": {
-        "title": "SF ELFA - 50% de descuento",
-        "desc": "50% de descuento en matrícula para residentes de SF que ganan 151-200% AMI"
+        "title": "SF ELFA - Crédito de matrícula",
+        "desc": "ELFA contribuye al costo del cuidado para residentes de SF que ganan 151-200% AMI. Las familias pagan el saldo restante."
       },
       "cspp": {
         "title": "Programa Preescolar del Estado de CA (CSPP)",

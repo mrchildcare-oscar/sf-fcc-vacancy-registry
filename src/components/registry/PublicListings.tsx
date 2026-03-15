@@ -20,6 +20,7 @@ import {
   Home,
   Check,
   BookOpen,
+  Shield,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -35,6 +36,7 @@ import {
 import { shuffleListingsForUser } from '../../lib/randomOrder';
 
 const PARENT_RESOURCES = [
+  { key: 'trustWheel', href: '/choose/', icon: Shield },
   { key: 'childCareGuide', href: '/child-care-san-francisco/', icon: BookOpen },
   { key: 'fccVsCenters', href: '/family-child-care-vs-centers/', icon: Home },
   { key: 'infantCare', href: '/infant-care-san-francisco/', icon: Baby },

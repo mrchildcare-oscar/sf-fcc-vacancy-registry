@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    {
+      "source": "/details/:id",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/summer2012newsletterfcc.pdf",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/summer2012newsletterfccchinese.pdf",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}

@@ -4,11 +4,12 @@ import {
   ShieldCheck,
   Users,
   Heart,
-  BookOpen,
+  Globe,
   Play,
   ChevronDown,
   ChevronUp,
   Home,
+  ArrowRight,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 
@@ -21,8 +22,45 @@ const YT_CC_LANG: Record<string, string> = {
   'zh-TW': 'zh-TW',
 };
 
+const TRUST_FACTORS = [
+  {
+    key: 'safety',
+    icon: ShieldCheck,
+    slug: '/choose/safety-licensing/',
+    iconColor: 'text-sky-600',
+    iconBg: 'bg-sky-50',
+    border: 'border-l-sky-400',
+  },
+  {
+    key: 'smallGroups',
+    icon: Users,
+    slug: '/choose/small-group-size/',
+    iconColor: 'text-emerald-600',
+    iconBg: 'bg-emerald-50',
+    border: 'border-l-emerald-400',
+  },
+  {
+    key: 'cultural',
+    icon: Globe,
+    slug: '/choose/cultural-language-match/',
+    iconColor: 'text-rose-500',
+    iconBg: 'bg-rose-50',
+    border: 'border-l-rose-400',
+  },
+  {
+    key: 'warmth',
+    icon: Heart,
+    slug: '/choose/warmth-family-feel/',
+    iconColor: 'text-violet-600',
+    iconBg: 'bg-violet-50',
+    border: 'border-l-violet-400',
+  },
+];
+
 export function WhyFamilyChildCare() {
   const { t, language } = useLanguage();
+
+  const langPrefix = language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : '';
 
   // Build YouTube URL with CC enabled in the user's language
   const ccLang = YT_CC_LANG[language] || 'en';
@@ -58,42 +96,17 @@ export function WhyFamilyChildCare() {
     }, 400);
   };
 
-  const benefits = [
-    {
-      icon: ShieldCheck,
-      title: t('landing.whyFcc.licensed'),
-      desc: t('landing.whyFcc.licensedDesc'),
-      iconColor: 'text-sky-600',
-      iconBg: 'bg-sky-50',
-      border: 'border-l-sky-400',
-    },
-    {
-      icon: Users,
-      title: t('landing.whyFcc.smallGroups'),
-      desc: t('landing.whyFcc.smallGroupsDesc'),
-      iconColor: 'text-emerald-600',
-      iconBg: 'bg-emerald-50',
-      border: 'border-l-emerald-400',
-    },
-    {
-      icon: Heart,
-      title: t('landing.whyFcc.diverse'),
-      desc: t('landing.whyFcc.diverseDesc'),
-      iconColor: 'text-rose-500',
-      iconBg: 'bg-rose-50',
-      border: 'border-l-rose-400',
-    },
-    {
-      icon: BookOpen,
-      title: t('landing.whyFcc.schoolReady'),
-      desc: t('landing.whyFcc.schoolReadyDesc'),
-      iconColor: 'text-violet-600',
-      iconBg: 'bg-violet-50',
-      border: 'border-l-violet-400',
-    },
-  ];
+  const factors = TRUST_FACTORS.map((f) => ({
+    ...f,
+    title: t(`landing.whyFcc.${f.key}`),
+    desc: t(`landing.whyFcc.${f.key}Desc`),
+    stat: t(`landing.whyFcc.${f.key}Stat`),
+    href: `${langPrefix}${f.slug}`,
+  }));
 
-  /* ── Returning visitor: compact collapsible (warm style) ── */
+  const exploreAllHref = `${langPrefix}/choose/`;
+
+  /* ── Returning visitor: compact collapsible ── */
   if (hasSeen) {
     return (
       <div className="mb-4">
@@ -142,23 +155,31 @@ export function WhyFamilyChildCare() {
                 className="absolute inset-0 w-full h-full"
               />
             </div>
-            {/* Benefit cards */}
+            {/* Trust Factor cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {benefits.map((b) => (
-                <div
-                  key={b.title}
-                  className={`flex items-start gap-3 bg-white/80 rounded-xl p-3.5 border-l-[3px] ${b.border}`}
+              {factors.map((f) => (
+                <a
+                  key={f.key}
+                  href={f.href}
+                  className={`flex items-start gap-3 bg-white/80 rounded-xl p-3.5 border-l-[3px] ${f.border} hover:bg-white transition-colors group`}
                 >
-                  <div className={`p-2 ${b.iconBg} rounded-lg flex-shrink-0`}>
-                    <b.icon size={18} className={b.iconColor} />
+                  <div className={`p-2 ${f.iconBg} rounded-lg flex-shrink-0`}>
+                    <f.icon size={18} className={f.iconColor} />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 leading-snug">{b.title}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{b.desc}</p>
+                    <h3 className="text-sm font-semibold text-gray-900 leading-snug group-hover:text-blue-700">{f.title}</h3>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{f.stat}</p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
+            <a
+              href={exploreAllHref}
+              className="flex items-center justify-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-900 transition-colors"
+            >
+              {t('landing.whyFcc.exploreAll')}
+              <ArrowRight size={14} />
+            </a>
           </div>
         )}
       </div>
@@ -211,32 +232,45 @@ export function WhyFamilyChildCare() {
           {t('landing.whyFcc.bannerSubtitle')}
         </p>
 
-        {/* Benefits grid — 1 col mobile, 2 col sm+ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-5">
-          {benefits.map((b, i) => (
-            <div
-              key={b.title}
-              className={`flex items-start gap-3 bg-white/80 backdrop-blur-sm rounded-xl p-3.5 border-l-[3px] ${b.border} transition-all duration-500 ease-out ${
+        {/* Trust Factor cards — 1 col mobile, 2 col sm+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+          {factors.map((f, i) => (
+            <a
+              key={f.key}
+              href={f.href}
+              className={`flex items-start gap-3 bg-white/80 backdrop-blur-sm rounded-xl p-3.5 border-l-[3px] ${f.border} transition-all duration-500 ease-out hover:bg-white group ${
                 mounted
                   ? 'opacity-100 translate-x-0'
                   : 'opacity-0 -translate-x-4'
               }`}
               style={{ transitionDelay: `${200 + i * 100}ms` }}
             >
-              <div className={`p-2 ${b.iconBg} rounded-lg flex-shrink-0`}>
-                <b.icon size={18} className={b.iconColor} />
+              <div className={`p-2 ${f.iconBg} rounded-lg flex-shrink-0`}>
+                <f.icon size={18} className={f.iconColor} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-sm font-semibold text-gray-900 leading-snug">
-                  {b.title}
+                <h3 className="text-sm font-semibold text-gray-900 leading-snug group-hover:text-blue-700">
+                  {f.title}
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                  {b.desc}
+                  {f.stat}
                 </p>
               </div>
-            </div>
+            </a>
           ))}
         </div>
+
+        {/* Explore all 8 factors */}
+        <a
+          href={exploreAllHref}
+          className={`flex items-center justify-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-900 mb-4 transition-all duration-500 ${
+            mounted ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ transitionDelay: '600ms' }}
+        >
+          {t('landing.whyFcc.exploreAll')}
+          <ArrowRight size={14} />
+        </a>
 
         {/* Video — lazy-loaded on click */}
         {showVideo ? (
@@ -245,7 +279,7 @@ export function WhyFamilyChildCare() {
               mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
             style={{
-              transitionDelay: '600ms',
+              transitionDelay: '700ms',
               border: '1px solid rgba(217,119,6,0.12)',
               boxShadow: '0 2px 12px rgba(217,119,6,0.08)',
             }}
@@ -265,7 +299,7 @@ export function WhyFamilyChildCare() {
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
             }`}
             style={{
-              transitionDelay: '600ms',
+              transitionDelay: '700ms',
               transitionDuration: '500ms',
               border: '1px solid rgba(217,119,6,0.1)',
             }}

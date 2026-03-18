@@ -47,6 +47,8 @@
     "forgotPasswordHelp": "Enter your email address and we'll send you a link to reset your password.",
     "sendResetLink": "Send Reset Link",
     "resetEmailSent": "Check your email for a password reset link.",
+    "resetEmailNotReceived": "Don't see an email? You may not have an account yet.",
+    "invalidCredentialsHint": "Email or password is incorrect. New here?",
     "enterEmail": "Please enter your email address",
     "sendMagicLink": "Send Magic Link",
     "magicLinkHelp": "We'll email you a link to sign in - no password needed",

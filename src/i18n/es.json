@@ -47,6 +47,8 @@
     "forgotPasswordHelp": "Ingrese su correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
     "sendResetLink": "Enviar enlace",
     "resetEmailSent": "Revise su correo electrónico para el enlace de restablecimiento de contraseña.",
+    "resetEmailNotReceived": "¿No recibió el correo? Es posible que no tenga una cuenta.",
+    "invalidCredentialsHint": "Correo o contraseña incorrectos. ¿Es nuevo aquí?",
     "enterEmail": "Por favor ingrese su correo electrónico",
     "sendMagicLink": "Enviar enlace mágico",
     "magicLinkHelp": "Le enviaremos un enlace para iniciar sesión - sin contraseña",

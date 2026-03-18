@@ -156,9 +156,21 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
             // Forgot Password Form
             <form onSubmit={handleSubmit} className="space-y-4">
               {resetSent ? (
-                <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 p-4 rounded-lg">
-                  <CheckCircle size={18} />
-                  <span>{t('auth.resetEmailSent')}</span>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 p-4 rounded-lg">
+                    <CheckCircle size={18} />
+                    <span>{t('auth.resetEmailSent')}</span>
+                  </div>
+                  <div className="text-sm text-gray-600 bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                    <p>{t('auth.resetEmailNotReceived')}</p>
+                    <button
+                      type="button"
+                      onClick={() => { setMode('signup'); setAuthMethod('password'); setResetSent(false); setError(''); }}
+                      className="mt-2 text-blue-600 hover:underline font-medium"
+                    >
+                      {t('auth.createAccount')}
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -350,9 +362,24 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
               )}
 
               {error && (
-                <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg">
-                  <AlertCircle size={16} />
-                  <span>{error}</span>
+                <div className="text-sm bg-red-50 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 text-red-600">
+                    <AlertCircle size={16} />
+                    <span>
+                      {mode === 'signin' && error.toLowerCase().includes('invalid login credentials')
+                        ? t('auth.invalidCredentialsHint')
+                        : error}
+                    </span>
+                  </div>
+                  {mode === 'signin' && error.toLowerCase().includes('invalid login credentials') && (
+                    <button
+                      type="button"
+                      onClick={() => { setMode('signup'); setAuthMethod('password'); setError(''); }}
+                      className="mt-2 text-blue-600 hover:underline font-medium"
+                    >
+                      {t('auth.createAccount')}
+                    </button>
+                  )}
                 </div>
               )}
 

@@ -209,10 +209,13 @@ export async function upsertVacancy(providerId: string, vacancyData: VacancyForm
 export async function getPublicListings(): Promise<PublicListing[]> {
   if (isDev) console.log('[Supabase] getPublicListings called');
   try {
+    // Include listings expired within the last 30 days (shown in "Older Listings" section)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const { data, error } = await supabase
       .from('public_listings')
       .select('*')
-      .gt('expires_at', new Date().toISOString())
+      .gt('expires_at', thirtyDaysAgo.toISOString())
       .order('last_updated', { ascending: false });
 
     if (error) {

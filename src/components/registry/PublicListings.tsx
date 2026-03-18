@@ -61,7 +61,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
 
   // Render freshness-aware "last updated" timestamp
   const renderLastUpdated = useCallback((listing: PublicListing) => {
-    const freshness = getListingFreshness(listing.last_updated);
+    const freshness = getListingFreshness(listing.last_updated, listing.expires_at);
     const timeAgo = formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true });
     if (freshness === 'stale') {
       return (
@@ -201,7 +201,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
     const fresh: PublicListing[] = [];
     const stale: PublicListing[] = [];
     listingsWithOpenings.forEach(l => {
-      if (getListingFreshness(l.last_updated) === 'stale') {
+      if (getListingFreshness(l.last_updated, l.expires_at) === 'stale') {
         stale.push(l);
       } else {
         fresh.push(l);

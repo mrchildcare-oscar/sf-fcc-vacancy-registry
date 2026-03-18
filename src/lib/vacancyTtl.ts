@@ -25,7 +25,9 @@ export function computeExpiresAt(data: Parameters<typeof computeVacancyTtlDays>[
 // stale: 30+ days — clear warning that availability may have changed
 export type ListingFreshness = 'fresh' | 'aging' | 'stale';
 
-export function getListingFreshness(lastUpdated: string): ListingFreshness {
+export function getListingFreshness(lastUpdated: string, expiresAt?: string): ListingFreshness {
+  // Expired listings are always stale
+  if (expiresAt && new Date(expiresAt) < new Date()) return 'stale';
   const ageMs = Date.now() - new Date(lastUpdated).getTime();
   const ageDays = ageMs / (1000 * 60 * 60 * 24);
   if (ageDays >= 30) return 'stale';

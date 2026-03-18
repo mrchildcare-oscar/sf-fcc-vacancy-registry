@@ -20,6 +20,7 @@ import {
   Home,
   Check,
   BookOpen,
+  AlertTriangle,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -33,6 +34,7 @@ import {
   trackSearchUsed,
 } from '../../lib/analytics';
 import { shuffleListingsForUser } from '../../lib/randomOrder';
+import { getListingFreshness } from '../../lib/vacancyTtl';
 
 const PARENT_RESOURCES = [
   { key: 'childCareGuide', href: '/child-care-san-francisco/', icon: BookOpen },
@@ -56,6 +58,33 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
   const [inquiryListing, setInquiryListing] = useState<PublicListing | null>(null);
   const [eligibilityOpen, setEligibilityOpen] = useState(false);
+
+  // Render freshness-aware "last updated" timestamp
+  const renderLastUpdated = useCallback((listing: PublicListing) => {
+    const freshness = getListingFreshness(listing.last_updated);
+    const timeAgo = formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true });
+    if (freshness === 'stale') {
+      return (
+        <p className="flex items-center gap-1 text-xs text-amber-600">
+          <AlertTriangle size={12} />
+          {t('publicListings.staleBadge')}
+        </p>
+      );
+    }
+    if (freshness === 'aging') {
+      return (
+        <p className="flex items-center gap-1 text-xs text-amber-500">
+          <Clock size={12} />
+          {t('publicListings.agingBadge')}
+        </p>
+      );
+    }
+    return (
+      <p className="text-xs text-gray-400">
+        {t('publicListings.lastUpdated')} {timeAgo}
+      </p>
+    );
+  }, [t]);
 
   // Read neighborhood filter from URL hash on mount (e.g. #public?neighborhood=Mission)
   useEffect(() => {
@@ -167,16 +196,32 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   }, [allFiltered]);
   const fullWithWaitlist = useMemo(() => allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available), [allFiltered]);
 
-  // Group listings by neighborhood for display
+  // Split listings into fresh/aging (shown normally) vs stale (shown in separate section)
+  const [freshListings, staleListings] = useMemo(() => {
+    const fresh: PublicListing[] = [];
+    const stale: PublicListing[] = [];
+    listingsWithOpenings.forEach(l => {
+      if (getListingFreshness(l.last_updated) === 'stale') {
+        stale.push(l);
+      } else {
+        fresh.push(l);
+      }
+    });
+    return [fresh, stale];
+  }, [listingsWithOpenings]);
+
+  const [showStaleSection, setShowStaleSection] = useState(false);
+
+  // Group listings by neighborhood for display (only fresh + aging)
   const groupedListings = useMemo(() => {
     const groups = new Map<string, PublicListing[]>();
-    listingsWithOpenings.forEach(listing => {
+    freshListings.forEach(listing => {
       const hood = listing.neighborhood || 'Other';
       if (!groups.has(hood)) groups.set(hood, []);
       groups.get(hood)!.push(listing);
     });
     return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
-  }, [listingsWithOpenings]);
+  }, [freshListings]);
 
   // Calculate vacancy statistics
   const vacancyStats = useMemo(() => {
@@ -676,9 +721,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
 
                     {/* Send Inquiry Button */}
                     <div className="mt-4 pt-4 border-t flex items-center justify-between">
-                      <p className="text-xs text-gray-400">
-                        {t('publicListings.lastUpdated')} {formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true })}
-                      </p>
+                      {renderLastUpdated(listing)}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -696,6 +739,157 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                 ))}
               </div>
             ))}
+
+            {/* Collapsed section for stale listings (30+ days old) */}
+            {staleListings.length > 0 && (
+              <div className="mt-8">
+                <button
+                  onClick={() => setShowStaleSection(!showStaleSection)}
+                  className="w-full flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-amber-700">
+                    <AlertTriangle size={18} />
+                    <span className="font-medium">
+                      {t('publicListings.olderListings')} ({staleListings.length})
+                    </span>
+                  </div>
+                  {showStaleSection ? (
+                    <ChevronUp size={20} className="text-amber-400" />
+                  ) : (
+                    <ChevronDown size={20} className="text-amber-400" />
+                  )}
+                </button>
+
+                {showStaleSection && (
+                  <div className="mt-2">
+                    <p className="text-sm text-amber-600 mb-4 px-1">
+                      {t('publicListings.olderListingsNote')}
+                    </p>
+                    <div className="space-y-3">
+                      {staleListings.map(listing => (
+                        <div
+                          key={listing.provider_id}
+                          className="bg-white rounded-xl shadow border-l-4 border-amber-300 opacity-80"
+                        >
+                          <div
+                            className="p-4 cursor-pointer"
+                            onClick={() => handleListingClick(listing)}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="font-semibold text-gray-900">{listing.business_name}</h3>
+                                  {listing.is_elfa_network && (
+                                    <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
+                                      <Star size={12} />
+                                      ELFA
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+                                  <span className="flex items-center gap-1">
+                                    <MapPin size={14} />
+                                    {listing.neighborhood || listing.zip_code}
+                                  </span>
+                                  <span className="flex items-center gap-1 text-amber-600">
+                                    <AlertTriangle size={12} />
+                                    {t('publicListings.staleBadge')}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right flex items-center gap-4">
+                                <span className="px-3 py-1 bg-amber-100 text-amber-700 text-sm font-medium rounded-full">
+                                  {t('publicListings.hasOpenings')}
+                                </span>
+                                {expandedListing === listing.provider_id ? (
+                                  <ChevronUp size={20} className="text-gray-400" />
+                                ) : (
+                                  <ChevronDown size={20} className="text-gray-400" />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {expandedListing === listing.provider_id && (
+                            <div className="px-4 pb-4 pt-2 border-t">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {(listing.phone || listing.website) && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
+                                    <div className="space-y-2 text-sm">
+                                      {listing.phone && (
+                                        <div className="flex items-center gap-2">
+                                          <a
+                                            href={`tel:${listing.phone}`}
+                                            onClick={() => trackContactClick(listing.provider_id, listing.business_name, 'phone')}
+                                            className="flex items-center gap-2 text-blue-600 hover:underline"
+                                          >
+                                            <Phone size={14} />
+                                            {listing.phone}
+                                          </a>
+                                          {listing.phone_accepts_text && (
+                                            <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+                                              {t('publicListings.textOk')}
+                                            </span>
+                                          )}
+                                        </div>
+                                      )}
+                                      {listing.website && (
+                                        <a
+                                          href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          onClick={() => trackContactClick(listing.provider_id, listing.business_name, 'website')}
+                                          className="flex items-center gap-1 text-blue-600 hover:underline"
+                                        >
+                                          <Globe size={14} />
+                                          {t('publicListings.visitWebsite')}
+                                          <ExternalLink size={12} />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
+                                  <div className="space-y-1 text-sm text-gray-600">
+                                    <p className="flex items-center gap-2">
+                                      <Clock size={14} />
+                                      {[
+                                        listing.full_time_available && t('vacancy.fullTime'),
+                                        listing.part_time_available && t('vacancy.partTime')
+                                      ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
+                                    </p>
+                                    {listing.languages.length > 0 && (
+                                      <p>{t('publicListings.languagesSpoken')}: {listing.languages.join(', ')}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Send Inquiry Button */}
+                              <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                                {renderLastUpdated(listing)}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setInquiryListing(listing);
+                                  }}
+                                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                  <MessageSquare size={16} />
+                                  {t('inquiry.sendInquiry')}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Collapsed section for full programs with waitlist */}
             {fullWithWaitlist.length > 0 && (
@@ -851,9 +1045,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
 
                             {/* Send Inquiry Button for waitlist */}
                             <div className="mt-4 pt-4 border-t flex items-center justify-between">
-                              <p className="text-xs text-gray-400">
-                                {t('publicListings.lastUpdated')} {formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true })}
-                              </p>
+                              {renderLastUpdated(listing)}
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();

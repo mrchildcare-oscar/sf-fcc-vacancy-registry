@@ -112,11 +112,12 @@ export interface PublicListing {
 
   available_date: string;
   last_updated: string;
+  expires_at?: string;
 }
 
 // Search/Filter options
 export interface SearchFilters {
-  zip_code?: string;
+  search?: string;
   neighborhood?: string;
   age_group?: 'infant' | 'toddler' | 'preschool' | 'school_age';
   elfa_only?: boolean;
@@ -133,10 +134,12 @@ export const SF_NEIGHBORHOODS = [
   'Excelsior',
   'Financial District',
   'Haight-Ashbury',
+  'Hayes Valley',
   'Inner Richmond',
   'Inner Sunset',
   'Marina',
   'Mission',
+  'Mission Bay',
   'Nob Hill',
   'Noe Valley',
   'North Beach',

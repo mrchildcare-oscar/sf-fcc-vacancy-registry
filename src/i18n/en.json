@@ -244,6 +244,10 @@
     "slots": "slots",
     "elfaFreeNote": "May offer FREE care for qualifying families",
     "fairnessNotice": "Listings shown in random order, rotating daily for fairness",
+    "agingBadge": "Updated over 2 weeks ago",
+    "staleBadge": "Updated over a month ago — contact to confirm availability",
+    "olderListings": "Older Listings",
+    "olderListingsNote": "These programs reported availability a while ago. Contact them directly to confirm.",
     "resources": {
       "heading": "Helpful Resources",
       "childCareGuide": { "title": "SF Child Care Guide", "desc": "Finding child care in San Francisco" },

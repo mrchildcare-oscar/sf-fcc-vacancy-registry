@@ -244,6 +244,10 @@
     "slots": "個名額",
     "elfaFreeNote": "符合資格的家庭可能獲得免費托兒服務",
     "fairnessNotice": "列表以隨機順序顯示，每日輪換以確保公平",
+    "agingBadge": "超過兩週前更新",
+    "staleBadge": "超過一個月前更新 — 請聯繫確認名額",
+    "olderListings": "較早的列表",
+    "olderListingsNote": "這些機構較早前報告了名額。請直接聯繫他們確認是否仍有空位。",
     "resources": {
       "heading": "實用資源",
       "childCareGuide": { "title": "舊金山托兒指南", "desc": "在舊金山尋找托兒服務" },

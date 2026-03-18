@@ -244,6 +244,10 @@
     "slots": "espacios",
     "elfaFreeNote": "Puede ofrecer cuidado GRATIS para familias que califiquen",
     "fairnessNotice": "Listados en orden aleatorio, rotando diariamente por equidad",
+    "agingBadge": "Actualizado hace más de 2 semanas",
+    "staleBadge": "Actualizado hace más de un mes — contacte para confirmar disponibilidad",
+    "olderListings": "Listados Anteriores",
+    "olderListingsNote": "Estos programas reportaron disponibilidad hace tiempo. Contáctelos directamente para confirmar.",
     "resources": {
       "heading": "Recursos útiles",
       "childCareGuide": { "title": "Guía de cuidado infantil", "desc": "Cómo encontrar cuidado infantil en SF" },

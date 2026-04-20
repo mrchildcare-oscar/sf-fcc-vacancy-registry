@@ -21,6 +21,7 @@ import {
 import { Provider, PublicListing } from '../../types/registry';
 import { Child, CapacityConfig } from '../../types';
 import { ProviderAuth } from './ProviderAuth';
+import { PasswordRecoveryScreen } from './PasswordRecoveryScreen';
 import { ProviderOnboarding, ProviderFormData } from './ProviderOnboarding';
 import { VacancyForm, VacancyFormData } from './VacancyForm';
 import { ProviderSettings } from './ProviderSettings';
@@ -33,7 +34,7 @@ import { CsvImport } from '../CsvImport';
 import { RosterSummary } from './RosterSummary';
 import { OrganizationDashboard } from './OrganizationDashboard';
 import { ProviderInquiries } from './ProviderInquiries';
-import { LogOut, User as UserIcon, Home, Edit3, Eye, Settings, Users, BarChart3, Building2, Key, MessageSquare, Shield } from 'lucide-react';
+import { LogOut, User as UserIcon, Edit3, Eye, Settings, Users, BarChart3, Building2, Key, MessageSquare, Shield } from 'lucide-react';
 import { useLanguage, LanguageSwitcher } from '../../i18n/LanguageContext';
 import { trackPageView, trackSignIn, trackSignUp, trackSignOut, trackAutoFillUsed, trackVacancyUpdated, ViewName } from '../../lib/analytics';
 
@@ -52,6 +53,7 @@ const HASH_TO_VIEW: Record<string, View> = {
   '': 'public',
   '#': 'public',
   '#public': 'public',
+  '#list-your-vacancy': 'auth',
   '#auth': 'auth',
   '#vacancies': 'dashboard',
   '#inquiries': 'inquiries',
@@ -62,7 +64,7 @@ const HASH_TO_VIEW: Record<string, View> = {
 
 const VIEW_TO_HASH: Partial<Record<View, string>> = {
   'public': '#public',
-  'auth': '#auth',
+  'auth': '#list-your-vacancy',
   'dashboard': '#vacancies',
   'inquiries': '#inquiries',
   'roster': '#roster',
@@ -106,6 +108,11 @@ export function RegistryApp() {
   const [editingChild, setEditingChild] = useState<Child | null>(null);
   const [showImport, setShowImport] = useState(false);
 
+  // Password recovery flow (provider clicked reset link in email)
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(
+    () => typeof window !== 'undefined' && window.location.hash.includes('type=recovery')
+  );
+
   // Track if view change is from hash (to avoid circular updates)
   const isHashChange = useRef(false);
   const lastTrackedView = useRef<View | null>(null);
@@ -130,7 +137,7 @@ export function RegistryApp() {
 
   // Read hash on mount and set initial view
   useEffect(() => {
-    const hash = window.location.hash;
+    const hash = window.location.hash.split('?')[0];
     const viewFromHash = HASH_TO_VIEW[hash];
     if (viewFromHash && viewFromHash !== 'public') {
       isHashChange.current = true;
@@ -145,7 +152,7 @@ export function RegistryApp() {
   // Listen for hash changes (back/forward buttons)
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash;
+      const hash = window.location.hash.split('?')[0];
       const viewFromHash = HASH_TO_VIEW[hash] || 'public';
       isHashChange.current = true;
       setView(viewFromHash);
@@ -323,6 +330,14 @@ export function RegistryApp() {
     // Subscribe to auth changes (but skip during initial load to avoid race condition)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (isDev) console.log('[Auth] Auth state changed:', event, { hasSession: !!session, isInitialLoad });
+
+      // Password reset link from email — show set-new-password screen
+      if (event === 'PASSWORD_RECOVERY') {
+        if (isDev) console.log('[Auth] PASSWORD_RECOVERY — showing reset form');
+        setIsPasswordRecovery(true);
+        if (session?.user) setUser(session.user);
+        return;
+      }
 
       // Skip INITIAL_SESSION event as we handle it in checkAuth
       if (event === 'INITIAL_SESSION') {
@@ -644,6 +659,22 @@ export function RegistryApp() {
     );
   }
 
+  // Password recovery flow — shown when provider clicks reset link in email
+  if (isPasswordRecovery) {
+    return (
+      <PasswordRecoveryScreen
+        userEmail={user?.email}
+        onSuccess={() => {
+          // Clean recovery tokens from URL so reload doesn't re-trigger
+          if (window.location.hash.includes('type=recovery')) {
+            window.history.replaceState({}, '', window.location.pathname);
+          }
+          setIsPasswordRecovery(false);
+        }}
+      />
+    );
+  }
+
   // Navigation for logged-in providers
   // Desktop: top horizontal nav
   // Mobile: bottom tab bar
@@ -740,20 +771,6 @@ export function RegistryApp() {
     return (
       <div>
         {user && provider && <ProviderNav />}
-        {!user && (
-          <div className="bg-gray-100 border-b border-gray-200">
-            <div className="max-w-6xl mx-auto px-4 h-8 flex items-center justify-between">
-              <LanguageSwitcher compact />
-              <button
-                onClick={() => navigateTo('auth')}
-                className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 border border-blue-300 hover:border-blue-400 rounded-full px-3 py-0.5 transition-colors"
-              >
-                <LogOut size={12} className="rotate-180" />
-                {t('landing.brand.providerLogin')}
-              </button>
-            </div>
-          </div>
-        )}
         <PublicListings listings={publicListings} loading={listingsLoading} onSignIn={() => navigateTo('auth')} isProvider={!!provider} />
       </div>
     );
@@ -762,24 +779,10 @@ export function RegistryApp() {
   // Auth view
   if (view === 'auth' || !user) {
     return (
-      <div>
-        <div className="bg-white border-b py-3 px-4">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <button
-              onClick={() => navigateTo('public')}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
-            >
-              <Home size={16} />
-              {t('auth.backToListings')}
-            </button>
-            <LanguageSwitcher />
-          </div>
-        </div>
-        <ProviderAuth
-          onEmailAuth={handleEmailAuth}
-          onGoogleAuth={handleGoogleAuth}
-        />
-      </div>
+      <ProviderAuth
+        onEmailAuth={handleEmailAuth}
+        onGoogleAuth={handleGoogleAuth}
+      />
     );
   }
 

@@ -167,9 +167,9 @@ Backed by SF Family Child Care Association
 #### QR Code Strategy
 
 Create trackable QR codes for each channel:
-- `beta.familychildcaresf.com/?ref=flyer-mission`
-- `beta.familychildcaresf.com/?ref=farmers-market`
-- `beta.familychildcaresf.com/?ref=pediatrician`
+- `familychildcaresf.com/?ref=flyer-mission`
+- `familychildcaresf.com/?ref=farmers-market`
+- `familychildcaresf.com/?ref=pediatrician`
 
 This lets you measure which offline efforts work best.
 

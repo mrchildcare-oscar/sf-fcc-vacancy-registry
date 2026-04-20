@@ -92,7 +92,7 @@
 **嵌入程式碼範例：**
 ```html
 <div id="fcc-vacancy-widget" data-provider="您的執照號碼"></div>
-<script src="https://beta.familychildcaresf.com/widget.js"></script>
+<script src="https://familychildcaresf.com/widget.js"></script>
 ```
 
 這樣一來，造訪您網站的家庭隨時都能看到最新的空缺資訊。

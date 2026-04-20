@@ -1,4 +1,53 @@
 {
+  "audienceBar": {
+    "parent": "尋找托兒",
+    "provider": "刊登您的空缺"
+  },
+  "toolbox": {
+    "heading": "家長工具箱",
+    "eligibility": {
+      "label": "我符合資格嗎？",
+      "desc": "查看您的收入是否符合補貼資格"
+    },
+    "license": {
+      "label": "查核執照",
+      "desc": "確認 ELFA 簽約狀態"
+    },
+    "evaluate": {
+      "label": "如何評估",
+      "heading": "如何評估家庭托兒者",
+      "body": "舊金山家庭在選擇托兒時常見的考量因素：",
+      "desc": "選擇托兒時該注意什麼"
+    },
+    "aboutFcc": {
+      "label": "什麼是家庭托兒？",
+      "desc": "家庭托兒基本介紹"
+    }
+  },
+  "licenseLookup": {
+    "heading": "查核家庭托兒者是否與 ELFA 簽約",
+    "helpText": "從 CCRR 名單或其他地方拿到 9 位數的執照編號？查核該家庭托兒是否目前與舊金山 ELFA 簽約。",
+    "placeholder": "例如：384001234",
+    "button": "查核",
+    "results": {
+      "invalid": "請輸入 9 位數字的執照編號（只限數字）。",
+      "elfa": "此執照已與 ELFA 簽約",
+      "elfaBody": "與 ELFA 簽約的家庭托兒符合舊金山「全民幼兒學習」品質標準，並服務不同收入家庭。",
+      "elfaSource": "資料來源：sf.gov",
+      "viewListing": "查看他們的空缺列表",
+      "notElfa": "未與 ELFA 簽約",
+      "notElfaBody": "這可能仍是持照家庭托兒，請透過 CDSS 確認執照狀態與紀錄。"
+    },
+    "cdssLink": "透過 CDSS 查核",
+    "disclaimer": "本工具反映我們最近一次 ELFA 簽約家庭托兒的記錄，並非轉介服務。瞭解更多：",
+    "elfaInfoLink": "sf.gov 全民幼兒學習計畫"
+  },
+  "inAppBrowser": {
+    "title": "您正在使用 {{browser}} 內建瀏覽器",
+    "body": "註冊、Google 登入及密碼重設連結在此處可能無法正常使用。請在 Safari、Chrome 或其他完整瀏覽器中開啟此頁面。點擊右上角「•••」選單並選擇「在瀏覽器中開啟」，或複製下方連結。",
+    "copyLink": "複製連結",
+    "copied": "已複製！"
+  },
   "common": {
     "save": "儲存",
     "saving": "儲存中...",
@@ -33,7 +82,7 @@
     "settings": "設定"
   },
   "auth": {
-    "title": "托兒所服務提供者登入",
+    "title": "家庭托兒者登入",
     "subtitle": "登入以管理您的空缺資訊",
     "emailPlaceholder": "your@email.com",
     "passwordPlaceholder": "您的密碼",
@@ -54,10 +103,24 @@
     "checkEmail": "請檢查您的信箱",
     "useDifferentEmail": "使用其他信箱",
     "usePassword": "改用密碼登入",
-    "useMagicLink": "改用登入連結"
+    "useMagicLink": "改用登入連結",
+    "setNewPasswordTitle": "設定新密碼",
+    "setNewPasswordSubtitle": "請為您的帳號設定新密碼。更新後將自動登入。",
+    "accountEmail": "帳號電子郵件",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認新密碼",
+    "updatePassword": "更新密碼",
+    "passwordTooShort": "密碼至少需要 6 個字元",
+    "passwordMismatch": "兩次輸入的密碼不一致",
+    "passwordUpdated": "密碼已更新！正在跳轉...",
+    "intakeBanner": {
+      "title": "大多數家庭托兒者使用我們的簡易登記表",
+      "body": "無需帳號或密碼。只有已經擁有帳號或管理多個地點的家庭托兒者才需要在此登入。",
+      "cta": "開啟登記表"
+    }
   },
   "onboarding": {
-    "title": "完成您的服務提供者資料",
+    "title": "完成您的家庭托兒者資料",
     "subtitle": "幫助家庭找到您的托兒服務",
     "licenseNumber": "執照號碼",
     "licenseNumberHelp": "您的加州社區照護執照9位數號碼",
@@ -137,7 +200,7 @@
     "embedDescription": "將此代碼添加到您的網站，向家庭展示您目前的空缺狀況。當您更改空缺狀態時，它會自動更新。",
     "embedNote": "適用於任何允許自定義 HTML 的網站建設工具。",
     "listingOrderTitle": "您的列表位置每日更新",
-    "listingOrderDesc": "為確保公平，每位家長看到的服務提供者順序都不同，且每日更新。這確保所有機構獲得平等的曝光機會。"
+    "listingOrderDesc": "為確保公平，每位家長看到的家庭托兒者順序都不同，且每日更新。這確保所有機構獲得平等的曝光機會。"
   },
   "roster": {
     "title": "已註冊兒童",
@@ -203,7 +266,8 @@
     "introSentence": "您社區中有空缺的持照家庭托兒服務",
     "programsWithOpenings": "個機構有空缺",
     "totalSlots": "個空缺名額",
-    "searchPlaceholder": "按名稱、社區或郵遞區號搜尋",
+    "searchPlaceholder": "按名稱、社區、郵遞區號或執照編號搜尋",
+    "browseByNeighborhood": "按社區瀏覽：",
     "filterResults": "篩選結果",
     "neighborhood": "社區",
     "ageGroup": "年齡組",
@@ -225,7 +289,7 @@
     "largeFamily": "最多14名兒童",
     "license": "執照",
     "footer": "舊金山家庭托兒協會 (FCCASF) 服務",
-    "areYouProvider": "您是持照家庭托兒服務提供者嗎？",
+    "areYouProvider": "您是持照家庭托兒者嗎？",
     "reportVacancies": "報告您的空缺",
     "signInPrompt": "登入以報告您的空缺",
     "visitWebsite": "訪問網站",
@@ -253,15 +317,17 @@
       "childCareGuide": { "title": "舊金山托兒指南", "desc": "在舊金山尋找托兒服務" },
       "fccVsCenters": { "title": "家庭托兒 vs. 中心", "desc": "比較您的選擇" },
       "infantCare": { "title": "嬰兒托兒", "desc": "兩歲以下兒童的照護" },
-      "financialAssistance": { "title": "財務援助", "desc": "幫助支付托兒費用的計劃" }
+      "financialAssistance": { "title": "財務援助", "desc": "幫助支付托兒費用的計劃" },
+      "neighborhoods": { "title": "社區", "desc": "按三藩市社區瀏覽" }
     },
     "providerCta": {
-      "headline": "您是家庭托兒服務提供者嗎？",
+      "headline": "您是家庭托兒者嗎？",
       "description": "在舊金山家庭托兒協會提供的這個登記處免費報告您的空缺。您的數據有助於在當地托兒規劃決策中納入家庭托兒的聲音。",
       "benefit1": "免費刊登 — 讓當地家庭找到您",
       "benefit2": "只需不到 5 分鐘",
       "benefit3": "支持家庭托兒倡導與規劃",
-      "button": "報告您的空缺"
+      "button": "刊登您的空缺（免費，5分鐘）",
+      "existingAccount": "已有帳號？登入"
     }
   },
   "settings": {
@@ -290,10 +356,10 @@
     "passwordsDoNotMatch": "密碼不符",
     "dangerZone": "危險區域",
     "deleteAccount": "刪除帳號",
-    "deleteAccountDesc": "永久刪除您的帳號、服務提供者資料和所有空缺列表。此操作無法復原。",
+    "deleteAccountDesc": "永久刪除您的帳號、家庭托兒者資料和所有空缺列表。此操作無法復原。",
     "deleteButton": "刪除我的帳號",
     "deleteConfirmTitle": "刪除您的帳號？",
-    "deleteConfirmMessage": "這將永久刪除您的帳號、服務提供者資料、所有空缺列表和詢問記錄。請輸入您的電子郵件地址以確認。",
+    "deleteConfirmMessage": "這將永久刪除您的帳號、家庭托兒者資料、所有空缺列表和詢問記錄。請輸入您的電子郵件地址以確認。",
     "deleteConfirmPlaceholder": "輸入您的電子郵件以確認",
     "deleteDeleting": "正在刪除帳號..."
   },
@@ -399,7 +465,7 @@
     },
     "otherOptions": {
       "title": "其他可探索的選項：",
-      "sliding": "部分服務提供者提供浮動收費",
+      "sliding": "部分家庭托兒者提供浮動收費",
       "employer": "雇主托兒福利",
       "fsa": "受扶養人照護 FSA（節省稅款）"
     }
@@ -407,7 +473,7 @@
   "landing": {
     "brand": {
       "name": "FamilyChildCareSF",
-      "providerLogin": "服務提供者登入"
+      "providerLogin": "家庭托兒者登入"
     },
     "welcomeSubtitle": "您的社區中有空缺的持照家庭托兒所",
     "elfa": {
@@ -448,14 +514,14 @@
     "namePlaceholder": "請輸入您的全名",
     "yourEmail": "您的電子郵件",
     "emailPlaceholder": "your@email.com",
-    "emailHelp": "服務提供者將回覆此電子郵件",
+    "emailHelp": "家庭托兒者將回覆此電子郵件",
     "yourPhone": "電話號碼",
     "phonePlaceholder": "(555) 555-5555",
     "ageGroupInterested": "感興趣的年齡組",
     "multipleAgeGroups": "多個年齡組",
     "message": "您的訊息",
-    "messagePlaceholder": "告訴服務提供者您的托兒需求、時間偏好，以及任何問題...",
-    "privacyNote": "您的資訊僅會與此服務提供者分享，以回覆您的詢問。",
+    "messagePlaceholder": "告訴家庭托兒者您的托兒需求、時間偏好，以及任何問題...",
+    "privacyNote": "您的資訊僅會與此家庭托兒者分享，以回覆您的詢問。",
     "sending": "發送中...",
     "successTitle": "詢問已發送！",
     "successMessage": "{provider} 將收到您的詢問並回覆您的電子郵件。",

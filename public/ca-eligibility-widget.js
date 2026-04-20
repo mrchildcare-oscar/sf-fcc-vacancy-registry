@@ -4,7 +4,7 @@
  *
  * Usage:
  * <div id="ca-eligibility-widget"></div>
- * <script src="https://beta.familychildcaresf.com/ca-eligibility-widget.js"></script>
+ * <script src="https://familychildcaresf.com/ca-eligibility-widget.js"></script>
  *
  * Or with custom options:
  * <div id="ca-eligibility-widget"

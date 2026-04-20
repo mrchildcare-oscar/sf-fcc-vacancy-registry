@@ -17,3 +17,7 @@ body {
     padding-bottom: 5rem; /* Height of bottom nav + some extra */
   }
 }
+
+/* Hide scrollbar for horizontal scroll strips */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

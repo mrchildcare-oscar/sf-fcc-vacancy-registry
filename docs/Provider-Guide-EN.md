@@ -92,7 +92,7 @@ Show your availability directly on your own website:
 **Example embed code:**
 ```html
 <div id="fcc-vacancy-widget" data-provider="YOUR-LICENSE-NUMBER"></div>
-<script src="https://beta.familychildcaresf.com/widget.js"></script>
+<script src="https://familychildcaresf.com/widget.js"></script>
 ```
 
 This way, families visiting your website always see your current availability.
@@ -131,9 +131,9 @@ If you have no current openings:
 
 ---
 
-## Beta Testing - We Need Your Feedback!
+## We Need Your Feedback!
 
-This platform is currently in beta testing. Your input is invaluable in making it better for all SF FCC providers.
+Your input is invaluable in making this platform better for all SF FCC providers.
 
 ### Please share:
 - **Challenges you face** with managing vacancies and enrollment
@@ -169,4 +169,4 @@ If you have questions or need help, please contact: **Oscar Tang** at **oscar.fc
 
 ---
 
-*This is a beta version. Features may change based on provider feedback.*
+*Features may change based on provider feedback.*

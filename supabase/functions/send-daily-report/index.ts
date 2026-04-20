@@ -214,6 +214,27 @@ async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date)
     })),
   }
 
+  // === PAGE VIEWS (last 24 hours) ===
+  const { data: viewsData } = await supabase
+    .from('page_views')
+    .select('event_type, provider_id')
+    .gte('created_at', startDate.toISOString())
+    .lte('created_at', endDate.toISOString())
+
+  const pageViews = viewsData?.filter(v => v.event_type === 'page_view').length || 0
+  const listingViews = viewsData?.filter(v => v.event_type === 'listing_view').length || 0
+  const contactClicks = viewsData?.filter(v => v.event_type === 'contact_click').length || 0
+  const uniqueListingsViewed = new Set(
+    viewsData?.filter(v => v.event_type === 'listing_view' && v.provider_id).map(v => v.provider_id) || []
+  ).size
+
+  metrics.views = {
+    pageViews,
+    listingViews,
+    contactClicks,
+    uniqueListingsViewed,
+  }
+
   // === VACANCY DETAILS ===
   const { data: vacancyData } = await supabase
     .from('vacancies')
@@ -350,6 +371,29 @@ async function sendDiagnosticReport(apiKey: string, recipient: string, metrics: 
       </div>
       ` : ''}
 
+      <!-- SITE TRAFFIC (Yesterday) -->
+      <div style="background:#f0fdfa;border-left:4px solid #0d9488;padding:16px;margin-bottom:24px;border-radius:4px;">
+        <h2 style="color:#134e4a;font-size:18px;margin:0 0 16px;">👀 Site Traffic (Last 24h)</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Page Views</p>
+            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.pageViews}</p>
+          </div>
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Listing Views</p>
+            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.listingViews}</p>
+          </div>
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Contact Clicks</p>
+            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.contactClicks}</p>
+          </div>
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Unique Listings</p>
+            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.uniqueListingsViewed}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- VACANCY SUMMARY -->
       <div style="background:#faf5ff;border-left:4px solid #9333ea;padding:16px;margin-bottom:24px;border-radius:4px;">
         <h2 style="color:#581c87;font-size:18px;margin:0 0 12px;">📍 Active Vacancies</h2>
@@ -408,6 +452,12 @@ PARENT INQUIRIES
 Real Inquiries: ${metrics.inquiries.totalRealInquiries} total (${metrics.inquiries.newRealInquiries} today)
 Test Inquiries: ${metrics.inquiries.totalTestInquiries} total
 Status: ${metrics.inquiries.totalRealInquiries === 0 ? 'NO REAL INQUIRIES YET' : 'Parents are using the platform'}
+
+SITE TRAFFIC (Last 24h)
+Page Views: ${metrics.views.pageViews}
+Listing Views: ${metrics.views.listingViews}
+Contact Clicks: ${metrics.views.contactClicks}
+Unique Listings Viewed: ${metrics.views.uniqueListingsViewed}
 
 ACTIVE VACANCIES
 Total Listings: ${metrics.vacancies.totalActive}

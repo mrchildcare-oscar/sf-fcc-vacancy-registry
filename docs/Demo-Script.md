@@ -3,7 +3,7 @@
 
 **Duration:** 15-20 minutes
 **Presenter:** Oscar Tang
-**Platform URL:** https://beta.familychildcaresf.com
+**Platform URL:** https://familychildcaresf.com
 
 ---
 
@@ -185,7 +185,7 @@
 
 > "That's basically it. Simple to use - report your vacancies, families find you. And now you can even show that info right on your own website.
 >
-> We're in beta testing right now, which means we're still improving it based on what providers like you tell us.
+> We're always improving it based on what providers like you tell us.
 >
 > **I'd love to hear:**
 > - What challenges do you face with managing vacancies and enrollment?

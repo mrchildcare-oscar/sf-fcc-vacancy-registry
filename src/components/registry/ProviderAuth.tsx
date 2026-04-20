@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Mail, Lock, Chrome, ArrowRight, AlertCircle, CheckCircle, Sparkles } from 'lucide-react';
+import { Mail, Lock, Chrome, ArrowRight, AlertCircle, CheckCircle, Sparkles, Check, Home } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
+import { trackJotformOpened, trackListProgramClicked } from '../../lib/analytics';
+import { buildIntakeUrl } from '../../lib/intakeUrl';
 
 interface ProviderAuthProps {
   onEmailAuth: (email: string, password: string, isSignUp: boolean) => Promise<{ error?: string }>;
@@ -9,7 +11,7 @@ interface ProviderAuthProps {
 }
 
 export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
   const [authMethod, setAuthMethod] = useState<'magic' | 'password'>('password');
   const [email, setEmail] = useState('');
@@ -119,19 +121,62 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
     }
   };
 
+  const jotformUrl = buildIntakeUrl(import.meta.env.VITE_JOTFORM_NEW_INTAKE_URL, language);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {t('auth.title')}
+            {t('publicListings.providerCta.headline')}
           </h1>
           <p className="text-gray-600">
-            {t('auth.subtitle')}
+            {t('publicListings.providerCta.description')}
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        {jotformUrl && (
+          <div className="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <Home size={22} className="text-blue-600" />
+              <h2 className="text-lg font-semibold text-gray-900">
+                {t('auth.intakeBanner.title')}
+              </h2>
+            </div>
+            <ul className="space-y-1.5 mb-4">
+              {(['benefit1', 'benefit2', 'benefit3'] as const).map((key) => (
+                <li key={key} className="flex items-center gap-2 text-sm text-gray-700">
+                  <Check size={16} className="text-green-600 flex-shrink-0" />
+                  {t(`publicListings.providerCta.${key}`)}
+                </li>
+              ))}
+            </ul>
+            <a
+              href={jotformUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                trackListProgramClicked('auth_banner');
+                trackJotformOpened('auth_page');
+              }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            >
+              {t('publicListings.providerCta.button')} →
+            </a>
+          </div>
+        )}
+
+        <details className="group mt-4">
+          <summary className="list-none cursor-pointer text-center text-sm text-gray-600 hover:text-gray-900 py-3 select-none">
+            <span className="underline underline-offset-2 group-open:hidden">
+              {t('publicListings.providerCta.existingAccount')}
+            </span>
+            <span className="hidden group-open:inline text-xs uppercase tracking-wider text-gray-500">
+              {t('publicListings.providerCta.existingAccount')} ▲
+            </span>
+          </summary>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 mt-3">
           {/* Google Sign In */}
           <button
             onClick={handleGoogleAuth}
@@ -409,6 +454,7 @@ export function ProviderAuth({ onEmailAuth, onGoogleAuth }: ProviderAuthProps) {
             </div>
           )}
         </div>
+        </details>
       </div>
     </div>
   );

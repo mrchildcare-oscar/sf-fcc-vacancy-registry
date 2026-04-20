@@ -383,7 +383,7 @@ Widget loads → Calls get_org_vacancies(slug) or get_provider_vacancy(license)
      data-org="modern-education"
      data-link-base="https://www.daycaresf.com">
 </div>
-<script src="https://beta.familychildcaresf.com/widget.js"></script>
+<script src="https://familychildcaresf.com/widget.js"></script>
 ```
 
 **Attributes:**
@@ -395,7 +395,7 @@ Widget loads → Calls get_org_vacancies(slug) or get_provider_vacancy(license)
 <div id="fcc-vacancy-widget"
      data-provider="384004210">
 </div>
-<script src="https://beta.familychildcaresf.com/widget.js"></script>
+<script src="https://familychildcaresf.com/widget.js"></script>
 ```
 
 **Attributes:**

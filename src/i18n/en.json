@@ -1,4 +1,53 @@
 {
+  "audienceBar": {
+    "parent": "Find Child Care",
+    "provider": "List Your Vacancy"
+  },
+  "toolbox": {
+    "heading": "Parent Toolbox",
+    "eligibility": {
+      "label": "Am I eligible?",
+      "desc": "Check if your income qualifies for subsidies"
+    },
+    "license": {
+      "label": "Check a license",
+      "desc": "Verify ELFA contract status"
+    },
+    "evaluate": {
+      "label": "How to evaluate",
+      "heading": "How to evaluate a provider",
+      "body": "Factors families in SF consistently weigh when choosing child care:",
+      "desc": "What to look for when choosing care"
+    },
+    "aboutFcc": {
+      "label": "What is FCC?",
+      "desc": "Family child care basics"
+    }
+  },
+  "licenseLookup": {
+    "heading": "Check if a provider is contracted with ELFA",
+    "helpText": "Got a 9-digit license number from CCRR's list or elsewhere? Check whether that home has a current ELFA contract with SF.",
+    "placeholder": "e.g. 384001234",
+    "button": "Check",
+    "results": {
+      "invalid": "Please enter a 9-digit license number (digits only).",
+      "elfa": "This license is contracted with ELFA",
+      "elfaBody": "ELFA-contracted homes meet the City's Early Learning for All quality standards and serve families across income levels.",
+      "elfaSource": "Source: sf.gov",
+      "viewListing": "View their vacancy listing",
+      "notElfa": "Not contracted with ELFA",
+      "notElfaBody": "This may still be a licensed family child care home — verify licensing status and history with CDSS."
+    },
+    "cdssLink": "Verify with CDSS",
+    "disclaimer": "This tool reflects our most recent snapshot of ELFA-contracted homes. It is not a referral. Learn more about",
+    "elfaInfoLink": "Early Learning for All on sf.gov"
+  },
+  "inAppBrowser": {
+    "title": "You're using {{browser}}'s in-app browser",
+    "body": "Sign-up, Google login, and password reset links may not work here. Please open this page in Safari, Chrome, or another full browser. Tap the ••• menu at the top right and choose \"Open in Browser,\" or copy the link below.",
+    "copyLink": "Copy link",
+    "copied": "Copied!"
+  },
   "common": {
     "save": "Save",
     "saving": "Saving...",
@@ -54,7 +103,21 @@
     "checkEmail": "Check your email",
     "useDifferentEmail": "Use a different email",
     "usePassword": "Sign in with password instead",
-    "useMagicLink": "Sign in with magic link instead"
+    "useMagicLink": "Sign in with magic link instead",
+    "setNewPasswordTitle": "Set a new password",
+    "setNewPasswordSubtitle": "Enter a new password for your account. You'll be signed in automatically after updating.",
+    "accountEmail": "Account email",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "updatePassword": "Update password",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordUpdated": "Password updated! Redirecting...",
+    "intakeBanner": {
+      "title": "Most providers use our simple intake form",
+      "body": "No account or password needed. Only sign in here if you already have an account or manage multiple locations.",
+      "cta": "Open the intake form"
+    }
   },
   "onboarding": {
     "title": "Complete Your Provider Profile",
@@ -203,7 +266,8 @@
     "introSentence": "Licensed home-based child care programs with openings in your neighborhood",
     "programsWithOpenings": "programs with openings",
     "totalSlots": "total slots",
-    "searchPlaceholder": "Search by name, neighborhood, or ZIP",
+    "searchPlaceholder": "Search by name, neighborhood, ZIP, or license #",
+    "browseByNeighborhood": "Browse by neighborhood:",
     "filterResults": "Filter Results",
     "neighborhood": "Neighborhood",
     "ageGroup": "Age Group",
@@ -253,15 +317,17 @@
       "childCareGuide": { "title": "SF Child Care Guide", "desc": "Finding child care in San Francisco" },
       "fccVsCenters": { "title": "FCC vs. Centers", "desc": "Compare your options" },
       "infantCare": { "title": "Infant Care", "desc": "Care for children under 2" },
-      "financialAssistance": { "title": "Financial Help", "desc": "Programs that help pay for care" }
+      "financialAssistance": { "title": "Financial Help", "desc": "Programs that help pay for care" },
+      "neighborhoods": { "title": "Neighborhoods", "desc": "Browse by SF neighborhood" }
     },
     "providerCta": {
       "headline": "Are you a Family Child Care provider?",
-      "description": "Report your vacancies for free on this registry provided by the SF Family Child Care Association. Your data helps include the family child care voice in local child care planning decisions.",
+      "description": "Report your vacancies for free on this registry provided by the Family Child Care Association of San Francisco. Your data helps include the family child care voice in local child care planning decisions.",
       "benefit1": "Free listing — reach local families",
       "benefit2": "Takes under 5 minutes",
       "benefit3": "Supports FCC advocacy & planning",
-      "button": "Report Your Vacancies"
+      "button": "List my vacancy (free, 5 min)",
+      "existingAccount": "Already have an account? Sign in"
     }
   },
   "settings": {

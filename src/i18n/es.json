@@ -1,4 +1,53 @@
 {
+  "audienceBar": {
+    "parent": "Buscar cuidado",
+    "provider": "Liste su vacante"
+  },
+  "toolbox": {
+    "heading": "Herramientas para familias",
+    "eligibility": {
+      "label": "¿Soy elegible?",
+      "desc": "Verifique si sus ingresos califican para subsidios"
+    },
+    "license": {
+      "label": "Verifique una licencia",
+      "desc": "Confirme el estado del contrato ELFA"
+    },
+    "evaluate": {
+      "label": "Cómo evaluar",
+      "heading": "Cómo evaluar a un proveedor",
+      "body": "Factores que las familias en SF consideran al elegir cuidado infantil:",
+      "desc": "Qué considerar al elegir cuidado"
+    },
+    "aboutFcc": {
+      "label": "¿Qué es FCC?",
+      "desc": "Cuidado infantil familiar básico"
+    }
+  },
+  "licenseLookup": {
+    "heading": "Verifique si un proveedor tiene contrato con ELFA",
+    "helpText": "¿Tiene un número de licencia de 9 dígitos de la lista de CCRR u otro lugar? Verifique si ese hogar tiene un contrato ELFA vigente con SF.",
+    "placeholder": "ej. 384001234",
+    "button": "Verificar",
+    "results": {
+      "invalid": "Por favor ingrese un número de licencia de 9 dígitos (solo números).",
+      "elfa": "Esta licencia tiene contrato con ELFA",
+      "elfaBody": "Los hogares con contrato ELFA cumplen los estándares de calidad de Early Learning for All de la Ciudad y atienden a familias de todos los niveles de ingresos.",
+      "elfaSource": "Fuente: sf.gov",
+      "viewListing": "Ver su listado de vacantes",
+      "notElfa": "Sin contrato con ELFA",
+      "notElfaBody": "Aún puede ser un hogar de cuidado infantil familiar con licencia — verifique el estado y el historial de licencia con CDSS."
+    },
+    "cdssLink": "Verificar con CDSS",
+    "disclaimer": "Esta herramienta refleja nuestra instantánea más reciente de hogares con contrato ELFA. No es una referencia. Más información sobre",
+    "elfaInfoLink": "Early Learning for All en sf.gov"
+  },
+  "inAppBrowser": {
+    "title": "Está usando el navegador interno de {{browser}}",
+    "body": "El registro, el inicio de sesión con Google y los enlaces de restablecimiento de contraseña pueden no funcionar aquí. Abra esta página en Safari, Chrome u otro navegador completo. Toque el menú \"•••\" en la esquina superior derecha y elija \"Abrir en el navegador\", o copie el enlace a continuación.",
+    "copyLink": "Copiar enlace",
+    "copied": "¡Copiado!"
+  },
   "common": {
     "save": "Guardar",
     "saving": "Guardando...",
@@ -54,7 +103,21 @@
     "checkEmail": "Revise su correo",
     "useDifferentEmail": "Usar otro correo",
     "usePassword": "Iniciar sesión con contraseña",
-    "useMagicLink": "Iniciar sesión con enlace mágico"
+    "useMagicLink": "Iniciar sesión con enlace mágico",
+    "setNewPasswordTitle": "Establezca una nueva contraseña",
+    "setNewPasswordSubtitle": "Ingrese una nueva contraseña para su cuenta. Se iniciará sesión automáticamente después de actualizar.",
+    "accountEmail": "Correo de la cuenta",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirme la nueva contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordUpdated": "¡Contraseña actualizada! Redirigiendo...",
+    "intakeBanner": {
+      "title": "La mayoría de proveedores usan nuestro formulario simple",
+      "body": "No se necesita cuenta ni contraseña. Inicie sesión aquí solo si ya tiene una cuenta o administra varias ubicaciones.",
+      "cta": "Abrir el formulario de registro"
+    }
   },
   "onboarding": {
     "title": "Complete su perfil de proveedor",
@@ -203,7 +266,8 @@
     "introSentence": "Programas de cuidado infantil familiar con licencia y vacantes en su vecindario",
     "programsWithOpenings": "programas con vacantes",
     "totalSlots": "espacios totales",
-    "searchPlaceholder": "Buscar por nombre, vecindario o código postal",
+    "searchPlaceholder": "Buscar por nombre, vecindario, código postal o N° de licencia",
+    "browseByNeighborhood": "Explorar por barrio:",
     "filterResults": "Filtrar resultados",
     "neighborhood": "Vecindario",
     "ageGroup": "Grupo de edad",
@@ -253,15 +317,17 @@
       "childCareGuide": { "title": "Guía de cuidado infantil", "desc": "Cómo encontrar cuidado infantil en SF" },
       "fccVsCenters": { "title": "Familiar vs. Centros", "desc": "Compare sus opciones" },
       "infantCare": { "title": "Cuidado para bebés", "desc": "Para niños menores de 2 años" },
-      "financialAssistance": { "title": "Ayuda financiera", "desc": "Programas que ayudan a pagar" }
+      "financialAssistance": { "title": "Ayuda financiera", "desc": "Programas que ayudan a pagar" },
+      "neighborhoods": { "title": "Barrios", "desc": "Explorar por barrio de SF" }
     },
     "providerCta": {
       "headline": "¿Es usted proveedor de cuidado infantil familiar?",
-      "description": "Reporte sus vacantes gratis en este registro proporcionado por la Asociación de Cuidado Infantil Familiar de SF. Sus datos ayudan a incluir la voz del cuidado infantil familiar en las decisiones de planificación local.",
+      "description": "Reporte sus vacantes gratis en este registro proporcionado por la Asociación de Cuidado Infantil Familiar de San Francisco. Sus datos ayudan a incluir la voz del cuidado infantil familiar en las decisiones de planificación local.",
       "benefit1": "Listado gratuito — llegue a familias locales",
       "benefit2": "Toma menos de 5 minutos",
       "benefit3": "Apoya la defensa y planificación de FCC",
-      "button": "Reporte sus vacantes"
+      "button": "Liste mi vacante (gratis, 5 min)",
+      "existingAccount": "¿Ya tiene una cuenta? Inicie sesión"
     }
   },
   "settings": {

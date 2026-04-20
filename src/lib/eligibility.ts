@@ -45,7 +45,7 @@ export interface EligibilityResult {
   statePreschool: boolean;    // 100% SMI (CSPP)
   elfaFree: boolean;          // ≤110% AMI (fully funded)
   elfaCredit100: boolean;     // 111-150% AMI (100% credit = FREE/nearly free)
-  elfaDiscount50: boolean;    // 151-200% AMI (50% discount, starting July 2026)
+  elfaDiscount50: boolean;    // 151-200% AMI (tuition credit, starting July 2026)
   anyProgram: boolean;
 }
 
@@ -125,7 +125,7 @@ export const SF_RR_AGENCIES: RRAgency[] = [
     email: "rr@childrenscouncil.org",
     address: "445 Church Street, San Francisco, CA 94114",
     addressZh: "445 Church Street, San Francisco, CA 94114",
-    website: "childcaresf.org",
+    website: "childrenscouncil.org",
     forTiers: ['free'],
     description: "For Fully-Funded ELFA applications (≤110% AMI)",
     descriptionZh: "適用於全額補助 ELFA 申請（≤110% AMI）",
@@ -171,10 +171,11 @@ export function getRelevantAgencies(result: EligibilityResult): RRAgency[] {
   } else if (result.elfaCredit100 || result.elfaDiscount50) {
     // For tuition credit tiers: Wu Yee only
     agencies.push(SF_RR_AGENCIES.find(a => a.id === 'wu-yee')!);
+  } else {
+    // Over income: R&R agencies can still help find care
+    agencies.push(SF_RR_AGENCIES.find(a => a.id === 'childrens-council')!);
+    agencies.push(SF_RR_AGENCIES.find(a => a.id === 'wu-yee')!);
   }
-
-  // Always show Compass for homeless families (at the end)
-  agencies.push(SF_RR_AGENCIES.find(a => a.id === 'compass')!);
 
   return agencies;
 }

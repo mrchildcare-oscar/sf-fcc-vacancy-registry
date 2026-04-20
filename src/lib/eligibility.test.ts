@@ -162,36 +162,34 @@ describe('checkEligibility', () => {
 // ── getRelevantAgencies ──────────────────────────────────────────────
 
 describe('getRelevantAgencies', () => {
-  it("returns Children's Council + Wu Yee + Compass for elfaFree", () => {
+  it("returns Children's Council + Wu Yee for elfaFree", () => {
     const result = checkEligibility(4, 100000);
     const agencies = getRelevantAgencies(result);
     const ids = agencies.map((a) => a.id);
     expect(ids).toContain('childrens-council');
     expect(ids).toContain('wu-yee');
-    expect(ids).toContain('compass');
   });
 
-  it('returns Wu Yee + Compass for elfaCredit100', () => {
+  it('returns Wu Yee only for elfaCredit100', () => {
     const result = checkEligibility(4, 200000);
     const agencies = getRelevantAgencies(result);
     const ids = agencies.map((a) => a.id);
     expect(ids).not.toContain('childrens-council');
     expect(ids).toContain('wu-yee');
-    expect(ids).toContain('compass');
   });
 
-  it('returns Wu Yee + Compass for elfaDiscount50', () => {
+  it('returns Wu Yee only for elfaDiscount50', () => {
     const result = checkEligibility(4, 250000);
     const agencies = getRelevantAgencies(result);
     const ids = agencies.map((a) => a.id);
     expect(ids).toContain('wu-yee');
-    expect(ids).toContain('compass');
+    expect(ids).not.toContain('compass');
   });
 
-  it('always includes Compass (homeless services)', () => {
+  it('Compass is only for homeless tier', () => {
     const result = checkEligibility(4, 999999);
     const agencies = getRelevantAgencies(result);
-    expect(agencies.some((a) => a.id === 'compass')).toBe(true);
+    expect(agencies.some((a) => a.id === 'compass')).toBe(false);
   });
 });
 

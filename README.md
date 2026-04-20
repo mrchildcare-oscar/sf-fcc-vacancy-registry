@@ -1,6 +1,6 @@
 # SF Family Child Care Vacancy Registry
 
-**Version 1.7.0**
+**Version 1.8.1**
 
 A web platform helping licensed Family Child Care providers in San Francisco report vacancies and connect with families seeking childcare. Built with CA Regulation 102416.5 compliance checking to help providers stay within licensing limits.
 
@@ -254,6 +254,15 @@ npm run test:coverage # Run tests with coverage report
 | ![Projections](docs/screenshot-projections.png) | ![Org](docs/screenshot-7-organization-dashboard.png) |
 
 ## Changelog
+
+### v1.8.1 (March 2026)
+- **License number on all listing types** — Waitlist and older listing cards now display the provider's license number, matching active listings
+- **Vacancy flags on older listings** — Older listings now show Infant/Toddler/Preschool/School Age badges matching active listing style and placement
+- **Stale badge replaced with specific date** — "Updated over a month ago" replaced with actual date (e.g., "Last updated Feb 12") for transparency without alarm. "Contact to confirm" note appears once in section header instead of on every card
+
+### v1.8.0 (March 2026)
+- **Auth UX fix** — Failed login now shows "New here?" + Create account button; password reset success adds guidance for non-existent accounts
+- **Staleness indicators** — Instead of hiding expired listings, show them in a collapsible "Older Listings" section with amber visual treatment and freshness tiers (fresh/aging/stale)
 
 ### v1.7.0 (March 2026)
 - **Trust Wheel Content Hub** — 27 new pages (9 EN + 9 ES + 9 ZH) with interactive wheel visualization and 8 deep-dive factor pages based on 312-family survey data

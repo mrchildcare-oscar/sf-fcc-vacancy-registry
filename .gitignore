@@ -29,3 +29,6 @@ npm-debug.log*
 .claude/
 .vercel
 .env*.local
+
+# Jotform provisioning state (contains form ID)
+.jotform-intake.json

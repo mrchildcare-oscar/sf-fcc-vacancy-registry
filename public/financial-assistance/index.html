@@ -6,7 +6,7 @@
   <title>SF Child Care Financial Assistance — Free &amp; Reduced-Cost Programs | Family Child Care SF</title>
 
   <!-- Primary Meta Tags -->
-  <meta name="description" content="Most San Francisco families qualify for free or reduced-cost child care. Learn about Early Learning For All (ELFA), Head Start, CSPP, CalWORKs, and how to apply.">
+  <meta name="description" content="Most San Francisco families qualify for free or reduced-cost child care. Learn about Early Learning For All (ELFA), Head Start, CSPP, CalWORKs, plus documentation checklists for residency, income, and family size.">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://familychildcaresf.com/financial-assistance/">
@@ -105,6 +105,30 @@
           "@type": "Answer",
           "text": "In addition to ELFA, California has many child care subsidy programs including Head Start, California State Preschool Program (CSPP), CalWORKs child care, the Bridge Program for foster children, and more. For a complete guide to all programs, visit mychildcareplan.org/resource/child-care-subsidy-programs/."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does child care cost in San Francisco without subsidies?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Full-time child care in San Francisco typically costs between $2,500 and $3,500 per month for infants and toddlers, and $2,000 to $3,000 per month for preschool-age children, depending on the program type and location."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take to get child care subsidies in San Francisco?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Processing times vary, but families should expect 2-4 weeks from application to enrollment confirmation. Availability depends on open slots at ELFA-participating programs; as of early 2026, approximately 1,000 slots are open citywide, with the highest demand for infant and toddler care (ages 0-3)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is Baby Prop C and how does it fund child care?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Baby Prop C, passed by San Francisco voters in 2018, is a 3.5% tax on commercial property leases that funds the city's early care and education system. It pays for ELFA subsidies, provider workforce compensation, and facility improvements. Current revenue projections fund the program through approximately 2032."
+        }
       }
     ]
   }
@@ -124,7 +148,7 @@
       "url": "https://familychildcaresf.com"
     },
     "datePublished": "2026-03-14",
-    "dateModified": "2026-03-07",
+    "dateModified": "2026-04-20",
     "inLanguage": "en"
   }
   </script>
@@ -285,6 +309,28 @@
     }
     .program-card h3 { margin-top: 0; }
 
+    /* Doc vault + example family card grids */
+    .card-grid { display: grid; gap: 16px; margin: 16px 0; grid-template-columns: 1fr; }
+    @media (min-width: 720px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
+    .vault-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .vault-card h3 { margin-top: 0; font-size: 16px; color: #1e40af; }
+    .vault-card h3 a { color: #1e40af; }
+    .vault-card p { font-size: 14px; color: #475569; margin-bottom: 0; }
+    .example-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      padding: 18px;
+    }
+    .example-card h3 { margin-top: 0; font-size: 16px; color: #1e40af; }
+    .example-card p { font-size: 15px; margin-bottom: 0; }
+
     /* CTA */
     .cta-section {
       text-align: center;
@@ -343,6 +389,7 @@
           <a href="/infant-care-san-francisco/">Infant Care</a>
           <a href="/financial-assistance/" class="active-page">Financial Help</a>
           <a href="/choose/">Trust Wheel</a>
+          <a href="/neighborhoods/">Neighborhoods</a>
           <a href="/#public">Find Providers</a>
         </div>
         <div class="lang-switcher">
@@ -448,6 +495,44 @@
       </div>
 
       <div class="content-section">
+        <h2>Documentation Vault</h2>
+        <p>Applications move faster when you arrive with the right documents. Use these short, plain-English checklists before you sit down with Children's Council or Wu Yee.</p>
+        <div class="card-grid">
+          <div class="vault-card">
+            <h3><a href="/financial-assistance/docs/residency-proof/">What documents prove SF residency?</a></h3>
+            <p>A current lease, recent utility bill, or government mail addressed to you inside city limits — usually two matching items are enough.</p>
+          </div>
+          <div class="vault-card">
+            <h3><a href="/financial-assistance/docs/self-employed-income/">How do self-employed/gig workers prove income?</a></h3>
+            <p>Bring your latest tax return plus 1099s, Schedule C, or 3 months of bank deposits and platform payout statements from Uber, DoorDash, or similar.</p>
+          </div>
+          <div class="vault-card">
+            <h3><a href="/financial-assistance/docs/family-size/">Who counts as "family size"?</a></h3>
+            <p>Everyone financially dependent in your household — parents, children, and often a pregnant member counts as two — even if extended relatives share rent.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>Example Families &mdash; What Would I Qualify For?</h2>
+        <p>Three common San Francisco scenarios to help you estimate your own benefit before applying.</p>
+        <div class="card-grid">
+          <div class="example-card">
+            <h3>Single parent, one toddler, earning $65,000/year</h3>
+            <p>This family is well under 110% AMI, so they qualify for <strong>fully free enrollment</strong> at any ELFA program. If their child is under 3, they should look for family child care homes with infant/toddler openings, since these are the most common setting for this age group. Estimated annual subsidy value: approximately $36,000.</p>
+          </div>
+          <div class="example-card">
+            <h3>Two parents, one infant, household income $180,000/year</h3>
+            <p>This family sits above 110% AMI but below 150% AMI, so they qualify for a <strong>full tuition credit</strong> at ELFA programs &mdash; meaning most or all of their child care costs are covered. Many family child care homes in the Sunset and Richmond districts serve this income bracket and offer Cantonese or Mandarin bilingual care.</p>
+          </div>
+          <div class="example-card">
+            <h3>Two parents, two children (ages 1 and 4), household income $280,000/year</h3>
+            <p>This family falls between 150% and 200% AMI. Starting July 1, 2026, they will qualify for a <strong>half tuition credit</strong> &mdash; approximately 50% off ELFA rates. For two children, that can save over $18,000 per year. Their 4-year-old may also be eligible for free Transitional Kindergarten through SFUSD.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
         <h2>Other programs beyond ELFA</h2>
         <p>California has many child care subsidy programs beyond ELFA, including Head Start, CSPP (State Preschool), CalWORKs, the Bridge Program for foster children, and more. Eligibility and benefits vary by program.</p>
         <div class="program-card">
@@ -478,6 +563,18 @@
         <div class="faq-item">
           <h3>What other child care assistance programs are available in San Francisco?</h3>
           <p>In addition to ELFA, California has many child care subsidy programs including Head Start, California State Preschool Program (CSPP), CalWORKs, the Bridge Program for foster children, and more. For a complete guide to all programs, visit <a href="https://mychildcareplan.org/resource/child-care-subsidy-programs/" target="_blank" rel="noopener">mychildcareplan.org</a>.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How much does child care cost in San Francisco without subsidies?</h3>
+          <p>Full-time child care in San Francisco typically costs between $2,500 and $3,500 per month for infants and toddlers, and $2,000 to $3,000 per month for preschool-age children, depending on the program type and location.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How long does it take to get child care subsidies in San Francisco?</h3>
+          <p>Processing times vary, but families should expect 2&ndash;4 weeks from application to enrollment confirmation. Availability depends on open slots at ELFA-participating programs; as of early 2026, approximately 1,000 slots are open citywide, with the highest demand for infant and toddler care (ages 0&ndash;3).</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is Baby Prop C and how does it fund child care?</h3>
+          <p>Baby Prop C, passed by San Francisco voters in 2018, is a 3.5% tax on commercial property leases that funds the city's early care and education system. It pays for ELFA subsidies, provider workforce compensation, and facility improvements. Current revenue projections fund the program through approximately 2032.</p>
         </div>
       </div>
 

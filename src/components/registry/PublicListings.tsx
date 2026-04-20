@@ -514,12 +514,6 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                 </button>
               );
             })}
-            <a
-              href={`${language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : ''}/neighborhoods/`}
-              className="px-3 py-1 rounded-full text-blue-700 hover:underline"
-            >
-              {language === 'zh-TW' ? '閱讀文章 →' : language === 'es' ? 'Leer artículos →' : 'Read articles →'}
-            </a>
           </div>
 
           {/* Filter Panel */}

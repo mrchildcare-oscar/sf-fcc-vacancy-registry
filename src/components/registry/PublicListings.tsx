@@ -84,6 +84,90 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     mission: ['Mission'],
   };
 
+  // Short trilingual hint + label for the 5 neighborhoods with landing pages.
+  // Used to decorate group headers in the listings with a "learn more" link
+  // that's contextually adjacent to where parents are evaluating that area.
+  const NEIGHBORHOOD_ARTICLES: Record<string, {
+    label: { en: string; es: string; zh: string };
+    hint: { en: string; es: string; zh: string };
+  }> = {
+    sunset: {
+      label: { en: 'Sunset', es: 'Sunset', zh: '日落區' },
+      hint: {
+        en: 'High density of Cantonese/Mandarin bilingual homes',
+        es: 'Alta densidad de hogares bilingües en cantonés/mandarín',
+        zh: '粵語及普通話雙語托兒密度最高',
+      },
+    },
+    richmond: {
+      label: { en: 'Richmond', es: 'Richmond', zh: '列治文區' },
+      hint: {
+        en: 'Chinese and Russian bilingual providers',
+        es: 'Proveedores bilingües en chino y ruso',
+        zh: '中文及俄語雙語服務提供者',
+      },
+    },
+    excelsior: {
+      label: { en: 'Excelsior', es: 'Excelsior', zh: '艾克賽爾西奧' },
+      hint: {
+        en: 'Diverse Spanish, Tagalog, and Chinese FCC community',
+        es: 'Comunidad FCC diversa en español, tagalo y chino',
+        zh: '多元西班牙語、他加祿語及中文FCC社群',
+      },
+    },
+    bayview: {
+      label: { en: 'Bayview', es: 'Bayview', zh: '灣景區' },
+      hint: {
+        en: 'Growing ELFA network in southeastern SF',
+        es: 'Red ELFA en crecimiento en el sureste de SF',
+        zh: '三藩市東南ELFA網絡持續擴展',
+      },
+    },
+    mission: {
+      label: { en: 'Mission', es: 'Mission', zh: '教會區' },
+      hint: {
+        en: 'Highest concentration of Spanish-speaking FCC',
+        es: 'Mayor concentración de FCC en español',
+        zh: '西班牙語FCC密度最高',
+      },
+    },
+  };
+
+  // Map a DB neighborhood value (e.g. "Inner Sunset") to its article slug
+  // (e.g. "sunset"), or null if no article exists for that neighborhood.
+  const getArticleSlug = (dbNeighborhood: string): string | null => {
+    const lowered = dbNeighborhood.toLowerCase();
+    if (NEIGHBORHOOD_ARTICLES[lowered]) return lowered;
+    for (const [slug, aliases] of Object.entries(NEIGHBORHOOD_ALIASES)) {
+      if (aliases.includes(dbNeighborhood)) return slug;
+    }
+    return null;
+  };
+
+  // Is the given slug chip currently active (matches filters.neighborhood)?
+  const isChipActive = (slug: string): boolean => {
+    if (!filters.neighborhood) return false;
+    const f = filters.neighborhood.toLowerCase();
+    if (f === slug) return true;
+    const aliases = NEIGHBORHOOD_ALIASES[slug] || [];
+    return aliases.some(a => a.toLowerCase() === f);
+  };
+
+  // Handle chip click: toggle filter (clicking an active chip clears it).
+  // Single-alias slugs use the canonical DB value so the dropdown reflects
+  // the selection; multi-alias slugs use the raw slug and rely on the
+  // alias lookup inside applyFilters.
+  const handleNeighborhoodChipClick = (slug: string) => {
+    if (isChipActive(slug)) {
+      setFilters(prev => ({ ...prev, neighborhood: undefined }));
+      return;
+    }
+    const aliases = NEIGHBORHOOD_ALIASES[slug] || [];
+    const value = aliases.length === 1 ? aliases[0] : slug;
+    setFilters(prev => ({ ...prev, neighborhood: value }));
+    setShowFilters(true);
+  };
+
   // Read neighborhood filter from URL hash on mount (e.g. #public?neighborhood=excelsior)
   // Normalizes slugs to canonical DB values so the dropdown reflects the active filter.
   useEffect(() => {
@@ -403,36 +487,38 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
             </button>
           </div>
 
-          {/* Browse by neighborhood — direct links to landing pages */}
+          {/* Browse by neighborhood — clicking a chip filters the listings
+              in-place; the "View all" link at the end goes to the neighborhood
+              articles index for parents who want to read up before deciding. */}
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
             <span className="text-gray-500 inline-flex items-center gap-1">
               <MapPin size={14} />
               {t('publicListings.browseByNeighborhood')}
             </span>
-            {[
-              { slug: 'sunset', en: 'Sunset', es: 'Sunset', zh: '日落區' },
-              { slug: 'richmond', en: 'Richmond', es: 'Richmond', zh: '列治文區' },
-              { slug: 'excelsior', en: 'Excelsior', es: 'Excelsior', zh: 'Excelsior' },
-              { slug: 'bayview', en: 'Bayview', es: 'Bayview', zh: 'Bayview' },
-              { slug: 'mission', en: 'Mission', es: 'Mission', zh: 'Mission' },
-            ].map(n => {
-              const langPrefix = language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : '';
-              const label = language === 'zh-TW' ? n.zh : language === 'es' ? n.es : n.en;
+            {(['sunset', 'richmond', 'excelsior', 'bayview', 'mission'] as const).map(slug => {
+              const langKey = language === 'zh-TW' ? 'zh' : language === 'es' ? 'es' : 'en';
+              const label = NEIGHBORHOOD_ARTICLES[slug].label[langKey];
+              const active = isChipActive(slug);
               return (
-                <a
-                  key={n.slug}
-                  href={`${langPrefix}/neighborhoods/${n.slug}/`}
-                  className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                <button
+                  key={slug}
+                  type="button"
+                  onClick={() => handleNeighborhoodChipClick(slug)}
+                  className={`px-3 py-1 rounded-full border transition-colors ${
+                    active
+                      ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
+                      : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                  }`}
                 >
                   {label}
-                </a>
+                </button>
               );
             })}
             <a
               href={`${language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : ''}/neighborhoods/`}
               className="px-3 py-1 rounded-full text-blue-700 hover:underline"
             >
-              {language === 'zh-TW' ? '查看全部 →' : language === 'es' ? 'Ver todos →' : 'View all →'}
+              {language === 'zh-TW' ? '閱讀文章 →' : language === 'es' ? 'Leer artículos →' : 'Read articles →'}
             </a>
           </div>
 
@@ -602,12 +688,29 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
           </div>
         ) : (
           <div className="space-y-4">
-            {groupedListings.map(([neighborhood, groupListings]) => (
+            {groupedListings.map(([neighborhood, groupListings]) => {
+              const articleSlug = getArticleSlug(neighborhood);
+              const langKey = language === 'zh-TW' ? 'zh' : language === 'es' ? 'es' : 'en';
+              const langPrefix = language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : '';
+              const article = articleSlug ? NEIGHBORHOOD_ARTICLES[articleSlug] : null;
+              const learnMoreLabel = langKey === 'zh' ? '了解更多' : langKey === 'es' ? 'Más información' : 'Learn more';
+              return (
               <div key={neighborhood}>
-                <div className="flex items-center gap-2 mb-2 mt-2">
+                <div className="flex items-center gap-2 mb-2 mt-2 flex-wrap">
                   <MapPin size={14} className="text-gray-400" />
                   <h2 className="text-sm font-semibold text-gray-700">{neighborhood}</h2>
                   <span className="text-xs text-gray-400">({groupListings.length})</span>
+                  {article && (
+                    <>
+                      <span className="text-xs text-gray-500">· {article.hint[langKey]}</span>
+                      <a
+                        href={`${langPrefix}/neighborhoods/${articleSlug}/`}
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        {learnMoreLabel} →
+                      </a>
+                    </>
+                  )}
                 </div>
                 {groupListings.map(listing => (
               <div
@@ -780,7 +883,8 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
               </div>
                 ))}
               </div>
-            ))}
+              );
+            })}
 
             {/* Collapsed section for stale listings (30+ days old) */}
             {staleListings.length > 0 && (

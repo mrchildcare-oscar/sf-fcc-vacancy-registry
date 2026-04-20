@@ -15,18 +15,13 @@ import {
   ClipboardList,
   MessageSquare,
   Shuffle,
-  DollarSign,
   ExternalLink,
-  Home,
-  Check,
-  BookOpen,
   AlertTriangle,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { EligibilityScreener } from './EligibilityScreener';
-import { WhyFamilyChildCare } from './WhyFamilyChildCare';
 import { ParentInquiryForm } from './ParentInquiryForm';
+import { ParentToolbox } from './ParentToolbox';
 import {
   trackListingView,
   trackContactClick,
@@ -36,13 +31,6 @@ import {
 import { shuffleListingsForUser } from '../../lib/randomOrder';
 import { getListingFreshness } from '../../lib/vacancyTtl';
 
-const PARENT_RESOURCES = [
-  { key: 'childCareGuide', href: '/child-care-san-francisco/', icon: BookOpen },
-  { key: 'fccVsCenters', href: '/family-child-care-vs-centers/', icon: Home },
-  { key: 'infantCare', href: '/infant-care-san-francisco/', icon: Baby },
-  { key: 'financialAssistance', href: '/financial-assistance/', icon: DollarSign },
-] as const;
-
 interface PublicListingsProps {
   listings: PublicListing[];
   loading?: boolean;
@@ -50,24 +38,23 @@ interface PublicListingsProps {
   isProvider?: boolean; // Whether viewer is a signed-in provider
 }
 
-export function PublicListings({ listings, loading, onSignIn, isProvider = false }: PublicListingsProps) {
+export function PublicListings({ listings, loading, isProvider = false }: PublicListingsProps) {
   const { t, language } = useLanguage();
   const [filters, setFilters] = useState<SearchFilters>({});
   const [showFilters, setShowFilters] = useState(false);
   const [expandedListing, setExpandedListing] = useState<string | null>(null);
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
   const [inquiryListing, setInquiryListing] = useState<PublicListing | null>(null);
-  const [eligibilityOpen, setEligibilityOpen] = useState(false);
 
   // Render freshness-aware "last updated" timestamp
   const renderLastUpdated = useCallback((listing: PublicListing) => {
     const freshness = getListingFreshness(listing.last_updated, listing.expires_at);
     const timeAgo = formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true });
     if (freshness === 'stale') {
+      const updatedDate = new Date(listing.last_updated).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       return (
-        <p className="flex items-center gap-1 text-xs text-amber-600">
-          <AlertTriangle size={12} />
-          {t('publicListings.staleBadge')}
+        <p className="text-xs text-gray-400">
+          {t('publicListings.lastUpdated')} {updatedDate}
         </p>
       );
     }
@@ -86,14 +73,32 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
     );
   }, [t]);
 
-  // Read neighborhood filter from URL hash on mount (e.g. #public?neighborhood=Mission)
+  // Map URL slugs from /neighborhoods/{slug}/ landing pages to canonical
+  // neighborhood values in the listing data. Sunset and Richmond are split
+  // into Inner/Outer in the dataset, so the landing-page slug should match both.
+  const NEIGHBORHOOD_ALIASES: Record<string, string[]> = {
+    sunset: ['Inner Sunset', 'Outer Sunset'],
+    richmond: ['Inner Richmond', 'Outer Richmond'],
+    bayview: ['Bayview'],
+    excelsior: ['Excelsior'],
+    mission: ['Mission'],
+  };
+
+  // Read neighborhood filter from URL hash on mount (e.g. #public?neighborhood=excelsior)
+  // Normalizes slugs to canonical DB values so the dropdown reflects the active filter.
   useEffect(() => {
     const hashParts = window.location.hash.split('?');
     if (hashParts.length > 1) {
       const params = new URLSearchParams(decodeURIComponent(hashParts[1]));
       const neighborhood = params.get('neighborhood');
       if (neighborhood) {
-        setFilters(prev => ({ ...prev, neighborhood }));
+        const fLower = neighborhood.trim().toLowerCase();
+        const aliasList = NEIGHBORHOOD_ALIASES[fLower];
+        // Single-alias slugs (excelsior, bayview, mission): use the canonical DB value
+        // so the dropdown shows the correct selection. Multi-alias slugs (sunset, richmond)
+        // keep the slug — the filter logic handles them via the alias lookup.
+        const displayValue = aliasList?.length === 1 ? aliasList[0] : neighborhood;
+        setFilters(prev => ({ ...prev, neighborhood: displayValue }));
         setShowFilters(true);
       }
     }
@@ -143,13 +148,22 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   const applyFilters = (listing: PublicListing) => {
     if (filters.search) {
       const q = filters.search.toLowerCase();
+      const digitsOnly = filters.search.replace(/\D/g, '');
       const matchesZip = listing.zip_code.startsWith(filters.search);
       const matchesNeighborhood = listing.neighborhood?.toLowerCase().includes(q);
       const matchesName = listing.business_name.toLowerCase().includes(q);
-      if (!matchesZip && !matchesNeighborhood && !matchesName) return false;
+      const matchesLicense =
+        digitsOnly.length >= 4 && listing.license_number?.includes(digitsOnly);
+      if (!matchesZip && !matchesNeighborhood && !matchesName && !matchesLicense) return false;
     }
-    if (filters.neighborhood && listing.neighborhood !== filters.neighborhood) {
-      return false;
+    if (filters.neighborhood) {
+      const fLower = filters.neighborhood.trim().toLowerCase();
+      const aliasList = NEIGHBORHOOD_ALIASES[fLower];
+      if (aliasList) {
+        if (!listing.neighborhood || !aliasList.includes(listing.neighborhood)) return false;
+      } else if ((listing.neighborhood?.toLowerCase() ?? '') !== fLower) {
+        return false;
+      }
     }
     if (filters.elfa_only && !listing.is_elfa_network) {
       return false;
@@ -211,6 +225,14 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   }, [listingsWithOpenings]);
 
   const [showStaleSection, setShowStaleSection] = useState(false);
+
+  // Auto-expand the older listings section when there are no fresh listings
+  // but stale ones exist (e.g., a neighborhood filter with only older results).
+  useEffect(() => {
+    if (freshListings.length === 0 && staleListings.length > 0) {
+      setShowStaleSection(true);
+    }
+  }, [freshListings.length, staleListings.length]);
 
   // Group listings by neighborhood for display (only fresh + aging)
   const groupedListings = useMemo(() => {
@@ -294,7 +316,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div data-page-header className="bg-white border-b sticky top-11 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4">
           {/* Title and Stats - stacked on mobile, side-by-side on desktop */}
           <div className="mb-4">
@@ -379,6 +401,39 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                 </span>
               )}
             </button>
+          </div>
+
+          {/* Browse by neighborhood — direct links to landing pages */}
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-gray-500 inline-flex items-center gap-1">
+              <MapPin size={14} />
+              {t('publicListings.browseByNeighborhood')}
+            </span>
+            {[
+              { slug: 'sunset', en: 'Sunset', es: 'Sunset', zh: '日落區' },
+              { slug: 'richmond', en: 'Richmond', es: 'Richmond', zh: '列治文區' },
+              { slug: 'excelsior', en: 'Excelsior', es: 'Excelsior', zh: 'Excelsior' },
+              { slug: 'bayview', en: 'Bayview', es: 'Bayview', zh: 'Bayview' },
+              { slug: 'mission', en: 'Mission', es: 'Mission', zh: 'Mission' },
+            ].map(n => {
+              const langPrefix = language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : '';
+              const label = language === 'zh-TW' ? n.zh : language === 'es' ? n.es : n.en;
+              return (
+                <a
+                  key={n.slug}
+                  href={`${langPrefix}/neighborhoods/${n.slug}/`}
+                  className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
+                >
+                  {label}
+                </a>
+              );
+            })}
+            <a
+              href={`${language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : ''}/neighborhoods/`}
+              className="px-3 py-1 rounded-full text-blue-700 hover:underline"
+            >
+              {language === 'zh-TW' ? '查看全部 →' : language === 'es' ? 'Ver todos →' : 'View all →'}
+            </a>
           </div>
 
           {/* Filter Panel */}
@@ -495,42 +550,28 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
 
       {/* Listings */}
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Eligibility Screener */}
-        <div id="eligibility-screener">
-          <EligibilityScreener
-            isOpen={eligibilityOpen}
-            onToggle={setEligibilityOpen}
-            elfaStats={vacancyStats}
-          />
-        </div>
-
-        {/* Why Family Child Care? — prominent for first visit, collapsible after */}
-        <WhyFamilyChildCare />
-
-        {/* Parent Resources */}
-        <div className="mb-4">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-            {t('publicListings.resources.heading')}
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {PARENT_RESOURCES.map(({ key, href, icon: Icon }) => (
-              <a
-                key={key}
-                href={`${language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : ''}${href}`}
-                className="p-3 bg-white rounded-xl border border-gray-200
-                           hover:border-blue-300 hover:shadow-sm transition-all group"
-              >
-                <Icon size={18} className="text-blue-600 mb-1.5" />
-                <span className="text-sm font-medium text-gray-900 group-hover:text-blue-700 block">
-                  {t(`publicListings.resources.${key}.title`)}
-                </span>
-                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
-                  {t(`publicListings.resources.${key}.desc`)}
-                </p>
-              </a>
-            ))}
-          </div>
-        </div>
+        {/* Parent Toolbox — unified entry for eligibility, license lookup, evaluate, about FCC */}
+        <ParentToolbox
+          listings={listings}
+          vacancyStats={vacancyStats}
+          onListingClick={(providerId) => {
+            setFilters({});
+            setExpandedListing(providerId);
+            // After the filter-cleared re-render commits, measure the actual
+            // on-screen bottom of the sticky page header so we can land the
+            // card just below it regardless of header height.
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                const el = document.querySelector<HTMLElement>(`[data-provider-id="${providerId}"]`);
+                if (!el) return;
+                const header = document.querySelector<HTMLElement>('[data-page-header]');
+                const stickyBottom = header ? 44 + header.offsetHeight : 110;
+                const y = el.getBoundingClientRect().top + window.scrollY - stickyBottom - 8;
+                window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+              });
+            });
+          }}
+        />
 
         {/* Fairness Notice */}
         <div className="mb-4 flex items-center justify-center gap-2 text-xs text-gray-500">
@@ -571,6 +612,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                 {groupListings.map(listing => (
               <div
                 key={listing.provider_id}
+                data-provider-id={listing.provider_id}
                 className="bg-white rounded-xl shadow hover:shadow-md transition-shadow mb-3"
               >
                 <div
@@ -769,6 +811,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                       {staleListings.map(listing => (
                         <div
                           key={listing.provider_id}
+                          data-provider-id={listing.provider_id}
                           className="bg-white rounded-xl shadow border-l-4 border-amber-300 opacity-80"
                         >
                           <div
@@ -791,12 +834,18 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                                     <MapPin size={14} />
                                     {listing.neighborhood || listing.zip_code}
                                   </span>
-                                  <span className="flex items-center gap-1 text-amber-600">
-                                    <AlertTriangle size={12} />
-                                    {t('publicListings.staleBadge')}
+                                  <span>
+                                    {listing.program_type === 'small_family' ? t('publicListings.smallFamily') : t('publicListings.largeFamily')}
+                                  </span>
+                                  <span className="text-gray-400">
+                                    {t('publicListings.license')} #{listing.license_number}
+                                  </span>
+                                  <span className="text-gray-400">
+                                    {t('publicListings.lastUpdated')} {new Date(listing.last_updated).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                   </span>
                                 </div>
                               </div>
+
                               <div className="text-right flex items-center gap-4">
                                 <span className="px-3 py-1 bg-amber-100 text-amber-700 text-sm font-medium rounded-full">
                                   {t('publicListings.hasOpenings')}
@@ -807,6 +856,30 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                                   <ChevronDown size={20} className="text-gray-400" />
                                 )}
                               </div>
+                            </div>
+
+                            {/* Vacancy flags - matching active listings placement */}
+                            <div className="flex gap-2 mt-3 flex-wrap">
+                              {listing.accepting_infants && (
+                                <span className="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded">
+                                  {t('vacancy.infant')}
+                                </span>
+                              )}
+                              {listing.accepting_toddlers && (
+                                <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">
+                                  {t('vacancy.toddler')}
+                                </span>
+                              )}
+                              {listing.accepting_preschool && (
+                                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
+                                  {t('vacancy.preschool')}
+                                </span>
+                              )}
+                              {listing.accepting_school_age && (
+                                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
+                                  {t('vacancy.schoolAge')}
+                                </span>
+                              )}
                             </div>
                           </div>
 
@@ -919,6 +992,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                     {fullWithWaitlist.map(listing => (
                       <div
                         key={listing.provider_id}
+                        data-provider-id={listing.provider_id}
                         className="bg-white rounded-xl shadow border-l-4 border-amber-400"
                       >
                         <div
@@ -949,6 +1023,9 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
                                 </span>
                                 <span>
                                   {listing.program_type === 'small_family' ? t('publicListings.smallFamily') : t('publicListings.largeFamily')}
+                                </span>
+                                <span className="text-gray-400">
+                                  {t('publicListings.license')} #{listing.license_number}
                                 </span>
                               </div>
                             </div>
@@ -1102,34 +1179,7 @@ export function PublicListings({ listings, loading, onSignIn, isProvider = false
               <ExternalLink size={12} />
             </a>
           </p>
-          <div className="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 text-left max-w-lg mx-auto">
-            <div className="flex items-center gap-2 mb-2">
-              <Home size={20} className="text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">
-                {t('publicListings.providerCta.headline')}
-              </h3>
-            </div>
-            <p className="text-sm text-gray-600 mb-3">
-              {t('publicListings.providerCta.description')}
-            </p>
-            <ul className="space-y-1 mb-4">
-              {(['benefit1', 'benefit2', 'benefit3'] as const).map((key) => (
-                <li key={key} className="flex items-center gap-2 text-sm text-gray-700">
-                  <Check size={16} className="text-green-600 flex-shrink-0" />
-                  {t(`publicListings.providerCta.${key}`)}
-                </li>
-              ))}
-            </ul>
-            <div className="text-center">
-              <button
-                onClick={onSignIn}
-                className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
-              >
-                {t('publicListings.providerCta.button')} →
-              </button>
-            </div>
-          </div>
-          <p className="mt-2 text-xs text-gray-400">
+          <p className="mt-4 text-xs text-gray-400">
             v{__APP_VERSION__}
           </p>
         </div>

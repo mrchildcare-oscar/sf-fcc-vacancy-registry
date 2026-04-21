@@ -387,8 +387,10 @@
       .neighborhood-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <!-- Header -->
   <header>
@@ -404,11 +406,7 @@
           <a href="/zh/neighborhoods/">社區</a>
           <a href="/?lang=zh-TW#public">尋找托兒</a>
         </div>
-        <div class="lang-switcher">
-          <a href="/child-care-san-francisco/">EN</a>
-          <a href="/es/child-care-san-francisco/">ES</a>
-          <span class="active">中文</span>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -519,21 +517,24 @@
 
       <div class="content-section">
         <h2>按舊金山社區搜尋托兒服務</h2>
-        <p>托兒服務的供應在全市各有不同。有些社區有強大的家庭托兒網絡；其他社區則面臨嚴重短缺。以下是家庭托兒員最多的地區：</p>
+        <p>托兒服務的供應在全市各有不同。有些社區有強大的家庭托兒網絡；其他社區則面臨嚴重短缺。閱讀我們的社區專屬指南，了解當地 FCC 供應、常見語言與 ELFA 覆蓋範圍——或直接查看各區當前空缺。</p>
 
+        <h3 style="font-size:16px;margin-top:24px;margin-bottom:12px;color:#1e40af;">社區指南</h3>
         <div class="neighborhood-grid">
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Mission">Mission District</a>
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Excelsior">Excelsior</a>
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Bayview">Bayview</a>
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Outer%20Sunset">Outer Sunset</a>
+          <a class="neighborhood-link" href="/zh/neighborhoods/sunset/">Sunset</a>
+          <a class="neighborhood-link" href="/zh/neighborhoods/richmond/">Richmond</a>
+          <a class="neighborhood-link" href="/zh/neighborhoods/mission/">Mission District</a>
+          <a class="neighborhood-link" href="/zh/neighborhoods/excelsior/">Excelsior</a>
+          <a class="neighborhood-link" href="/zh/neighborhoods/bayview/">Bayview-Hunters Point</a>
+        </div>
+
+        <h3 style="font-size:16px;margin-top:24px;margin-bottom:12px;color:#1e40af;">其他設有 FCC 家庭托兒者的社區</h3>
+        <div class="neighborhood-grid">
           <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Visitacion%20Valley">Visitacion Valley</a>
           <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Portola">Portola</a>
           <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Bernal%20Heights">Bernal Heights</a>
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Inner%20Richmond">Inner Richmond</a>
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Outer%20Richmond">Outer Richmond</a>
-          <a class="neighborhood-link" href="/?lang=zh-TW#public?neighborhood=Inner%20Sunset">Inner Sunset</a>
         </div>
-        <p style="font-size:14px;color:#64748b;"><a href="/?lang=zh-TW#public">搜尋所有舊金山社區 &rarr;</a></p>
+        <p style="font-size:14px;color:#64748b;margin-top:16px;"><a href="/zh/neighborhoods/">查看所有社區指南 &rarr;</a> &middot; <a href="/?lang=zh-TW#public">搜尋所有舊金山社區 &rarr;</a></p>
       </div>
 
       <div class="content-section">
@@ -605,5 +606,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

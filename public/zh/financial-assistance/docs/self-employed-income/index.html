@@ -123,8 +123,10 @@
       h2 { font-size: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <header>
     <div class="container">
@@ -139,11 +141,7 @@
           <a href="/zh/neighborhoods/">社區</a>
           <a href="/?lang=zh-TW#public">尋找托兒</a>
         </div>
-        <div class="lang-switcher">
-          <a href="/financial-assistance/docs/self-employed-income/">EN</a>
-          <a href="/es/financial-assistance/docs/self-employed-income/">ES</a>
-          <span class="active">中文</span>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -248,5 +246,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

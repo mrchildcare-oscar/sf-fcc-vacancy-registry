@@ -11,7 +11,7 @@
     },
     "license": {
       "label": "Verifique una licencia",
-      "desc": "Confirme el estado del contrato ELFA"
+      "desc": "Vea si este programa acepta ELFA"
     },
     "evaluate": {
       "label": "Cómo evaluar",
@@ -25,21 +25,21 @@
     }
   },
   "licenseLookup": {
-    "heading": "Verifique si un proveedor tiene contrato con ELFA",
-    "helpText": "¿Tiene un número de licencia de 9 dígitos de la lista de CCRR u otro lugar? Verifique si ese hogar tiene un contrato ELFA vigente con SF.",
+    "heading": "Vea si este programa acepta vales ELFA",
+    "helpText": "¿Tiene un número de licencia de 9 dígitos de una lista de referencia de cuidado infantil u otro lugar? Verifique si ese programa acepta ELFA en SF.",
     "placeholder": "ej. 384001234",
     "button": "Verificar",
     "results": {
       "invalid": "Por favor ingrese un número de licencia de 9 dígitos (solo números).",
-      "elfa": "Esta licencia tiene contrato con ELFA",
-      "elfaBody": "Los hogares con contrato ELFA cumplen los estándares de calidad de Early Learning for All de la Ciudad y atienden a familias de todos los niveles de ingresos.",
+      "elfa": "Este programa acepta ELFA",
+      "elfaBody": "Los programas ELFA ofrecen cuidado gratuito o de costo reducido a familias elegibles de SF y cumplen los estándares de calidad de Early Learning for All.",
       "elfaSource": "Fuente: sf.gov",
       "viewListing": "Ver su listado de vacantes",
-      "notElfa": "Sin contrato con ELFA",
-      "notElfaBody": "Aún puede ser un hogar de cuidado infantil familiar con licencia — verifique el estado y el historial de licencia con CDSS."
+      "notElfa": "No acepta ELFA",
+      "notElfaBody": "Aún puede ser un programa de cuidado infantil familiar con licencia — búsquelo en la base de datos de licencias de California."
     },
-    "cdssLink": "Verificar con CDSS",
-    "disclaimer": "Esta herramienta refleja nuestra instantánea más reciente de hogares con contrato ELFA. No es una referencia. Más información sobre",
+    "cdssLink": "Buscar en licencias de California",
+    "disclaimer": "Esta herramienta refleja nuestra instantánea más reciente de programas ELFA. No es una referencia. Más información sobre",
     "elfaInfoLink": "Early Learning for All en sf.gov"
   },
   "inAppBrowser": {
@@ -155,7 +155,7 @@
     "fccLicenseNumber": "Número de licencia FCC",
     "enterLicenseNumber": "Por favor ingrese su número de licencia",
     "licenseVerificationFailed": "Número de licencia no encontrado en la base de datos estatal. Por favor verifique e intente de nuevo.",
-    "licenseNotActive": "Esta licencia no está actualmente activa. Por favor contacte a CCLD si cree que esto es un error.",
+    "licenseNotActive": "Esta licencia no está actualmente activa. Por favor contacte a la oficina de licencias de cuidado infantil de California si cree que esto es un error.",
     "licenseVerified": "¡Licencia verificada!",
     "verifying": "Verificando..."
   },
@@ -180,6 +180,9 @@
     "scheduleOptions": "Opciones de horario",
     "fullTime": "Tiempo completo",
     "partTime": "Medio tiempo",
+    "weekend": "Fines de semana",
+    "evening": "Noches",
+    "overnight": "Durante la noche",
     "additionalNotes": "Notas adicionales (opcional)",
     "notesPlaceholder": "Cualquier información especial para las familias...",
     "updateVacancies": "Actualizar vacantes",
@@ -276,7 +279,7 @@
     "anyAge": "Cualquier edad",
     "language": "Idioma",
     "schedule": "Horario",
-    "elfaNetwork": "Red ELFA",
+    "elfaNetwork": "Programa ELFA",
     "onlyElfa": "Solo programas ELFA",
     "noMatches": "No se encontraron resultados",
     "noMatchesHelp": "Intente ajustar sus filtros o búsqueda",
@@ -341,9 +344,9 @@
     "programType": "Tipo de programa",
     "capacity": "Capacidad autorizada",
     "children": "niños",
-    "elfaStatus": "Estado de red ELFA",
-    "elfaMember": "Red ELFA",
-    "notElfaMember": "No está en la red ELFA",
+    "elfaStatus": "Estado del programa ELFA",
+    "elfaMember": "Programa ELFA",
+    "notElfaMember": "No está en el programa ELFA",
     "reverifyElfa": "Re-verificar ELFA",
     "saveSettings": "Guardar cambios",
     "savedSuccess": "¡Configuración guardada con éxito!",

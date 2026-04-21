@@ -421,6 +421,9 @@ export function RegistryApp() {
             available_date: vacancy.available_date,
             full_time_available: vacancy.full_time_available,
             part_time_available: vacancy.part_time_available,
+            weekend_available: vacancy.weekend_available || false,
+            evening_available: vacancy.evening_available || false,
+            overnight_available: vacancy.overnight_available || false,
             waitlist_available: vacancy.waitlist_available || false,
             notes: vacancy.notes || '',
           });
@@ -829,6 +832,9 @@ export function RegistryApp() {
       available_date: prev?.available_date || new Date().toISOString().split('T')[0],
       full_time_available: prev?.full_time_available ?? true,
       part_time_available: prev?.part_time_available ?? false,
+      weekend_available: prev?.weekend_available ?? false,
+      evening_available: prev?.evening_available ?? false,
+      overnight_available: prev?.overnight_available ?? false,
       waitlist_available: prev?.waitlist_available ?? false,
       notes: prev?.notes || '',
     }));

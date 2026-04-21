@@ -79,7 +79,7 @@
         "name": "舊金山哪些社區的家庭托兒老師最多？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "家庭托兒老師分佈在舊金山的各個社區。日落區、列治文區、Excelsior 區、Mission 區、Bayview 區以及華埠/北灘一帶的托兒老師尤其集中。與通常集中在商業區的托兒中心不同，家庭托兒老師位於每個社區的住宅區核心地帶。"
+          "text": "家庭托兒老師分佈在舊金山的各個社區。Sunset、Richmond、Excelsior 區、Mission 區、Bayview 區以及華埠/北灘一帶的托兒老師尤其集中。與通常集中在商業區的托兒中心不同，家庭托兒老師位於每個社區的住宅區核心地帶。"
         }
       },
       {
@@ -95,7 +95,7 @@
         "name": "我的社區有家庭托兒服務嗎？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "幾乎可以確定有。持照家庭托兒老師在舊金山每個主要社區都有營運——從西邊的日落區和列治文區，到南邊和東邊的 Mission 區、Excelsior 區和 Bayview 區，再到北邊的華埠、諾布山和 Marina 區。使用我們的托兒老師名冊按地點搜尋，查看您附近有空位的托兒老師。"
+          "text": "幾乎可以確定有。持照家庭托兒老師在舊金山每個主要社區都有營運——從西邊的Sunset和Richmond，到南邊和東邊的 Mission 區、Excelsior 區和 Bayview 區，再到北邊的華埠、諾布山和 Marina 區。使用我們的托兒老師名冊按地點搜尋，查看您附近有空位的托兒老師。"
         }
       }
     ]
@@ -298,8 +298,10 @@
       h2 { font-size: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <!-- Header -->
   <header>
@@ -315,11 +317,7 @@
           <a href="/zh/neighborhoods/">社區</a>
           <a href="/?lang=zh-TW#public">尋找托兒</a>
         </div>
-        <div class="lang-switcher">
-          <a href="/choose/location-convenience/">EN</a>
-          <a href="/es/choose/location-convenience/">ES</a>
-          <span class="active">中文</span>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -348,7 +346,7 @@
       <!-- 遍佈每個社區 -->
       <div class="content-section">
         <h2>家庭托兒遍佈每個社區</h2>
-        <p>托兒中心往往集中在商業走廊和市中心地帶，家長經常需要開車橫跨整個城市才能到達。家庭托兒則完全不同。由於托兒老師在自己的家中提供服務，家庭托兒遍佈舊金山各個住宅社區——日落區、列治文區、Mission 區、Bayview 區、Excelsior 區、華埠、Visitacion Valley、Ingleside 等等。</p>
+        <p>托兒中心往往集中在商業走廊和市中心地帶，家長經常需要開車橫跨整個城市才能到達。家庭托兒則完全不同。由於托兒老師在自己的家中提供服務，家庭托兒遍佈舊金山各個住宅社區——Sunset、Richmond、Mission 區、Bayview 區、Excelsior 區、華埠、Visitacion Valley、Ingleside 等等。</p>
         <p>這代表優質的持照托兒服務，往往就在您家門口幾步之遙。對於沒有車的家庭，或者不想在接送孩子的路上多花時間的家庭來說，在自家街區或附近幾條街就有托兒老師，會讓日常生活輕鬆許多。</p>
         <p>在許多社區，您會發現幾個街區內就有多位家庭托兒老師，讓您可以在不離開社區的情況下，比較不同的課程設計、時間安排和教學風格。</p>
       </div>
@@ -357,7 +355,7 @@
       <div class="content-section">
         <h2>配合通勤的托兒選擇</h2>
         <p>每位家長都知道這筆帳：每天早晚各繞路 15 分鐘接送孩子，一週五天，每週就多出兩個多小時在路上。選擇離家近或通勤路線上的托兒老師，可以把這些時間還給家人。</p>
-        <p>很多舊金山的家長會策略性地選擇通勤路線上的家庭托兒老師。如果您住在日落區、在市中心上班，選擇住家附近的托兒老師，送完孩子就能搭 N-Judah 輕軌直接上班，不用繞路。如果您開車往南上班，選擇高速公路入口附近的托兒老師，每趟都能省下不少時間。</p>
+        <p>很多舊金山的家長會策略性地選擇通勤路線上的家庭托兒老師。如果您住在Sunset、在市中心上班，選擇住家附近的托兒老師，送完孩子就能搭 N-Judah 輕軌直接上班，不用繞路。如果您開車往南上班，選擇高速公路入口附近的托兒老師，每趟都能省下不少時間。</p>
         <p>有些社區有多位家庭托兒老師聚集在很小的範圍內，對有兩個以上孩子的家庭特別方便——兄弟姊妹有時可以去同一位托兒老師，或者去同一條街上不同的托兒老師。</p>
       </div>
 
@@ -365,7 +363,7 @@
       <div class="content-section">
         <h2>反映您社區文化的托兒老師</h2>
         <p>家庭托兒的獨特優勢之一，是托兒老師本身就是所服務社區的一份子。他們將社區的語言、文化和傳統融入日常照顧之中。</p>
-        <p>在華埠和日落區，您會找到說粵語和普通話的托兒老師，她們會煮中式家常菜給孩子吃，和孩子們一起慶祝農曆新年。在 Mission 區和 Excelsior 區，說西班牙語的托兒老師會融入拉丁美洲的文化傳統和雙語學習。在 Bayview 區，深深植根於非裔美國社區的托兒老師會營造出肯定文化認同的環境。</p>
+        <p>在華埠和Sunset，您會找到說粵語和普通話的托兒老師，她們會煮中式家常菜給孩子吃，和孩子們一起慶祝農曆新年。在 Mission 區和 Excelsior 區，說西班牙語的托兒老師會融入拉丁美洲的文化傳統和雙語學習。在 Bayview 區，深深植根於非裔美國社區的托兒老師會營造出肯定文化認同的環境。</p>
         <p>這種文化契合非常重要。研究一再顯示，當照顧環境能反映並尊重孩子的家庭文化時，孩子的成長更加茁壯。對於希望孩子維持或發展母語能力的家庭來說，社區中說同一種語言的家庭托兒老師是無價的資源。</p>
       </div>
 
@@ -397,7 +395,7 @@
         <div class="faq-item">
           <div class="faq-question">舊金山哪些社區的家庭托兒老師最多？</div>
           <div class="faq-answer">
-            <p>家庭托兒老師分佈在舊金山各個社區。日落區、列治文區、Excelsior 區、Mission 區、Bayview 區以及華埠/北灘一帶的托兒老師尤其集中。但與集中在商業區的托兒中心不同，家庭托兒老師深植在全市各社區的住宅區核心地帶，所以幾乎每個地方都有選擇。</p>
+            <p>家庭托兒老師分佈在舊金山各個社區。Sunset、Richmond、Excelsior 區、Mission 區、Bayview 區以及華埠/北灘一帶的托兒老師尤其集中。但與集中在商業區的托兒中心不同，家庭托兒老師深植在全市各社區的住宅區核心地帶，所以幾乎每個地方都有選擇。</p>
           </div>
         </div>
 
@@ -411,7 +409,7 @@
         <div class="faq-item">
           <div class="faq-question">我的社區有家庭托兒服務嗎？</div>
           <div class="faq-answer">
-            <p>幾乎可以確定有。持照家庭托兒老師在舊金山每個主要社區都有營運——從西邊的日落區和列治文區，到南邊和東邊的 Mission 區、Excelsior 區和 Bayview 區，再到北邊的華埠、諾布山和 Marina 區。使用我們的<a href="/?lang=zh-TW#public">托兒老師名冊</a>按地點搜尋，查看您附近有空位的托兒老師。</p>
+            <p>幾乎可以確定有。持照家庭托兒老師在舊金山每個主要社區都有營運——從西邊的Sunset和Richmond，到南邊和東邊的 Mission 區、Excelsior 區和 Bayview 區，再到北邊的華埠、諾布山和 Marina 區。使用我們的<a href="/?lang=zh-TW#public">托兒老師名冊</a>按地點搜尋，查看您附近有空位的托兒老師。</p>
           </div>
         </div>
       </div>
@@ -452,5 +450,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

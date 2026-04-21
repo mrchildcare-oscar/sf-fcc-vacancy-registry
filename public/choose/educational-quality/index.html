@@ -324,8 +324,10 @@
       .related-links { flex-direction: column; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <!-- Header -->
   <header>
@@ -341,11 +343,7 @@
           <a href="/neighborhoods/">Neighborhoods</a>
           <a href="/#public">Find Providers</a>
         </div>
-        <div class="lang-switcher">
-          <span class="active">EN</span>
-          <a href="/es/choose/educational-quality/">ES</a>
-          <a href="/zh/choose/educational-quality/">中文</a>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -486,5 +484,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

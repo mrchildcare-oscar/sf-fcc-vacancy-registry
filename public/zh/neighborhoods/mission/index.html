@@ -147,8 +147,10 @@
       .glance-card dt { margin-top: 8px; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
   <header>
     <div class="container">
       <a href="/zh/" class="site-title">Family Child Care SF</a>
@@ -163,11 +165,7 @@
           <a href="/#public">尋找托兒者</a>
         </div>
         
-        <div class="lang-switcher">
-          <a href="/neighborhoods/mission/">EN</a>
-          <a href="/es/neighborhoods/mission/">ES</a>
-          <span class="active">中文</span>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -181,7 +179,7 @@
   <main>
     <div class="container">
       <div class="breadcrumb">
-        <a href="/zh/">首頁</a> &rsaquo; <a href="/zh/child-care-san-francisco/">三藩市托兒服務</a> &rsaquo; 社區 &rsaquo; Mission
+        <a href="/zh/">首頁</a> &rsaquo; <a href="/zh/child-care-san-francisco/">三藩市托兒服務</a> &rsaquo; <a href="/zh/neighborhoods/">社區</a> &rsaquo; Mission
       </div>
 
       <div class="content-section" style="margin-top:24px;">
@@ -252,5 +250,6 @@
       <p>由 <a href="https://fccasf.com" target="_blank" rel="noopener">三藩市家庭托兒協會 (Family Child Care Association of San Francisco)</a></p>
     </div>
   </footer>
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

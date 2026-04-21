@@ -11,7 +11,7 @@
     },
     "license": {
       "label": "查核執照",
-      "desc": "確認 ELFA 簽約狀態"
+      "desc": "查看此機構是否接受 ELFA"
     },
     "evaluate": {
       "label": "如何評估",
@@ -25,21 +25,21 @@
     }
   },
   "licenseLookup": {
-    "heading": "查核家庭托兒者是否與 ELFA 簽約",
-    "helpText": "從 CCRR 名單或其他地方拿到 9 位數的執照編號？查核該家庭托兒是否目前與舊金山 ELFA 簽約。",
+    "heading": "查看此機構是否接受 ELFA 補助",
+    "helpText": "從托兒轉介名單或其他地方拿到 9 位數的執照編號？查核該機構是否在舊金山接受 ELFA。",
     "placeholder": "例如：384001234",
     "button": "查核",
     "results": {
       "invalid": "請輸入 9 位數字的執照編號（只限數字）。",
-      "elfa": "此執照已與 ELFA 簽約",
-      "elfaBody": "與 ELFA 簽約的家庭托兒符合舊金山「全民幼兒學習」品質標準，並服務不同收入家庭。",
+      "elfa": "此機構接受 ELFA",
+      "elfaBody": "ELFA 機構為符合資格的舊金山家庭提供免費或減價托兒，並達到「全民幼兒學習」品質標準。",
       "elfaSource": "資料來源：sf.gov",
       "viewListing": "查看他們的空缺列表",
-      "notElfa": "未與 ELFA 簽約",
-      "notElfaBody": "這可能仍是持照家庭托兒，請透過 CDSS 確認執照狀態與紀錄。"
+      "notElfa": "不接受 ELFA",
+      "notElfaBody": "這可能仍是持照家庭托兒機構，請於加州執照資料庫查詢。"
     },
-    "cdssLink": "透過 CDSS 查核",
-    "disclaimer": "本工具反映我們最近一次 ELFA 簽約家庭托兒的記錄，並非轉介服務。瞭解更多：",
+    "cdssLink": "查詢加州執照資料庫",
+    "disclaimer": "本工具反映我們最近一次 ELFA 機構的記錄，並非轉介服務。瞭解更多：",
     "elfaInfoLink": "sf.gov 全民幼兒學習計畫"
   },
   "inAppBrowser": {
@@ -155,7 +155,7 @@
     "fccLicenseNumber": "FCC 執照號碼",
     "enterLicenseNumber": "請輸入您的執照號碼",
     "licenseVerificationFailed": "在州政府資料庫中找不到此執照號碼。請檢查後重試。",
-    "licenseNotActive": "此執照目前未生效。如果您認為這是錯誤，請聯繫 CCLD。",
+    "licenseNotActive": "此執照目前未生效。如果您認為這是錯誤，請聯繫加州托兒執照機關。",
     "licenseVerified": "執照已驗證！",
     "verifying": "驗證中..."
   },
@@ -180,6 +180,9 @@
     "scheduleOptions": "時間選項",
     "fullTime": "全日",
     "partTime": "半日",
+    "weekend": "週末",
+    "evening": "晚間",
+    "overnight": "過夜",
     "additionalNotes": "附加說明（選填）",
     "notesPlaceholder": "給家庭的特別資訊...",
     "updateVacancies": "更新空缺資訊",
@@ -276,7 +279,7 @@
     "anyAge": "不限年齡",
     "language": "語言",
     "schedule": "時間",
-    "elfaNetwork": "ELFA 網絡",
+    "elfaNetwork": "ELFA 計畫",
     "onlyElfa": "僅顯示 ELFA 機構",
     "noMatches": "找不到符合的結果",
     "noMatchesHelp": "請嘗試調整篩選條件或搜尋內容",
@@ -341,9 +344,9 @@
     "programType": "服務類型",
     "capacity": "核准容量",
     "children": "名兒童",
-    "elfaStatus": "ELFA 網絡狀態",
-    "elfaMember": "ELFA 網絡",
-    "notElfaMember": "非 ELFA 網絡成員",
+    "elfaStatus": "ELFA 計畫狀態",
+    "elfaMember": "ELFA 計畫",
+    "notElfaMember": "非 ELFA 計畫",
     "reverifyElfa": "重新驗證 ELFA",
     "saveSettings": "儲存變更",
     "savedSuccess": "設定儲存成功！",

@@ -147,8 +147,10 @@
       .glance-card dt { margin-top: 8px; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
   <header>
     <div class="container">
       <a href="/" class="site-title">Family Child Care SF</a>
@@ -163,11 +165,7 @@
           <a href="/#public">Find Providers</a>
         </div>
         
-        <div class="lang-switcher">
-          <span class="active">EN</span>
-          <a href="/es/neighborhoods/richmond/">ES</a>
-          <a href="/zh/neighborhoods/richmond/">中文</a>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -181,7 +179,7 @@
   <main>
     <div class="container">
       <div class="breadcrumb">
-        <a href="/">Home</a> &rsaquo; <a href="/child-care-san-francisco/">Child Care in SF</a> &rsaquo; Neighborhoods &rsaquo; Richmond District
+        <a href="/">Home</a> &rsaquo; <a href="/child-care-san-francisco/">Child Care in SF</a> &rsaquo; <a href="/neighborhoods/">Neighborhoods</a> &rsaquo; Richmond District
       </div>
 
       <div class="content-section" style="margin-top:24px;">
@@ -252,5 +250,6 @@
       <p>A service of the <a href="https://fccasf.com" target="_blank" rel="noopener">Family Child Care Association of San Francisco</a></p>
     </div>
   </footer>
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

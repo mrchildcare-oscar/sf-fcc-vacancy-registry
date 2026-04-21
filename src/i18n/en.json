@@ -11,7 +11,7 @@
     },
     "license": {
       "label": "Check a license",
-      "desc": "Verify ELFA contract status"
+      "desc": "See if this program accepts ELFA"
     },
     "evaluate": {
       "label": "How to evaluate",
@@ -25,21 +25,21 @@
     }
   },
   "licenseLookup": {
-    "heading": "Check if a provider is contracted with ELFA",
-    "helpText": "Got a 9-digit license number from CCRR's list or elsewhere? Check whether that home has a current ELFA contract with SF.",
+    "heading": "See if this program accepts ELFA vouchers",
+    "helpText": "Got a 9-digit license number from a child care referral list or elsewhere? Check whether that program accepts ELFA in SF.",
     "placeholder": "e.g. 384001234",
     "button": "Check",
     "results": {
       "invalid": "Please enter a 9-digit license number (digits only).",
-      "elfa": "This license is contracted with ELFA",
-      "elfaBody": "ELFA-contracted homes meet the City's Early Learning for All quality standards and serve families across income levels.",
+      "elfa": "This program accepts ELFA",
+      "elfaBody": "ELFA programs offer free or reduced-cost care to eligible SF families and meet Early Learning for All quality standards.",
       "elfaSource": "Source: sf.gov",
       "viewListing": "View their vacancy listing",
-      "notElfa": "Not contracted with ELFA",
-      "notElfaBody": "This may still be a licensed family child care home — verify licensing status and history with CDSS."
+      "notElfa": "Does not accept ELFA",
+      "notElfaBody": "This may still be a licensed family child care program — look it up in California's licensing database."
     },
-    "cdssLink": "Verify with CDSS",
-    "disclaimer": "This tool reflects our most recent snapshot of ELFA-contracted homes. It is not a referral. Learn more about",
+    "cdssLink": "Look up California licensing",
+    "disclaimer": "This tool reflects our most recent snapshot of ELFA programs. It is not a referral. Learn more about",
     "elfaInfoLink": "Early Learning for All on sf.gov"
   },
   "inAppBrowser": {
@@ -155,7 +155,7 @@
     "fccLicenseNumber": "FCC License Number",
     "enterLicenseNumber": "Please enter your license number",
     "licenseVerificationFailed": "License number not found in state database. Please check and try again.",
-    "licenseNotActive": "This license is not currently active. Please contact CCLD if you believe this is an error.",
+    "licenseNotActive": "This license is not currently active. Please contact California child care licensing if you believe this is an error.",
     "licenseVerified": "License verified!",
     "verifying": "Verifying..."
   },
@@ -180,6 +180,9 @@
     "scheduleOptions": "Schedule Options",
     "fullTime": "Full-time",
     "partTime": "Part-time",
+    "weekend": "Weekends",
+    "evening": "Evenings",
+    "overnight": "Overnight",
     "additionalNotes": "Additional Notes (optional)",
     "notesPlaceholder": "Any special information for families...",
     "updateVacancies": "Update Vacancies",
@@ -276,7 +279,7 @@
     "anyAge": "Any age",
     "language": "Language",
     "schedule": "Schedule",
-    "elfaNetwork": "ELFA Network",
+    "elfaNetwork": "ELFA program",
     "onlyElfa": "Only ELFA programs",
     "noMatches": "No matches found",
     "noMatchesHelp": "Try adjusting your filters or search",
@@ -341,9 +344,9 @@
     "programType": "Program Type",
     "capacity": "Licensed Capacity",
     "children": "children",
-    "elfaStatus": "ELFA Network Status",
-    "elfaMember": "ELFA Network",
-    "notElfaMember": "Not in ELFA Network",
+    "elfaStatus": "ELFA Program Status",
+    "elfaMember": "ELFA Program",
+    "notElfaMember": "Not in ELFA Program",
     "reverifyElfa": "Re-verify ELFA",
     "saveSettings": "Save Changes",
     "savedSuccess": "Settings saved successfully!",

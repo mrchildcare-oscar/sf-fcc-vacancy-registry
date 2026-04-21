@@ -63,6 +63,11 @@ export interface Vacancy {
   full_time_available: boolean;
   part_time_available: boolean;
 
+  // Non-traditional schedule
+  weekend_available: boolean;
+  evening_available: boolean;
+  overnight_available: boolean;
+
   // Waitlist
   waitlist_available: boolean;
 
@@ -108,6 +113,9 @@ export interface PublicListing {
   full_time_available: boolean;
   part_time_available: boolean;
   waitlist_available: boolean;
+  weekend_available: boolean;
+  evening_available: boolean;
+  overnight_available: boolean;
   notes?: string;
 
   available_date: string;
@@ -122,7 +130,7 @@ export interface SearchFilters {
   age_group?: 'infant' | 'toddler' | 'preschool' | 'school_age';
   elfa_only?: boolean;
   language?: string;
-  schedule?: 'full_time' | 'part_time';
+  schedule?: 'full_time' | 'part_time' | 'weekend' | 'evening' | 'overnight';
 }
 
 // SF Neighborhoods for filtering

@@ -75,13 +75,26 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
 
   // Map URL slugs from /neighborhoods/{slug}/ landing pages to canonical
   // neighborhood values in the listing data. Sunset and Richmond are split
-  // into Inner/Outer in the dataset, so the landing-page slug should match both.
+  // into Inner/Outer in the dataset; we also accept the bare form so any
+  // provider labeled just "Sunset" or "Richmond" still groups correctly.
   const NEIGHBORHOOD_ALIASES: Record<string, string[]> = {
-    sunset: ['Inner Sunset', 'Outer Sunset'],
-    richmond: ['Inner Richmond', 'Outer Richmond'],
+    sunset: ['Inner Sunset', 'Outer Sunset', 'Sunset'],
+    richmond: ['Inner Richmond', 'Outer Richmond', 'Richmond'],
     bayview: ['Bayview'],
     excelsior: ['Excelsior'],
     mission: ['Mission'],
+  };
+
+  // Convert any DB neighborhood value to its canonical display name.
+  // "Outer Richmond" / "Inner Richmond" / "Richmond" → "Richmond"
+  // "Portola" (no alias) → "Portola"
+  const canonicalNeighborhood = (dbName: string): string => {
+    for (const [slug, aliases] of Object.entries(NEIGHBORHOOD_ALIASES)) {
+      if (aliases.includes(dbName)) {
+        return slug[0].toUpperCase() + slug.slice(1);
+      }
+    }
+    return dbName;
   };
 
   // Short trilingual hint + label for the 5 neighborhoods with landing pages.
@@ -92,7 +105,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     hint: { en: string; es: string; zh: string };
   }> = {
     sunset: {
-      label: { en: 'Sunset', es: 'Sunset', zh: '日落區' },
+      label: { en: 'Sunset', es: 'Sunset', zh: 'Sunset' },
       hint: {
         en: 'High density of Cantonese/Mandarin bilingual homes',
         es: 'Alta densidad de hogares bilingües en cantonés/mandarín',
@@ -100,7 +113,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
       },
     },
     richmond: {
-      label: { en: 'Richmond', es: 'Richmond', zh: '列治文區' },
+      label: { en: 'Richmond', es: 'Richmond', zh: 'Richmond' },
       hint: {
         en: 'Chinese and Russian bilingual providers',
         es: 'Proveedores bilingües en chino y ruso',
@@ -108,7 +121,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
       },
     },
     excelsior: {
-      label: { en: 'Excelsior', es: 'Excelsior', zh: '艾克賽爾西奧' },
+      label: { en: 'Excelsior', es: 'Excelsior', zh: 'Excelsior' },
       hint: {
         en: 'Diverse Spanish, Tagalog, and Chinese FCC community',
         es: 'Comunidad FCC diversa en español, tagalo y chino',
@@ -116,7 +129,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
       },
     },
     bayview: {
-      label: { en: 'Bayview', es: 'Bayview', zh: '灣景區' },
+      label: { en: 'Bayview', es: 'Bayview', zh: 'Bayview' },
       hint: {
         en: 'Growing ELFA network in southeastern SF',
         es: 'Red ELFA en crecimiento en el sureste de SF',
@@ -124,7 +137,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
       },
     },
     mission: {
-      label: { en: 'Mission', es: 'Mission', zh: '教會區' },
+      label: { en: 'Mission', es: 'Mission', zh: 'Mission' },
       hint: {
         en: 'Highest concentration of Spanish-speaking FCC',
         es: 'Mayor concentración de FCC en español',
@@ -154,16 +167,15 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   };
 
   // Handle chip click: toggle filter (clicking an active chip clears it).
-  // Single-alias slugs use the canonical DB value so the dropdown reflects
-  // the selection; multi-alias slugs use the raw slug and rely on the
-  // alias lookup inside applyFilters.
+  // Always store the canonical Title-Case name (e.g. 'Richmond') so the
+  // dropdown selection mirrors the chip and applyFilters' alias lookup
+  // matches every DB variant (Inner/Outer/bare).
   const handleNeighborhoodChipClick = (slug: string) => {
     if (isChipActive(slug)) {
       setFilters(prev => ({ ...prev, neighborhood: undefined }));
       return;
     }
-    const aliases = NEIGHBORHOOD_ALIASES[slug] || [];
-    const value = aliases.length === 1 ? aliases[0] : slug;
+    const value = slug[0].toUpperCase() + slug.slice(1);
     setFilters(prev => ({ ...prev, neighborhood: value }));
     setShowFilters(true);
   };
@@ -177,11 +189,12 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
       const neighborhood = params.get('neighborhood');
       if (neighborhood) {
         const fLower = neighborhood.trim().toLowerCase();
-        const aliasList = NEIGHBORHOOD_ALIASES[fLower];
-        // Single-alias slugs (excelsior, bayview, mission): use the canonical DB value
-        // so the dropdown shows the correct selection. Multi-alias slugs (sunset, richmond)
-        // keep the slug — the filter logic handles them via the alias lookup.
-        const displayValue = aliasList?.length === 1 ? aliasList[0] : neighborhood;
+        // If the URL param is one of our known slugs, store the canonical
+        // Title-Case name. Otherwise (arbitrary neighborhood passed in),
+        // pass through as-is.
+        const displayValue = NEIGHBORHOOD_ALIASES[fLower]
+          ? fLower[0].toUpperCase() + fLower.slice(1)
+          : neighborhood;
         setFilters(prev => ({ ...prev, neighborhood: displayValue }));
         setShowFilters(true);
       }
@@ -203,6 +216,19 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     trackContactClick(listing.provider_id, listing.business_name, contactType);
   }, []);
 
+  // Auto-close the filter panel when the user scrolls away from it, so it
+  // doesn't keep eating screen real estate while browsing listings.
+  // Threshold: ~120px of scroll past the position where it was opened.
+  useEffect(() => {
+    if (!showFilters) return;
+    const openY = window.scrollY;
+    const onScroll = () => {
+      if (window.scrollY > openY + 120) setShowFilters(false);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [showFilters]);
+
   // Track filter changes
   const prevFilters = useRef<SearchFilters>({});
 
@@ -211,7 +237,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     const neighborhoods = new Set<string>();
     listings.forEach(listing => {
       if (listing.neighborhood) {
-        neighborhoods.add(listing.neighborhood);
+        neighborhoods.add(canonicalNeighborhood(listing.neighborhood));
       }
     });
     return Array.from(neighborhoods).sort();
@@ -282,6 +308,15 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     if (filters.schedule === 'part_time' && !listing.part_time_available) {
       return false;
     }
+    if (filters.schedule === 'weekend' && !listing.weekend_available) {
+      return false;
+    }
+    if (filters.schedule === 'evening' && !listing.evening_available) {
+      return false;
+    }
+    if (filters.schedule === 'overnight' && !listing.overnight_available) {
+      return false;
+    }
     return true;
   };
 
@@ -322,7 +357,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   const groupedListings = useMemo(() => {
     const groups = new Map<string, PublicListing[]>();
     freshListings.forEach(listing => {
-      const hood = listing.neighborhood || 'Other';
+      const hood = listing.neighborhood ? canonicalNeighborhood(listing.neighborhood) : 'Other';
       if (!groups.has(hood)) groups.set(hood, []);
       groups.get(hood)!.push(listing);
     });
@@ -604,6 +639,9 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                     <option value="">{t('common.any')}</option>
                     <option value="full_time">{t('vacancy.fullTime')}</option>
                     <option value="part_time">{t('vacancy.partTime')}</option>
+                    <option value="weekend">{t('vacancy.weekend')}</option>
+                    <option value="evening">{t('vacancy.evening')}</option>
+                    <option value="overnight">{t('vacancy.overnight')}</option>
                   </select>
                 </div>
 
@@ -842,7 +880,10 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                             <Clock size={14} />
                             {[
                               listing.full_time_available && t('vacancy.fullTime'),
-                              listing.part_time_available && t('vacancy.partTime')
+                              listing.part_time_available && t('vacancy.partTime'),
+                              listing.weekend_available && t('vacancy.weekend'),
+                              listing.evening_available && t('vacancy.evening'),
+                              listing.overnight_available && t('vacancy.overnight')
                             ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
                           </p>
                           {listing.languages.length > 0 && (
@@ -1028,7 +1069,10 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                                       <Clock size={14} />
                                       {[
                                         listing.full_time_available && t('vacancy.fullTime'),
-                                        listing.part_time_available && t('vacancy.partTime')
+                                        listing.part_time_available && t('vacancy.partTime'),
+                                        listing.weekend_available && t('vacancy.weekend'),
+                                        listing.evening_available && t('vacancy.evening'),
+                                        listing.overnight_available && t('vacancy.overnight')
                                       ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
                                     </p>
                                     {listing.languages.length > 0 && (
@@ -1202,7 +1246,10 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                                     <Clock size={14} />
                                     {[
                                       listing.full_time_available && t('vacancy.fullTime'),
-                                      listing.part_time_available && t('vacancy.partTime')
+                                      listing.part_time_available && t('vacancy.partTime'),
+                                      listing.weekend_available && t('vacancy.weekend'),
+                                      listing.evening_available && t('vacancy.evening'),
+                                      listing.overnight_available && t('vacancy.overnight')
                                     ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
                                   </p>
                                   {listing.languages.length > 0 && (

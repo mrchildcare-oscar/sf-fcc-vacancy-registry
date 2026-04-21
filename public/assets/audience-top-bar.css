@@ -1,0 +1,70 @@
+/* Fixed audience top bar for static pages — mirrors the SPA design. */
+body { padding-top: 44px; }
+
+/* Hide legacy inline lang-switcher — audience top bar now provides it. */
+.lang-switcher#lang-switcher { display: none !important; }
+
+#audience-top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: stretch;
+  z-index: 60;
+  background: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+#audience-top-bar .aud-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+  border-right: 1px solid #e5e7eb;
+}
+@media (min-width: 640px) {
+  #audience-top-bar .aud-tab {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+}
+
+#audience-top-bar .aud-tab-parent    { color: #1d4ed8; background: #fff; }
+#audience-top-bar .aud-tab-parent:hover:not(.active)    { background: #eff6ff; }
+#audience-top-bar .aud-tab-parent.active    { background: #2563eb; color: #fff; }
+
+#audience-top-bar .aud-tab-provider  { color: #b45309; background: #fff; }
+#audience-top-bar .aud-tab-provider:hover:not(.active)  { background: #fffbeb; }
+#audience-top-bar .aud-tab-provider.active  { background: #f59e0b; color: #fff; }
+
+#audience-top-bar .aud-lang {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 0;
+  background: #fff;
+}
+
+#audience-top-bar .aud-lang-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  background: #fff;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+#audience-top-bar .aud-lang-btn:first-child { border-radius: 6px 0 0 6px; }
+#audience-top-bar .aud-lang-btn:last-child  { border-radius: 0 6px 6px 0; border-left: 0; }
+#audience-top-bar .aud-lang-btn:not(:first-child):not(:last-child) { border-left: 0; }
+#audience-top-bar .aud-lang-btn:hover:not(.active) { background: #f3f4f6; }
+#audience-top-bar .aud-lang-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }

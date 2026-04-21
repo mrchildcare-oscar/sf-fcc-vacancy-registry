@@ -35,6 +35,9 @@ interface ProviderPayload {
   school_age_spots: number;
   full_time_available: boolean;
   part_time_available: boolean;
+  weekend_available: boolean;
+  evening_available: boolean;
+  overnight_available: boolean;
   waitlist_available: boolean;
   notes?: string;
   provider_id?: string;
@@ -165,6 +168,9 @@ function buildPayload(answers: Record<string, unknown>): ProviderPayload {
     school_age_spots,
     full_time_available: parseBool(answers.full_time_available),
     part_time_available: parseBool(answers.part_time_available),
+    weekend_available: parseBool(answers.weekend_available),
+    evening_available: parseBool(answers.evening_available),
+    overnight_available: parseBool(answers.overnight_available),
     waitlist_available: parseBool(answers.waitlist_available),
     notes: answers.notes ? String(answers.notes).trim() : undefined,
     provider_id: answers.provider_id ? String(answers.provider_id).trim() : undefined,
@@ -357,6 +363,9 @@ serve(async (req) => {
           accepting_school_age: payload.school_age_spots > 0,
           full_time_available: payload.full_time_available,
           part_time_available: payload.part_time_available,
+          weekend_available: payload.weekend_available,
+          evening_available: payload.evening_available,
+          overnight_available: payload.overnight_available,
           waitlist_available: payload.waitlist_available,
           notes: payload.notes ?? null,
           reported_at: new Date().toISOString(),
@@ -505,6 +514,9 @@ serve(async (req) => {
     accepting_school_age: payload.school_age_spots > 0,
     full_time_available: payload.full_time_available,
     part_time_available: payload.part_time_available,
+    weekend_available: payload.weekend_available,
+    evening_available: payload.evening_available,
+    overnight_available: payload.overnight_available,
     waitlist_available: payload.waitlist_available,
     notes: payload.notes ?? null,
     expires_at: computeExpiresAt({

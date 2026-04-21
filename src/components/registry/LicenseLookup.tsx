@@ -35,7 +35,7 @@ export function LicenseLookup({ listings, onListingClick }: LicenseLookupProps) 
     setChecking(false);
   };
 
-  const cdssUrl = 'https://www.cdss.ca.gov/inforesources/community-care-licensing/child-care-licensing';
+  const cdssUrl = 'https://www.cdss.ca.gov/inforesources/community-care-licensing/facility-search-welcome';
   const elfaSourceUrl = 'https://www.sf.gov/department-san-francisco-department-of-early-childhood/elfa';
   const elfaInfoUrl =
     language === 'zh-TW'

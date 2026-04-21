@@ -387,8 +387,10 @@
       .neighborhood-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <!-- Header -->
   <header>
@@ -404,11 +406,7 @@
           <a href="/es/neighborhoods/">Barrios</a>
           <a href="/?lang=es#public">Buscar proveedores</a>
         </div>
-        <div class="lang-switcher">
-          <a href="/child-care-san-francisco/">EN</a>
-          <span class="active">ES</span>
-          <a href="/zh/child-care-san-francisco/">中文</a>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -519,21 +517,24 @@
 
       <div class="content-section">
         <h2>Cuidado infantil por vecindario de San Francisco</h2>
-        <p>La disponibilidad de cuidado infantil var&iacute;a en la ciudad. Algunos vecindarios tienen fuertes redes de cuidado familiar; otros enfrentan escasez. Estas son las &aacute;reas con m&aacute;s proveedores de cuidado familiar:</p>
+        <p>La disponibilidad de cuidado infantil var&iacute;a en la ciudad. Algunos vecindarios tienen fuertes redes de cuidado familiar; otros enfrentan escasez. Lea nuestras gu&iacute;as por vecindario para conocer la disponibilidad local de FCC, los idiomas comunes y la cobertura ELFA &mdash; o vaya directamente a las vacantes actuales en cada &aacute;rea.</p>
 
+        <h3 style="font-size:16px;margin-top:24px;margin-bottom:12px;color:#1e40af;">Gu&iacute;as por vecindario</h3>
         <div class="neighborhood-grid">
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Mission">Mission District</a>
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Excelsior">Excelsior</a>
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Bayview">Bayview</a>
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Outer%20Sunset">Outer Sunset</a>
+          <a class="neighborhood-link" href="/es/neighborhoods/sunset/">Sunset</a>
+          <a class="neighborhood-link" href="/es/neighborhoods/richmond/">Richmond</a>
+          <a class="neighborhood-link" href="/es/neighborhoods/mission/">Mission District</a>
+          <a class="neighborhood-link" href="/es/neighborhoods/excelsior/">Excelsior</a>
+          <a class="neighborhood-link" href="/es/neighborhoods/bayview/">Bayview-Hunters Point</a>
+        </div>
+
+        <h3 style="font-size:16px;margin-top:24px;margin-bottom:12px;color:#1e40af;">Otros vecindarios con proveedores FCC</h3>
+        <div class="neighborhood-grid">
           <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Visitacion%20Valley">Visitacion Valley</a>
           <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Portola">Portola</a>
           <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Bernal%20Heights">Bernal Heights</a>
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Inner%20Richmond">Inner Richmond</a>
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Outer%20Richmond">Outer Richmond</a>
-          <a class="neighborhood-link" href="/?lang=es#public?neighborhood=Inner%20Sunset">Inner Sunset</a>
         </div>
-        <p style="font-size:14px;color:#64748b;"><a href="/?lang=es#public">Buscar en todos los vecindarios &rarr;</a></p>
+        <p style="font-size:14px;color:#64748b;margin-top:16px;"><a href="/es/neighborhoods/">Ver todas las gu&iacute;as por vecindario &rarr;</a> &middot; <a href="/?lang=es#public">Buscar en todos los vecindarios &rarr;</a></p>
       </div>
 
       <div class="content-section">
@@ -605,5 +606,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

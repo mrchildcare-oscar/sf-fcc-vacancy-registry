@@ -313,3 +313,37 @@ For the bilingual question sections, add FAQ schema:
 - Character: Quiet residential; underrecognized FCC area
 - Bilingual section: Yes (Chinese + Tagalog)
 - Cross-links: Bayview, Excelsior
+
+---
+
+## Curation Playbook (for deepening articles over time)
+
+The initial 5 neighborhood pages are seeded with template content. Over time, each should be deepened into a genuinely authoritative local article. The goal is **local signal density that AI-generated content cannot match**, written in an **advertorial voice that celebrates every neighborhood** (not a journalistic voice that critiques).
+
+### Editorial voice
+
+- **Celebratory, specific, accurate.** Every neighborhood has real strengths — lead with those.
+- **Not journalistic.** Don't compare neighborhoods against each other, don't raise "concerns" (safety, gentrification), don't editorialize.
+- **FCCASF-authored.** The platform is operated by FCCASF. Other orgs like Wu Yee Children's Services and Children's Council of San Francisco can be referenced as resources families can use, but should not be positioned as partners or the narrative anchor unless an actual collaboration exists.
+- **Center the providers and families.** The real story is what care looks like inside a Sunset or Mission FCC home — not the agencies around it.
+
+### Content that beats AI
+
+1. **Interview 1–2 providers per neighborhood** (15-min calls). Extract 2–3 real quotes per article ("At our home, lunch is always a home-cooked Chinese meal — the kids and their grandparents both know what's on the table"). These quotes are the strongest trust signal on the page and impossible for AI to fabricate.
+2. **Add a parent view** (planned by FCCASF). A quote or two from a real parent about why they chose a neighborhood FCC over a center — same trust-signal value as provider quotes.
+3. **At least one real photo per article** — FCC front door, play area, snack table. Beats stock imagery significantly.
+4. **Distinctive-strength framing**, not comparison. Each article describes what makes *this* neighborhood's FCC community distinctive — "Sunset's Cantonese family rhythm woven into meals and afternoon snacks", "Mission providers who serve three generations of the same family". Celebrate, don't rank.
+5. **Concrete local anchors**: name actual streets, transit stops, parks, community institutions by name (24th St BART, Thai Temple, Clement Street corridor, Golden Gate Park's Children's Playground). These are the strongest SEO+AEO signals and they accumulate trust.
+
+### Operational cadence
+
+- **One neighborhood deepened per month.** Interview → photos → article rewrite → ship.
+- **Let analytics drive order.** Use PostHog to see which neighborhood pages already drive the most inquiries or engagement and prioritize deepening those first, not blindly rotating through all five.
+- **Repurpose each interview.** 15-min call → written quotes for article + short Xiaohongshu/Instagram clip + provider's own testimonial. Amortize the outreach cost across channels.
+- **Revisit positioning** if/when an actual FCCASF × Wu Yee or × Children's Council partnership is established — then the narrative can evolve.
+
+### Out of scope (for now)
+
+- Comparative "choose X if..." frames — not an editorial fit for an advertorial platform.
+- Neighborhood risk/concern callouts (safety, gentrification, ICE) — hurts providers in those neighborhoods and is not our role to editorialize.
+- Featuring agencies with whom no active partnership exists as central characters.

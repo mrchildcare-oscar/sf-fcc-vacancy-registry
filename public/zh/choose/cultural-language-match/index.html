@@ -71,7 +71,7 @@
         "name": "如何在舊金山找到說粵語的托兒老師？",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "您可以在 familychildcaresf.com 的 FCCASF 名冊中按語言篩選托兒老師。日落區、列治文區和華埠有許多以粵語為主要語言的家庭托兒老師，提供全日制粵語托兒服務。您可以按社區和語言搜尋，找到離您最近的托兒老師。"
+          "text": "您可以在 familychildcaresf.com 的 FCCASF 名冊中按語言篩選托兒老師。Sunset、Richmond和華埠有許多以粵語為主要語言的家庭托兒老師，提供全日制粵語托兒服務。您可以按社區和語言搜尋，找到離您最近的托兒老師。"
         }
       },
       {
@@ -288,8 +288,10 @@
       h2 { font-size: 20px; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <!-- Header -->
   <header>
@@ -305,11 +307,7 @@
           <a href="/zh/neighborhoods/">社區</a>
           <a href="/?lang=zh-TW#public">尋找托兒</a>
         </div>
-        <div class="lang-switcher">
-          <a href="/choose/cultural-language-match/">EN</a>
-          <a href="/es/choose/cultural-language-match/">ES</a>
-          <span class="active">中文</span>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -350,8 +348,8 @@
         <p>舊金山的家庭托兒老師總共會說<strong>超過 20 種語言</strong>。這種卓越的語言多元性是本市托兒體系最大的優勢之一。</p>
         <p>主要語言包括：</p>
         <ul>
-          <li><strong>粵語</strong>——日落區、列治文區、華埠和訪谷區的托兒老師廣泛使用</li>
-          <li><strong>國語</strong>——多個社區都有提供，尤其在日落區和列治文區</li>
+          <li><strong>粵語</strong>——Sunset、Richmond、華埠和訪谷區的托兒老師廣泛使用</li>
+          <li><strong>國語</strong>——多個社區都有提供，尤其在Sunset和Richmond</li>
           <li><strong>西班牙語</strong>——米慎區、Excelsior 區、灣景區和外米慎區常見</li>
           <li><strong>他加祿語</strong>——市場南區和 Excelsior 區的托兒老師使用</li>
           <li><strong>越南語、俄語、阿拉伯語、薩摩亞語、東加語、韓語、日語、印地語、烏爾都語、法語、葡萄牙語</strong>——以及更多語言</li>
@@ -384,7 +382,7 @@
 
         <div class="faq-item">
           <h3>如何在舊金山找到說粵語的托兒老師？</h3>
-          <p>您可以在 familychildcaresf.com 的 FCCASF 名冊中按語言篩選托兒老師。日落區、列治文區和華埠有許多以粵語為主要語言的家庭托兒老師，提供全日制粵語托兒服務。您可以按社區和語言搜尋，找到離您最近的托兒老師。</p>
+          <p>您可以在 familychildcaresf.com 的 FCCASF 名冊中按語言篩選托兒老師。Sunset、Richmond和華埠有許多以粵語為主要語言的家庭托兒老師，提供全日制粵語托兒服務。您可以按社區和語言搜尋，找到離您最近的托兒老師。</p>
         </div>
 
         <div class="faq-item">
@@ -428,5 +426,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

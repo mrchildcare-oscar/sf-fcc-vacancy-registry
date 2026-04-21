@@ -65,6 +65,9 @@ interface StagedPayload {
   school_age_spots: number;
   full_time_available: boolean;
   part_time_available: boolean;
+  weekend_available: boolean;
+  evening_available: boolean;
+  overnight_available: boolean;
   waitlist_available: boolean;
   notes?: string;
 }
@@ -148,6 +151,9 @@ function coercePayload(raw: unknown): StagedPayload | null {
     school_age_spots: toInt(answers.school_age_spots),
     full_time_available: toBool(answers.full_time_available),
     part_time_available: toBool(answers.part_time_available),
+    weekend_available: toBool(answers.weekend_available),
+    evening_available: toBool(answers.evening_available),
+    overnight_available: toBool(answers.overnight_available),
     waitlist_available: toBool(answers.waitlist_available),
     notes: toStr(answers.notes) || undefined,
   };
@@ -255,6 +261,9 @@ serve(async (req) => {
       accepting_school_age: payload.school_age_spots > 0,
       full_time_available: payload.full_time_available,
       part_time_available: payload.part_time_available,
+      weekend_available: payload.weekend_available,
+      evening_available: payload.evening_available,
+      overnight_available: payload.overnight_available,
       waitlist_available: payload.waitlist_available,
       notes: payload.notes ?? null,
       reported_at: new Date().toISOString(),

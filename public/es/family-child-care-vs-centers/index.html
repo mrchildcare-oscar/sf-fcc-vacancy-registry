@@ -352,8 +352,10 @@
       .stats-bar { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
 
   <!-- Header -->
   <header>
@@ -369,11 +371,7 @@
           <a href="/es/neighborhoods/">Barrios</a>
           <a href="/?lang=es#public">Buscar proveedores</a>
         </div>
-        <div class="lang-switcher">
-          <a href="/family-child-care-vs-centers/">EN</a>
-          <span class="active">ES</span>
-          <a href="/zh/family-child-care-vs-centers/">中文</a>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -626,5 +624,6 @@
     </div>
   </footer>
 
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

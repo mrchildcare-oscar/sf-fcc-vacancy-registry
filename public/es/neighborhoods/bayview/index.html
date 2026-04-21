@@ -147,8 +147,10 @@
       .glance-card dt { margin-top: 8px; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/audience-top-bar.css">
 </head>
 <body>
+  <div id="audience-top-bar"></div>
   <header>
     <div class="container">
       <a href="/es/" class="site-title">Family Child Care SF</a>
@@ -163,11 +165,7 @@
           <a href="/#public">Encontrar Proveedores</a>
         </div>
         
-        <div class="lang-switcher">
-          <a href="/neighborhoods/bayview/">EN</a>
-          <span class="active">ES</span>
-          <a href="/zh/neighborhoods/bayview/">中文</a>
-        </div>
+        <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
     </div>
   </header>
@@ -181,7 +179,7 @@
   <main>
     <div class="container">
       <div class="breadcrumb">
-        <a href="/es/">Inicio</a> &rsaquo; <a href="/es/child-care-san-francisco/">Cuidado Infantil en SF</a> &rsaquo; Barrios &rsaquo; Bayview-Hunters Point
+        <a href="/es/">Inicio</a> &rsaquo; <a href="/es/child-care-san-francisco/">Cuidado Infantil en SF</a> &rsaquo; <a href="/es/neighborhoods/">Barrios</a> &rsaquo; Bayview-Hunters Point
       </div>
 
       <div class="content-section" style="margin-top:24px;">
@@ -252,5 +250,6 @@
       <p>Un servicio de la <a href="https://fccasf.com" target="_blank" rel="noopener">Asociación de Cuidado Infantil Familiar de San Francisco</a></p>
     </div>
   </footer>
+  <script src="/assets/lang-switcher.js" defer></script>
 </body>
 </html>

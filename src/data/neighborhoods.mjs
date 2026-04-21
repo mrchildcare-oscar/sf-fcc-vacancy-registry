@@ -12,7 +12,7 @@ export const neighborhoods = [
     slug: "sunset",
     nameEn: "Sunset District",
     nameEs: "Distrito Sunset",
-    nameZh: "日落區",
+    nameZh: "Sunset",
     primaryLanguagesEn: ["Chinese (Cantonese)", "Chinese (Mandarin)", "English"],
     primaryLanguagesEs: ["Chino (Cantonés)", "Chino (Mandarín)", "Inglés"],
     primaryLanguagesZh: ["中文（粵語）", "中文（普通話）", "英語"],
@@ -28,14 +28,14 @@ export const neighborhoods = [
     introEs:
       "El Distrito Sunset alberga una de las mayores concentraciones de hogares de cuidado infantil familiar con licencia en San Francisco, con muchos proveedores que ofrecen cuidado bilingüe en cantonés, mandarín e inglés. El carácter residencial del barrio — calles tranquilas, proximidad al Golden Gate Park y buen transporte público a lo largo de las líneas N-Judah y L-Taraval — lo hace ideal para el cuidado infantil en el hogar. Muchos proveedores del Sunset participan en la red ELFA, por lo que la mayoría de familias pueden acceder a cuidado gratuito o a bajo costo. Ya sea que busque cuidado para bebés, plazas para niños pequeños, o un programa bilingüe preescolar, el Sunset tiene más opciones de cuidado familiar por cuadra que casi cualquier otro barrio de San Francisco.",
     introZh:
-      "日落區（Sunset District）擁有全三藩市（舊金山）最密集的持牌家庭托兒所之一，許多托兒者提供粵語、普通話及英語的雙語照護。此社區環境寧靜、近金門公園，並有N-Judah及L-Taraval等便利公共交通，非常適合家庭式托兒。日落區多家家庭托兒所參加全民早教 (ELFA) 網絡，大部分家庭均可獲得免費或減費托兒服務。無論您在尋找嬰兒托兒、幼兒名額，或雙語學前教育計劃，日落區的家庭托兒所選擇是全市最多的。",
+      "Sunset（Sunset District）擁有全三藩市（舊金山）最密集的持牌家庭托兒所之一，許多托兒者提供粵語、普通話及英語的雙語照護。此社區環境寧靜、近金門公園，並有N-Judah及L-Taraval等便利公共交通，非常適合家庭式托兒。Sunset多家家庭托兒所參加全民早教 (ELFA) 網絡，大部分家庭均可獲得免費或減費托兒服務。無論您在尋找嬰兒托兒、幼兒名額，或雙語學前教育計劃，Sunset的家庭托兒所選擇是全市最多的。",
 
     fccDescriptionEn:
       "Family child care homes in the Sunset typically serve mixed-age groups of up to 8 children (small FCC) or up to 14 children (large FCC), with a home-like environment that many families prefer for infants and toddlers. Providers in this area commonly offer full-day care from approximately 7:30 AM to 5:30 PM, Monday through Friday, though hours vary by provider. The Sunset's family child care homes often reflect the neighborhood's strong Chinese-American community. Cantonese is the most commonly spoken second language among providers here, followed by Mandarin. Many providers also serve English-speaking families in a bilingual or English-primary setting. Meals and daily routines frequently incorporate Chinese cultural practices, including home-cooked meals with traditional ingredients.",
     fccDescriptionEs:
       "Los hogares de cuidado infantil familiar en el Sunset generalmente atienden a grupos de edades mixtas de hasta 8 niños (FCC pequeño) o hasta 14 niños (FCC grande), con un ambiente hogareño que muchas familias prefieren para bebés y niños pequeños. Los proveedores en esta área comúnmente ofrecen cuidado de día completo aproximadamente de 7:30 AM a 5:30 PM, de lunes a viernes, aunque las horas varían según el proveedor. Los hogares del Sunset a menudo reflejan la fuerte comunidad chino-americana del barrio. El cantonés es el segundo idioma más hablado entre los proveedores aquí, seguido del mandarín. Muchos proveedores también atienden a familias de habla inglesa en un entorno bilingüe o principalmente en inglés. Las comidas y rutinas diarias frecuentemente incorporan prácticas culturales chinas, incluyendo comidas caseras con ingredientes tradicionales.",
     fccDescriptionZh:
-      "日落區的家庭托兒所通常照顧混合年齡組最多8名兒童（小型FCC）或最多14名兒童（大型FCC），提供家庭式環境，許多家庭偏好為嬰幼兒選擇此類環境。本區托兒者通常提供週一至週五7:30 AM至5:30 PM的全日托兒服務，具體時間因托兒者而異。日落區的家庭托兒所充分反映社區強大的華人美裔社群。粵語是本區托兒者最常使用的第二語言，其次為普通話。許多托兒者也以雙語或英語為主的環境服務英語家庭。膳食及日常活動經常融入中國文化元素，包括以傳統食材烹調的家常菜。",
+      "Sunset的家庭托兒所通常照顧混合年齡組最多8名兒童（小型FCC）或最多14名兒童（大型FCC），提供家庭式環境，許多家庭偏好為嬰幼兒選擇此類環境。本區托兒者通常提供週一至週五7:30 AM至5:30 PM的全日托兒服務，具體時間因托兒者而異。Sunset的家庭托兒所充分反映社區強大的華人美裔社群。粵語是本區托兒者最常使用的第二語言，其次為普通話。許多托兒者也以雙語或英語為主的環境服務英語家庭。膳食及日常活動經常融入中國文化元素，包括以傳統食材烹調的家常菜。",
 
     bilingual: {
       languageEn: "Chinese",
@@ -46,16 +46,16 @@ export const neighborhoods = [
       contentEs:
         "El Distrito Sunset tiene la mayor densidad de proveedores de cuidado infantil familiar de habla china en San Francisco. Para las familias que desean que su hijo crezca escuchando cantonés o mandarín junto al inglés, este barrio ofrece algo que pocos programas centralizados pueden igualar: inmersión diaria en un entorno bilingüe en el hogar donde el idioma nativo del proveedor se integra en las comidas, el juego, las canciones y la conversación durante todo el día. Esto no es lo mismo que un 'plan bilingüe' en un centro grande. En un hogar FCC del Sunset, un proveedor de habla cantonesa puede leer cuentos en cantonés, cocinar comidas chinas con los niños, celebrar el Año Nuevo Lunar y el Festival del Medio Otoño como parte del ritmo diario, y comunicarse con los abuelos de habla china que hacen la recogida y dejada. Para las familias que mantienen el idioma de herencia en casa, esta continuidad es difícil de replicar en otros lugares.",
       contentZh:
-        "日落區擁有全三藩市密度最高的華語家庭托兒所。對於希望孩子在成長過程中同時接觸粵語或普通話與英語的家庭來說，本社區提供了大多數中心式計劃無法比擬的條件：每天沉浸於雙語家庭環境，托兒者的母語自然融入膳食、遊戲、歌曲及對話之中。這與大型中心的「雙語課程」截然不同。在日落區的家庭托兒所，粵語托兒者可能以粵語講故事、與孩子一起烹調中式膳食、將農曆新年和中秋節納入日常節奏、並用中文與負責接送的祖父母溝通。對於在家維持母語的家庭而言，這種延續性難以在其他地方複製。",
+        "Sunset擁有全三藩市密度最高的華語家庭托兒所。對於希望孩子在成長過程中同時接觸粵語或普通話與英語的家庭來說，本社區提供了大多數中心式計劃無法比擬的條件：每天沉浸於雙語家庭環境，托兒者的母語自然融入膳食、遊戲、歌曲及對話之中。這與大型中心的「雙語課程」截然不同。在Sunset的家庭托兒所，粵語托兒者可能以粵語講故事、與孩子一起烹調中式膳食、將農曆新年和中秋節納入日常節奏、並用中文與負責接送的祖父母溝通。對於在家維持母語的家庭而言，這種延續性難以在其他地方複製。",
       directAnswerQuestionEn: "Where can I find Chinese bilingual daycare in the Sunset?",
       directAnswerQuestionEs: "¿Dónde puedo encontrar cuidado infantil bilingüe en chino en el Sunset?",
-      directAnswerQuestionZh: "在日落區哪裡可以找到中文雙語托兒服務？",
+      directAnswerQuestionZh: "在Sunset哪裡可以找到中文雙語托兒服務？",
       directAnswerTextEn:
         "The Sunset District has dozens of licensed family child care homes where Cantonese or Mandarin is spoken daily alongside English. Many of these providers participate in San Francisco's ELFA subsidy network, so bilingual care can be free or low-cost for most families. Use FamilyChildcareSF.com to search current openings in the Sunset filtered by Chinese language.",
       directAnswerTextEs:
         "El Distrito Sunset tiene docenas de hogares FCC con licencia donde se habla cantonés o mandarín diariamente junto al inglés. Muchos de estos proveedores participan en la red de subsidios ELFA de San Francisco, por lo que el cuidado bilingüe puede ser gratuito o de bajo costo para la mayoría de las familias. Use FamilyChildcareSF.com para buscar aperturas actuales en el Sunset filtradas por idioma chino.",
       directAnswerTextZh:
-        "日落區有數十家持牌家庭托兒所日常以粵語或普通話配合英語授課。許多托兒者參加三藩市全民早教 (ELFA) 補助網絡，大多數家庭可獲得免費或低費的雙語照護。請使用 FamilyChildcareSF.com 按中文語言篩選日落區的當前空位。",
+        "Sunset有數十家持牌家庭托兒所日常以粵語或普通話配合英語授課。許多托兒者參加三藩市全民早教 (ELFA) 補助網絡，大多數家庭可獲得免費或低費的雙語照護。請使用 FamilyChildcareSF.com 按中文語言篩選Sunset的當前空位。",
     },
   },
 
@@ -63,7 +63,7 @@ export const neighborhoods = [
     slug: "richmond",
     nameEn: "Richmond District",
     nameEs: "Distrito Richmond",
-    nameZh: "列治文區",
+    nameZh: "Richmond",
     primaryLanguagesEn: ["Chinese (Cantonese)", "Chinese (Mandarin)", "Russian", "English"],
     primaryLanguagesEs: ["Chino (Cantonés)", "Chino (Mandarín)", "Ruso", "Inglés"],
     primaryLanguagesZh: ["中文（粵語）", "中文（普通話）", "俄語", "英語"],
@@ -79,14 +79,14 @@ export const neighborhoods = [
     introEs:
       "El Distrito Richmond es el segundo barrio más denso de San Francisco en hogares FCC con licencia, con una mezcla distintiva de proveedores de habla china (principalmente a lo largo de Clement Street y Geary Boulevard) y proveedores de habla rusa agrupados cerca del corredor Geary. Las calles residenciales tranquilas, el fácil acceso al Golden Gate Park y al Presidio, y el buen servicio de autobús 38-Geary lo convierten en una opción práctica para familias trabajadoras. Muchos hogares FCC del Richmond participan en la red ELFA, lo que significa que la mayoría de familias en este barrio pueden acceder a cuidado gratuito o a bajo costo. Ya sea que busque inmersión en cantonés, mandarín o cuidado de habla rusa para un bebé o niño pequeño, el Richmond ofrece opciones profundas a nivel de barrio que los programas centralizados rara vez igualan.",
     introZh:
-      "列治文區（Richmond District）是三藩市（舊金山）家庭托兒所密度第二高的社區，擁有獨特的組合：以Clement街和Geary大道為主的華語托兒者，以及集中於Geary走廊的俄語托兒者。寧靜的住宅街區、鄰近金門公園與Presidio，加上38-Geary巴士服務便利，使其成為雙職家庭的實用選擇。列治文區多家家庭托兒所參加全民早教 (ELFA) 網絡，大部分家庭均可獲得免費或減費托兒服務。無論您尋找粵語浸潤、普通話浸潤或俄語托兒（嬰兒或幼兒），列治文區均提供深厚的社區級選擇，通常是中心式計劃難以比擬的。",
+      "Richmond（Richmond District）是三藩市（舊金山）家庭托兒所密度第二高的社區，擁有獨特的組合：以Clement街和Geary大道為主的華語托兒者，以及集中於Geary走廊的俄語托兒者。寧靜的住宅街區、鄰近金門公園與Presidio，加上38-Geary巴士服務便利，使其成為雙職家庭的實用選擇。Richmond多家家庭托兒所參加全民早教 (ELFA) 網絡，大部分家庭均可獲得免費或減費托兒服務。無論您尋找粵語浸潤、普通話浸潤或俄語托兒（嬰兒或幼兒），Richmond均提供深厚的社區級選擇，通常是中心式計劃難以比擬的。",
 
     fccDescriptionEn:
       "Family child care homes in the Richmond typically serve mixed-age groups of up to 8 children (small FCC) or up to 14 children (large FCC) in a home environment. Most providers operate Monday through Friday from roughly 7:30 AM to 5:30 PM. Language diversity is the Richmond's distinguishing feature: Cantonese and Mandarin are most common in the Inner Richmond and along Clement Street, while Russian-speaking providers — serving families connected to the Russian community centered around Geary — offer a rare heritage-language option for infants and toddlers. Many providers cook meals onsite, and homes often reflect the cultural traditions of the provider family.",
     fccDescriptionEs:
       "Los hogares FCC en el Richmond generalmente atienden a grupos de edades mixtas de hasta 8 niños (FCC pequeño) o hasta 14 niños (FCC grande) en un ambiente hogareño. La mayoría de los proveedores operan de lunes a viernes aproximadamente de 7:30 AM a 5:30 PM. La diversidad lingüística es la característica distintiva del Richmond: el cantonés y el mandarín son más comunes en el Inner Richmond y a lo largo de Clement Street, mientras que los proveedores de habla rusa — que atienden a familias conectadas con la comunidad rusa centrada alrededor de Geary — ofrecen una opción poco común de idioma heredado para bebés y niños pequeños. Muchos proveedores cocinan comidas en el sitio, y los hogares a menudo reflejan las tradiciones culturales de la familia del proveedor.",
     fccDescriptionZh:
-      "列治文區的家庭托兒所通常照顧混合年齡組最多8名兒童（小型FCC）或最多14名兒童（大型FCC），提供家庭式環境。大多數托兒者於週一至週五約7:30 AM至5:30 PM營業。語言多樣性是列治文區的顯著特點：粵語和普通話在內列治文區及Clement街最為常見，而俄語托兒者——服務以Geary為中心的俄裔社群家庭——為嬰幼兒提供罕見的母語選擇。許多托兒者在現場烹調膳食，家庭環境也經常反映托兒者家庭的文化傳統。",
+      "Richmond的家庭托兒所通常照顧混合年齡組最多8名兒童（小型FCC）或最多14名兒童（大型FCC），提供家庭式環境。大多數托兒者於週一至週五約7:30 AM至5:30 PM營業。語言多樣性是Richmond的顯著特點：粵語和普通話在內Richmond及Clement街最為常見，而俄語托兒者——服務以Geary為中心的俄裔社群家庭——為嬰幼兒提供罕見的母語選擇。許多托兒者在現場烹調膳食，家庭環境也經常反映托兒者家庭的文化傳統。",
 
     bilingual: {
       languageEn: "Chinese and Russian",
@@ -97,16 +97,16 @@ export const neighborhoods = [
       contentEs:
         "El Distrito Richmond ofrece una combinación poco común de cuidado infantil familiar bilingüe en chino y ruso. Para las familias de habla china, el Inner Richmond y el corredor de Clement Street albergan a muchos proveedores de habla cantonesa y mandarina cuyos hogares incorporan naturalmente comidas chinas, canciones y celebraciones culturales. Para las familias de habla rusa — una comunidad históricamente desatendida por los programas dominados por el inglés — el corredor de Geary alberga a proveedores que hablan ruso diariamente con los niños a su cargo. En ambos casos, el valor es el mismo: inmersión en el idioma heredado desde la infancia, integrada en la vida diaria y no entregada como un plan de estudios, y una continuidad cultural que los programas centralizados no pueden replicar fácilmente.",
       contentZh:
-        "列治文區提供罕見的中文與俄語雙語家庭托兒組合。對於華語家庭，內列治文區及Clement街走廊有許多粵語及普通話托兒者，家庭環境自然融入中式膳食、歌曲及文化節日。對於俄語家庭——一個長期被英語為主計劃忽略的社群——Geary走廊的托兒者每日以俄語與托管兒童溝通。兩種情況的價值相同：從嬰兒期開始的母語浸潤，融入日常生活而非當作課程，以及中心式計劃難以複製的文化延續性。",
+        "Richmond提供罕見的中文與俄語雙語家庭托兒組合。對於華語家庭，內Richmond及Clement街走廊有許多粵語及普通話托兒者，家庭環境自然融入中式膳食、歌曲及文化節日。對於俄語家庭——一個長期被英語為主計劃忽略的社群——Geary走廊的托兒者每日以俄語與托管兒童溝通。兩種情況的價值相同：從嬰兒期開始的母語浸潤，融入日常生活而非當作課程，以及中心式計劃難以複製的文化延續性。",
       directAnswerQuestionEn: "Where can I find Cantonese, Mandarin, or Russian bilingual daycare in the Richmond?",
       directAnswerQuestionEs: "¿Dónde puedo encontrar cuidado infantil bilingüe en cantonés, mandarín o ruso en el Richmond?",
-      directAnswerQuestionZh: "在列治文區哪裡可以找到粵語、普通話或俄語雙語托兒服務？",
+      directAnswerQuestionZh: "在Richmond哪裡可以找到粵語、普通話或俄語雙語托兒服務？",
       directAnswerTextEn:
         "The Richmond District has licensed family child care homes offering Cantonese and Mandarin bilingual care — concentrated in the Inner Richmond and along Clement Street — and Russian-speaking providers near the Geary corridor. Many participate in San Francisco's ELFA subsidy network, so bilingual care can be free or low-cost. Use FamilyChildcareSF.com to filter current openings by neighborhood and language.",
       directAnswerTextEs:
         "El Distrito Richmond tiene hogares FCC con licencia que ofrecen cuidado bilingüe en cantonés y mandarín — concentrados en el Inner Richmond y a lo largo de Clement Street — y proveedores de habla rusa cerca del corredor Geary. Muchos participan en la red de subsidios ELFA, por lo que el cuidado bilingüe puede ser gratuito o de bajo costo. Use FamilyChildcareSF.com para filtrar aperturas actuales por barrio e idioma.",
       directAnswerTextZh:
-        "列治文區有持牌家庭托兒所提供粵語及普通話雙語照護——集中在內列治文區及Clement街——以及Geary走廊附近的俄語托兒者。許多托兒者參加三藩市全民早教 (ELFA) 補助網絡，雙語照護可以免費或低費獲得。請使用 FamilyChildcareSF.com 按社區及語言篩選當前空位。",
+        "Richmond有持牌家庭托兒所提供粵語及普通話雙語照護——集中在內Richmond及Clement街——以及Geary走廊附近的俄語托兒者。許多托兒者參加三藩市全民早教 (ELFA) 補助網絡，雙語照護可以免費或低費獲得。請使用 FamilyChildcareSF.com 按社區及語言篩選當前空位。",
     },
   },
 

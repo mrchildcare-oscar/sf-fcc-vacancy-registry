@@ -26,6 +26,9 @@ export interface VacancyFormData {
   available_date: string;
   full_time_available: boolean;
   part_time_available: boolean;
+  weekend_available: boolean;
+  evening_available: boolean;
+  overnight_available: boolean;
   waitlist_available: boolean;
   notes: string;
 }
@@ -42,6 +45,9 @@ const DEFAULT_DATA: VacancyFormData = {
   available_date: new Date().toISOString().split('T')[0],
   full_time_available: true,
   part_time_available: false,
+  weekend_available: false,
+  evening_available: false,
+  overnight_available: false,
   waitlist_available: false,
   notes: '',
 };
@@ -285,7 +291,7 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
             <Clock size={14} className="inline mr-1" />
             {t('vacancy.scheduleOptions')}
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -303,6 +309,33 @@ export function VacancyForm({ initialData, onSubmit, programType, currentEnrollm
                 className="rounded"
               />
               <span className="text-sm">{t('vacancy.partTime')}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.weekend_available}
+                onChange={e => setFormData(prev => ({ ...prev, weekend_available: e.target.checked }))}
+                className="rounded"
+              />
+              <span className="text-sm">{t('vacancy.weekend')}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.evening_available}
+                onChange={e => setFormData(prev => ({ ...prev, evening_available: e.target.checked }))}
+                className="rounded"
+              />
+              <span className="text-sm">{t('vacancy.evening')}</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.overnight_available}
+                onChange={e => setFormData(prev => ({ ...prev, overnight_available: e.target.checked }))}
+                className="rounded"
+              />
+              <span className="text-sm">{t('vacancy.overnight')}</span>
             </label>
           </div>
         </div>

@@ -131,6 +131,9 @@ export function OrganizationDashboard({ organization, providers, onRefresh }: Or
       available_date: vacancy?.available_date || new Date().toISOString().split('T')[0],
       full_time_available: vacancy?.full_time_available ?? true,
       part_time_available: vacancy?.part_time_available ?? false,
+      weekend_available: vacancy?.weekend_available ?? false,
+      evening_available: vacancy?.evening_available ?? false,
+      overnight_available: vacancy?.overnight_available ?? false,
       waitlist_available: vacancy?.waitlist_available ?? false,
       notes: vacancy?.notes || '',
     });
@@ -298,6 +301,9 @@ export function OrganizationDashboard({ organization, providers, onRefresh }: Or
           available_date: dateIdx >= 0 && values[dateIdx] ? values[dateIdx] : new Date().toISOString().split('T')[0],
           full_time_available: true,
           part_time_available: false,
+          weekend_available: false,
+          evening_available: false,
+          overnight_available: false,
           waitlist_available: waitlistIdx >= 0 ? ['yes', 'true', '1'].includes(values[waitlistIdx]?.toLowerCase()) : false,
           notes: '',
         };

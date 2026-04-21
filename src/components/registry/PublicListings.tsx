@@ -1304,7 +1304,16 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
       <div className="bg-white border-t mt-8 py-6">
         <div className="max-w-6xl mx-auto px-4 text-center text-sm text-gray-600">
           <p>
-            {t('publicListings.footer')}
+            {t('publicListings.footerPrefix')}{' '}
+            <a
+              href="https://fccasf.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              {t('publicListings.footerOrgName')}
+            </a>
+            {t('publicListings.footerSuffix')}
           </p>
           <p className="mt-2">
             {t('landing.footer.moreProviders')}{' '}

@@ -313,13 +313,23 @@
     .card-grid { display: grid; gap: 16px; margin: 16px 0; grid-template-columns: 1fr; }
     @media (min-width: 720px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
     .vault-card {
+      display: block;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
       padding: 18px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .vault-card:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+      text-decoration: none;
+      transform: translateY(-1px);
     }
     .vault-card h3 { margin-top: 0; font-size: 16px; color: #1e40af; }
-    .vault-card h3 a { color: #1e40af; }
+    .vault-card:hover h3 { color: #1d4ed8; }
     .vault-card p { font-size: 14px; color: #475569; margin-bottom: 0; }
     .example-card {
       background: #fff;
@@ -383,7 +393,6 @@
   <!-- Header -->
   <header>
     <div class="container">
-      <a href="/" class="site-title">Family Child Care SF</a>
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
         <div class="header-links">
           <a href="/child-care-san-francisco/">Guide</a>
@@ -392,7 +401,6 @@
           <a href="/financial-assistance/" class="active-page">Financial Help</a>
           <a href="/choose/">Trust Wheel</a>
           <a href="/neighborhoods/">Neighborhoods</a>
-          <a href="/#public">Find Providers</a>
         </div>
         <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
@@ -496,18 +504,9 @@
         <h2>Documentation Vault</h2>
         <p>Applications move faster when you arrive with the right documents. Use these short, plain-English checklists before you sit down with Children's Council or Wu Yee.</p>
         <div class="card-grid">
-          <div class="vault-card">
-            <h3><a href="/financial-assistance/docs/residency-proof/">What documents prove SF residency?</a></h3>
-            <p>A current lease, recent utility bill, or government mail addressed to you inside city limits — usually two matching items are enough.</p>
-          </div>
-          <div class="vault-card">
-            <h3><a href="/financial-assistance/docs/self-employed-income/">How do self-employed/gig workers prove income?</a></h3>
-            <p>Bring your latest tax return plus 1099s, Schedule C, or 3 months of bank deposits and platform payout statements from Uber, DoorDash, or similar.</p>
-          </div>
-          <div class="vault-card">
-            <h3><a href="/financial-assistance/docs/family-size/">Who counts as "family size"?</a></h3>
-            <p>Everyone financially dependent in your household — parents, children, and often a pregnant member counts as two — even if extended relatives share rent.</p>
-          </div>
+          <a href="/financial-assistance/docs/residency-proof/" class="vault-card"><h3>What documents prove SF residency?</h3><p>A current lease, recent utility bill, or government mail addressed to you inside city limits — usually two matching items are enough.</p></a>
+          <a href="/financial-assistance/docs/self-employed-income/" class="vault-card"><h3>How do self-employed/gig workers prove income?</h3><p>Bring your latest tax return plus 1099s, Schedule C, or 3 months of bank deposits and platform payout statements from Uber, DoorDash, or similar.</p></a>
+          <a href="/financial-assistance/docs/family-size/" class="vault-card"><h3>Who counts as "family size"?</h3><p>Everyone financially dependent in your household — parents, children, and often a pregnant member counts as two — even if extended relatives share rent.</p></a>
         </div>
       </div>
 

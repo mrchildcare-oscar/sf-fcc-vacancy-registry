@@ -313,13 +313,23 @@
     .card-grid { display: grid; gap: 16px; margin: 16px 0; grid-template-columns: 1fr; }
     @media (min-width: 720px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
     .vault-card {
+      display: block;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
       padding: 18px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .vault-card:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+      text-decoration: none;
+      transform: translateY(-1px);
     }
     .vault-card h3 { margin-top: 0; font-size: 16px; color: #1e40af; }
-    .vault-card h3 a { color: #1e40af; }
+    .vault-card:hover h3 { color: #1d4ed8; }
     .vault-card p { font-size: 14px; color: #475569; margin-bottom: 0; }
     .example-card {
       background: #fff;
@@ -383,7 +393,6 @@
   <!-- Header -->
   <header>
     <div class="container">
-      <a href="/es/" class="site-title">Family Child Care SF</a>
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
         <div class="header-links">
           <a href="/es/child-care-san-francisco/">Gu&iacute;a</a>
@@ -392,7 +401,6 @@
           <a href="/es/financial-assistance/" class="active-page">Ayuda financiera</a>
           <a href="/es/choose/">Guía de confianza</a>
           <a href="/es/neighborhoods/">Barrios</a>
-          <a href="/?lang=es#public">Buscar proveedores</a>
         </div>
         <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
@@ -486,18 +494,9 @@
         <h2>Archivo de documentos</h2>
         <p>Las solicitudes avanzan m&aacute;s r&aacute;pido cuando llega con los documentos correctos. Use estas listas cortas y claras antes de reunirse con Children's Council o Wu Yee.</p>
         <div class="card-grid">
-          <div class="vault-card">
-            <h3><a href="/financial-assistance/docs/residency-proof/">&iquest;Qu&eacute; documentos prueban la residencia en SF?</a></h3>
-            <p>Un contrato de arrendamiento vigente, una factura de servicios reciente o correo gubernamental a su nombre dentro de la ciudad &mdash; normalmente bastan dos comprobantes coincidentes.</p>
-          </div>
-          <div class="vault-card">
-            <h3><a href="/financial-assistance/docs/self-employed-income/">&iquest;C&oacute;mo prueban ingresos los trabajadores independientes?</a></h3>
-            <p>Traiga su &uacute;ltima declaraci&oacute;n de impuestos m&aacute;s formularios 1099, Schedule C, o 3 meses de dep&oacute;sitos bancarios y comprobantes de pago de Uber, DoorDash u otras plataformas.</p>
-          </div>
-          <div class="vault-card">
-            <h3><a href="/financial-assistance/docs/family-size/">&iquest;Qui&eacute;n cuenta como "tama&ntilde;o familiar"?</a></h3>
-            <p>Todos los que dependen econ&oacute;micamente de su hogar &mdash; padres, hijos, y una persona embarazada suele contar como dos &mdash; aun si comparten renta con familiares.</p>
-          </div>
+          <a href="/financial-assistance/docs/residency-proof/" class="vault-card"><h3>&iquest;Qu&eacute; documentos prueban la residencia en SF?</h3><p>Un contrato de arrendamiento vigente, una factura de servicios reciente o correo gubernamental a su nombre dentro de la ciudad &mdash; normalmente bastan dos comprobantes coincidentes.</p></a>
+          <a href="/financial-assistance/docs/self-employed-income/" class="vault-card"><h3>&iquest;C&oacute;mo prueban ingresos los trabajadores independientes?</h3><p>Traiga su &uacute;ltima declaraci&oacute;n de impuestos m&aacute;s formularios 1099, Schedule C, o 3 meses de dep&oacute;sitos bancarios y comprobantes de pago de Uber, DoorDash u otras plataformas.</p></a>
+          <a href="/financial-assistance/docs/family-size/" class="vault-card"><h3>&iquest;Qui&eacute;n cuenta como "tama&ntilde;o familiar"?</h3><p>Todos los que dependen econ&oacute;micamente de su hogar &mdash; padres, hijos, y una persona embarazada suele contar como dos &mdash; aun si comparten renta con familiares.</p></a>
         </div>
       </div>
 
@@ -578,7 +577,7 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>A service of the <a href="https://fccasf.com" target="_blank" rel="noopener">Family Child Care Association of San Francisco</a></p>
+      <p>Un servicio de la <a href="https://fccasf.com" target="_blank" rel="noopener">Asociación de Cuidado Infantil Familiar de San Francisco</a> (FCCASF)</p>
     </div>
   </footer>
 

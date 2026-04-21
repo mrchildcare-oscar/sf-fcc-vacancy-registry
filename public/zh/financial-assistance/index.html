@@ -313,13 +313,23 @@
     .card-grid { display: grid; gap: 16px; margin: 16px 0; grid-template-columns: 1fr; }
     @media (min-width: 720px) { .card-grid { grid-template-columns: repeat(3, 1fr); } }
     .vault-card {
+      display: block;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
       padding: 18px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .vault-card:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+      text-decoration: none;
+      transform: translateY(-1px);
     }
     .vault-card h3 { margin-top: 0; font-size: 16px; color: #1e40af; }
-    .vault-card h3 a { color: #1e40af; }
+    .vault-card:hover h3 { color: #1d4ed8; }
     .vault-card p { font-size: 14px; color: #475569; margin-bottom: 0; }
     .example-card {
       background: #fff;
@@ -383,7 +393,6 @@
   <!-- Header -->
   <header>
     <div class="container">
-      <a href="/zh/" class="site-title">Family Child Care SF</a>
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
         <div class="header-links">
           <a href="/zh/child-care-san-francisco/">指南</a>
@@ -392,7 +401,6 @@
           <a href="/zh/financial-assistance/" class="active-page">財務援助</a>
           <a href="/zh/choose/">信任指南</a>
           <a href="/zh/neighborhoods/">社區</a>
-          <a href="/?lang=zh-TW#public">尋找托兒</a>
         </div>
         <div class="lang-switcher" id="lang-switcher"><a href="/">EN</a><a href="/es/">ES</a><a href="/zh/">中文</a></div>
       </div>
@@ -486,18 +494,9 @@
         <h2>文件資料庫</h2>
         <p>攜帶正確的文件可加快申請速度。在與兒童議會或護兒兒童服務預約前，請先查看以下簡易清單。</p>
         <div class="card-grid">
-          <div class="vault-card">
-            <h3><a href="/zh/financial-assistance/docs/residency-proof/">哪些文件可證明三藩市居住資格？</a></h3>
-            <p>現行租約、近期水電費帳單，或寄至市內地址的政府郵件；通常兩項一致文件即可。</p>
-          </div>
-          <div class="vault-card">
-            <h3><a href="/zh/financial-assistance/docs/self-employed-income/">自僱及零工工作者如何證明收入？</a></h3>
-            <p>最新報稅表加上 1099 表、Schedule C，或 3 個月銀行存款及 Uber、DoorDash 等平台的收款紀錄。</p>
-          </div>
-          <div class="vault-card">
-            <h3><a href="/zh/financial-assistance/docs/family-size/">「家庭人數」如何計算？</a></h3>
-            <p>所有依賴您經濟支援的家庭成員——父母、子女、懷孕成員通常算兩人——即使與親戚合租也一樣。</p>
-          </div>
+          <a href="/zh/financial-assistance/docs/residency-proof/" class="vault-card"><h3>哪些文件可證明三藩市居住資格？</h3><p>現行租約、近期水電費帳單，或寄至市內地址的政府郵件；通常兩項一致文件即可。</p></a>
+          <a href="/zh/financial-assistance/docs/self-employed-income/" class="vault-card"><h3>自僱及零工工作者如何證明收入？</h3><p>最新報稅表加上 1099 表、Schedule C，或 3 個月銀行存款及 Uber、DoorDash 等平台的收款紀錄。</p></a>
+          <a href="/zh/financial-assistance/docs/family-size/" class="vault-card"><h3>「家庭人數」如何計算？</h3><p>所有依賴您經濟支援的家庭成員——父母、子女、懷孕成員通常算兩人——即使與親戚合租也一樣。</p></a>
         </div>
       </div>
 
@@ -578,7 +577,7 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>A service of the <a href="https://fccasf.com" target="_blank" rel="noopener">Family Child Care Association of San Francisco</a></p>
+      <p>本網站由 <a href="https://fccasf.com" target="_blank" rel="noopener">舊金山家庭托兒協會</a> (FCCASF) 提供</p>
     </div>
   </footer>
 

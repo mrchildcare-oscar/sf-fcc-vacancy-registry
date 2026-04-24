@@ -30,10 +30,7 @@ serve(async (req) => {
     const yesterday = new Date(now)
     yesterday.setDate(yesterday.getDate() - 1)
 
-    // Get detailed metrics for diagnosis
     const metrics = await getDetailedMetrics(supabase, yesterday, now)
-    
-    // Send the report email
     await sendDiagnosticReport(resendApiKey, reportRecipient, metrics, now)
 
     console.log('Daily diagnostic report sent to', reportRecipient)
@@ -51,223 +48,230 @@ serve(async (req) => {
 })
 
 async function getDetailedMetrics(supabase: any, startDate: Date, endDate: Date) {
-  const now = endDate // Use endDate as the current time reference
-  const metrics: any = {
-    providers: {},
-    inquiries: {},
-    funnel: {},
-  }
+  const metrics: any = {}
+  const sevenDaysOut = new Date(endDate)
+  sevenDaysOut.setDate(sevenDaysOut.getDate() + 7)
 
-  // === PROVIDER FUNNEL ANALYSIS ===
-  
-  // Get all auth users (SSO signups)
-  const authResponse = await supabase.auth.admin.listUsers()
-  const authUsers = authResponse.data?.users || []
-  const totalAuthUsers = authUsers.length
-  
-  // Total providers with profiles (completed basic onboarding)
-  const { data: allProviders, count: totalProviders } = await supabase
+  // === PROVIDERS ===
+  const { data: allProviders } = await supabase
     .from('providers')
-    .select('*', { count: 'exact' })
+    .select('id, created_at, intake_source, is_approved, is_active, business_name, contact_email, zip_code')
     .order('created_at', { ascending: false })
 
-  // Providers with complete data (all required fields filled)
-  const completeProviders = allProviders?.filter(p => 
-    p.business_name && 
-    p.license_number && 
-    p.owner_name && 
-    p.zip_code && 
-    p.contact_email &&
-    p.licensed_capacity > 0
-  ) || []
-
-  // Providers with active vacancies
-  const { data: activeVacancies } = await supabase
-    .from('vacancies')
-    .select('provider_id')
-    .gt('expires_at', endDate.toISOString())
-
-  const providersWithVacancies = new Set(activeVacancies?.map(v => v.provider_id) || [])
-
-  // New signups in last 24 hours
-  const newAuthUsers = authUsers.filter((u: any) => {
-    const createdAt = new Date(u.created_at)
-    return createdAt >= startDate && createdAt <= endDate
+  const providers = allProviders || []
+  const bySource = (src: string) => providers.filter((p: any) => (p.intake_source ?? 'self_signup') === src)
+  const newInWindow = (rows: any[]) => rows.filter((r: any) => {
+    const t = new Date(r.created_at).getTime()
+    return t >= startDate.getTime() && t <= endDate.getTime()
   })
 
-  const { data: newProviders } = await supabase
-    .from('providers')
-    .select('*')
-    .gte('created_at', startDate.toISOString())
-    .lte('created_at', endDate.toISOString())
+  const pendingApproval = providers.filter((p: any) => p.is_approved === false && p.is_active !== false)
 
   metrics.providers = {
-    // Totals
-    totalSSOSignups: totalAuthUsers,
-    totalProvidersStarted: totalProviders || 0,
-    totalProvidersComplete: completeProviders.length,
-    totalWithVacancies: providersWithVacancies.size,
-    
-    // Last 24 hours
-    newSSOSignups: newAuthUsers.length,
-    newProvidersStarted: newProviders?.length || 0,
-    newVacanciesPosted: 0, // will calculate below
-    
-    // Conversion rates
-    ssoToProfileRate: totalAuthUsers > 0 ? ((totalProviders || 0) / totalAuthUsers * 100).toFixed(1) : '0',
-    profileToCompleteRate: totalProviders ? ((completeProviders.length / totalProviders) * 100).toFixed(1) : '0',
-    completeToVacancyRate: completeProviders.length ? ((providersWithVacancies.size / completeProviders.length) * 100).toFixed(1) : '0',
-  }
-
-  // New vacancies in last 24 hours
-  const { count: newVacanciesCount } = await supabase
-    .from('vacancies')
-    .select('*', { count: 'exact', head: true })
-    .gte('reported_at', startDate.toISOString())
-    .lte('reported_at', endDate.toISOString())
-
-  metrics.providers.newVacanciesPosted = newVacanciesCount || 0
-
-  // === INQUIRY ANALYSIS ===
-  
-  // All inquiries
-  const { data: allInquiries } = await supabase
-    .from('parent_inquiries')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  // Inquiries in last 24 hours
-  const newInquiries = allInquiries?.filter(i => {
-    const createdAt = new Date(i.created_at)
-    return createdAt >= startDate && createdAt <= endDate
-  }) || []
-
-  // Identify likely test inquiries (from staff emails or test patterns)
-  const testEmailPatterns = ['@familychildcaresf.com', 'ryan.tang', 'test', 'demo']
-  const realInquiries = allInquiries?.filter(i => 
-    !testEmailPatterns.some(pattern => 
-      i.parent_email?.toLowerCase().includes(pattern)
-    )
-  ) || []
-
-  const newRealInquiries = newInquiries.filter(i => 
-    !testEmailPatterns.some(pattern => 
-      i.parent_email?.toLowerCase().includes(pattern)
-    )
-  )
-
-  metrics.inquiries = {
-    // Totals
-    totalInquiries: allInquiries?.length || 0,
-    totalRealInquiries: realInquiries.length,
-    totalTestInquiries: (allInquiries?.length || 0) - realInquiries.length,
-    
-    // Last 24 hours
-    newInquiries: newInquiries.length,
-    newRealInquiries: newRealInquiries.length,
-    newTestInquiries: newInquiries.length - newRealInquiries.length,
-    
-    // Response rates
-    repliedInquiries: allInquiries?.filter(i => i.status === 'replied').length || 0,
-    pendingInquiries: allInquiries?.filter(i => i.status === 'pending').length || 0,
-  }
-
-  // === BARRIER DETECTION ===
-  
-  // Find providers stuck at each stage
-  const stuckAtSSO = authUsers.filter((u: any) => 
-    !allProviders?.find(p => p.id === u.id)
-  )
-
-  const stuckAtProfile = allProviders?.filter(p => 
-    !completeProviders.find(cp => cp.id === p.id)
-  ) || []
-
-  const stuckAtVacancy = completeProviders.filter(p => 
-    !providersWithVacancies.has(p.id)
-  )
-
-  metrics.funnel = {
-    stuckAtSSO: stuckAtSSO.length,
-    stuckAtProfile: stuckAtProfile.length,
-    stuckAtVacancy: stuckAtVacancy.length,
-    
-    // Recent dropoffs (last 7 days)
-    recentSSODropoffs: stuckAtSSO.filter((u: any) => {
-      const createdAt = new Date(u.created_at)
-      const daysAgo = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24)
-      return daysAgo <= 7
-    }).length,
-    
-    // Sample of incomplete profiles for diagnosis
-    incompleteProfiles: stuckAtProfile.slice(0, 3).map(p => ({
-      email: p.email,
-      createdDaysAgo: Math.floor((now.getTime() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24)),
-      missingFields: [
-        !p.business_name && 'business_name',
-        !p.license_number && 'license_number',
-        !p.owner_name && 'owner_name',
-        !p.zip_code && 'zip_code',
-        !p.contact_email && 'contact_email',
-        !p.licensed_capacity && 'licensed_capacity',
-      ].filter(Boolean),
+    total: providers.length,
+    totalJotform: bySource('jotform').length,
+    totalSelfSignup: bySource('self_signup').length,
+    totalAdmin: bySource('admin').length,
+    new24h: newInWindow(providers).length,
+    new24hJotform: newInWindow(bySource('jotform')).length,
+    new24hSelfSignup: newInWindow(bySource('self_signup')).length,
+    new24hAdmin: newInWindow(bySource('admin')).length,
+    pendingApproval: pendingApproval.length,
+    pendingApprovalSample: pendingApproval.slice(0, 3).map((p: any) => ({
+      name: p.business_name,
+      email: p.contact_email,
+      zip: p.zip_code,
+      daysAgo: Math.floor((endDate.getTime() - new Date(p.created_at).getTime()) / 86400000),
     })),
   }
 
-  // === PAGE VIEWS (last 24 hours) ===
+  // === PENDING INTAKES QUEUE ===
+  // Table added in migration 20260419. Gracefully handle absence for older DBs.
+  let pendingIntakes: any[] = []
+  try {
+    const { data } = await supabase
+      .from('pending_intakes')
+      .select('id, reason, created_at, token_expires_at, target_provider_id, payload')
+      .is('resolved_at', null)
+      .order('created_at', { ascending: false })
+    pendingIntakes = data || []
+  } catch (_e) {
+    pendingIntakes = []
+  }
+
+  const classifyReason = (reason: string): string => {
+    if (reason === 'suspicious_duplicate') return 'suspicious_duplicate'
+    if (reason === 'auto_update_applied') return 'auto_update_applied'
+    if (reason.startsWith('validation:')) return 'validation'
+    if (reason.startsWith('insert_error')) return 'insert_error'
+    return 'other'
+  }
+
+  const intakesByReason = pendingIntakes.reduce((acc: Record<string, any[]>, row: any) => {
+    const k = classifyReason(row.reason || '')
+    acc[k] = acc[k] || []
+    acc[k].push(row)
+    return acc
+  }, {})
+
+  // 24h activity — count ALL intake events (including resolved) for activity volume.
+  let intake24hCount = 0
+  let autoUpdate24hCount = 0
+  try {
+    const { data } = await supabase
+      .from('pending_intakes')
+      .select('reason, created_at')
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+    intake24hCount = (data || []).length
+    autoUpdate24hCount = (data || []).filter((r: any) => r.reason === 'auto_update_applied').length
+  } catch (_e) {
+    // Table not yet present.
+  }
+
+  metrics.intake = {
+    pendingSuspicious: (intakesByReason.suspicious_duplicate || []).length,
+    pendingValidation: (intakesByReason.validation || []).length,
+    pendingInsertError: (intakesByReason.insert_error || []).length,
+    pendingOther: (intakesByReason.other || []).length,
+    totalPending:
+      (intakesByReason.suspicious_duplicate || []).length +
+      (intakesByReason.validation || []).length +
+      (intakesByReason.insert_error || []).length +
+      (intakesByReason.other || []).length,
+    intakeEvents24h: intake24hCount,
+    autoUpdates24h: autoUpdate24hCount,
+    suspiciousSample: (intakesByReason.suspicious_duplicate || []).slice(0, 3).map((r: any) => {
+      const p = r.payload || {}
+      const submitted = stripQ(p) as any
+      return {
+        license: submitted.license_number,
+        submittedBusiness: submitted.business_name,
+        submittedEmail: submitted.contact_email,
+        daysAgo: Math.floor((endDate.getTime() - new Date(r.created_at).getTime()) / 86400000),
+        expiresInDays: r.token_expires_at
+          ? Math.max(0, Math.ceil((new Date(r.token_expires_at).getTime() - endDate.getTime()) / 86400000))
+          : null,
+      }
+    }),
+    validationSample: (intakesByReason.validation || []).slice(0, 3).map((r: any) => ({
+      reason: (r.reason || '').replace(/^validation:\s*/, ''),
+      daysAgo: Math.floor((endDate.getTime() - new Date(r.created_at).getTime()) / 86400000),
+    })),
+  }
+
+  // === VACANCIES ===
+  const { data: allVacancies } = await supabase
+    .from('vacancies')
+    .select('provider_id, infant_spots, toddler_spots, preschool_spots, school_age_spots, waitlist_available, expires_at, reported_at')
+
+  const vacancies = allVacancies || []
+  const active = vacancies.filter((v: any) => new Date(v.expires_at) > endDate)
+  const expiringSoon = active.filter((v: any) => new Date(v.expires_at) <= sevenDaysOut)
+  const expired24h = vacancies.filter((v: any) => {
+    const exp = new Date(v.expires_at).getTime()
+    return exp > startDate.getTime() && exp <= endDate.getTime()
+  })
+  const newVacancies24h = vacancies.filter((v: any) => {
+    const t = new Date(v.reported_at).getTime()
+    return t >= startDate.getTime() && t <= endDate.getTime()
+  })
+
+  const sumSpots = (rows: any[]) =>
+    rows.reduce(
+      (s: number, v: any) =>
+        s + (v.infant_spots || 0) + (v.toddler_spots || 0) + (v.preschool_spots || 0) + (v.school_age_spots || 0),
+      0,
+    )
+
+  metrics.vacancies = {
+    totalActive: active.length,
+    totalSpots: sumSpots(active),
+    byAge: {
+      infant: active.reduce((s: number, v: any) => s + (v.infant_spots || 0), 0),
+      toddler: active.reduce((s: number, v: any) => s + (v.toddler_spots || 0), 0),
+      preschool: active.reduce((s: number, v: any) => s + (v.preschool_spots || 0), 0),
+      schoolAge: active.reduce((s: number, v: any) => s + (v.school_age_spots || 0), 0),
+    },
+    waitlistOnly: active.filter((v: any) => v.waitlist_available && sumSpots([v]) === 0).length,
+    expiringSoon: expiringSoon.length,
+    expired24h: expired24h.length,
+    new24h: newVacancies24h.length,
+  }
+
+  // Providers in DB but no vacancy row at all (possible stale imports).
+  const providerIdsWithVacancy = new Set(vacancies.map((v: any) => v.provider_id))
+  metrics.providers.noVacancyEver = providers.filter((p: any) => !providerIdsWithVacancy.has(p.id)).length
+
+  // === INQUIRIES ===
+  const { data: allInquiries } = await supabase
+    .from('parent_inquiries')
+    .select('created_at, parent_email, status')
+    .order('created_at', { ascending: false })
+
+  const testPatterns = ['@familychildcaresf.com', 'ryan.tang', 'test', 'demo']
+  const isTest = (email?: string | null) =>
+    !!email && testPatterns.some((p) => email.toLowerCase().includes(p))
+  const inquiries = allInquiries || []
+  const realInquiries = inquiries.filter((i: any) => !isTest(i.parent_email))
+  const new24h = inquiries.filter((i: any) => {
+    const t = new Date(i.created_at).getTime()
+    return t >= startDate.getTime() && t <= endDate.getTime()
+  })
+  const newReal24h = new24h.filter((i: any) => !isTest(i.parent_email))
+
+  metrics.inquiries = {
+    totalReal: realInquiries.length,
+    totalTest: inquiries.length - realInquiries.length,
+    newReal24h: newReal24h.length,
+    newTest24h: new24h.length - newReal24h.length,
+    replied: inquiries.filter((i: any) => i.status === 'replied').length,
+    pending: inquiries.filter((i: any) => i.status === 'pending').length,
+  }
+
+  // === TRAFFIC ===
   const { data: viewsData } = await supabase
     .from('page_views')
     .select('event_type, provider_id')
     .gte('created_at', startDate.toISOString())
     .lte('created_at', endDate.toISOString())
 
-  const pageViews = viewsData?.filter(v => v.event_type === 'page_view').length || 0
-  const listingViews = viewsData?.filter(v => v.event_type === 'listing_view').length || 0
-  const contactClicks = viewsData?.filter(v => v.event_type === 'contact_click').length || 0
-  const uniqueListingsViewed = new Set(
-    viewsData?.filter(v => v.event_type === 'listing_view' && v.provider_id).map(v => v.provider_id) || []
-  ).size
-
+  const views = viewsData || []
   metrics.views = {
-    pageViews,
-    listingViews,
-    contactClicks,
-    uniqueListingsViewed,
-  }
-
-  // === VACANCY DETAILS ===
-  const { data: vacancyData } = await supabase
-    .from('vacancies')
-    .select('*')
-    .gt('expires_at', endDate.toISOString())
-
-  const totalSpots = vacancyData?.reduce((sum: number, v: any) => 
-    sum + (v.infant_spots || 0) + (v.toddler_spots || 0) + 
-    (v.preschool_spots || 0) + (v.school_age_spots || 0), 0) || 0
-
-  metrics.vacancies = {
-    totalActive: vacancyData?.length || 0,
-    totalSpots,
-    byAge: {
-      infant: vacancyData?.reduce((sum: number, v: any) => sum + (v.infant_spots || 0), 0) || 0,
-      toddler: vacancyData?.reduce((sum: number, v: any) => sum + (v.toddler_spots || 0), 0) || 0,
-      preschool: vacancyData?.reduce((sum: number, v: any) => sum + (v.preschool_spots || 0), 0) || 0,
-      schoolAge: vacancyData?.reduce((sum: number, v: any) => sum + (v.school_age_spots || 0), 0) || 0,
-    },
+    pageViews: views.filter((v: any) => v.event_type === 'page_view').length,
+    listingViews: views.filter((v: any) => v.event_type === 'listing_view').length,
+    contactClicks: views.filter((v: any) => v.event_type === 'contact_click').length,
+    uniqueListingsViewed: new Set(
+      views.filter((v: any) => v.event_type === 'listing_view' && v.provider_id).map((v: any) => v.provider_id),
+    ).size,
   }
 
   return metrics
 }
 
+// Jotform answer keys come in as "q3_license_number" — strip the "qN_" prefix so the template
+// can show submitted values regardless of whether Unique Name is set on the form.
+function stripQ(payload: Record<string, unknown>): Record<string, unknown> {
+  if (!payload || typeof payload !== 'object') return {}
+  const out: Record<string, unknown> = {}
+  for (const [k, v] of Object.entries(payload)) out[k.replace(/^q\d+_/, '')] = v
+  return out
+}
+
 async function sendDiagnosticReport(apiKey: string, recipient: string, metrics: any, date: Date) {
-  const dateStr = date.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  const dateStr = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   })
 
-  const subject = `FamilyChildCareSF Diagnostic Report - ${date.toLocaleDateString()}`
+  const subject = `FamilyChildCareSF Daily Report — ${date.toLocaleDateString()}`
+
+  const adminQueueTotal = metrics.intake.totalPending
+  const queueColor = adminQueueTotal === 0 ? '#16a34a' : adminQueueTotal > 5 ? '#dc2626' : '#f59e0b'
+  const queueBg = adminQueueTotal === 0 ? '#f0fdf4' : adminQueueTotal > 5 ? '#fee2e2' : '#fef3c7'
+  const queueText = adminQueueTotal === 0 ? '#14532d' : adminQueueTotal > 5 ? '#7f1d1d' : '#78350f'
 
   const html = `
 <!DOCTYPE html>
@@ -276,157 +280,177 @@ async function sendDiagnosticReport(apiKey: string, recipient: string, metrics: 
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb;margin:0;padding:20px;">
   <div style="max-width:700px;margin:0 auto;background:white;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1);">
     <div style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:32px;text-align:center;">
-      <h1 style="color:white;font-size:24px;margin:0;">🔍 Daily Diagnostic Report</h1>
+      <h1 style="color:white;font-size:24px;margin:0;">Daily Report</h1>
       <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px;">FamilyChildCareSF.com</p>
       <p style="color:rgba(255,255,255,0.8);margin:4px 0 0;font-size:13px;">${dateStr}</p>
     </div>
-    
+
     <div style="padding:32px;">
-      <!-- PROVIDER FUNNEL -->
-      <div style="background:#f0f9ff;border-left:4px solid #0284c7;padding:16px;margin-bottom:24px;border-radius:4px;">
-        <h2 style="color:#0c4a6e;font-size:18px;margin:0 0 16px;">📊 Provider Onboarding Funnel</h2>
-        
-        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-          <tr style="background:#e0f2fe;">
-            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;">Stage</td>
-            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;text-align:center;">Total</td>
-            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;text-align:center;">Last 24h</td>
-            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;text-align:center;">Conversion</td>
+      <!-- ADMIN QUEUE: the one thing you act on -->
+      <div style="background:${queueBg};border-left:4px solid ${queueColor};padding:16px;margin-bottom:24px;border-radius:4px;">
+        <h2 style="color:${queueText};font-size:18px;margin:0 0 12px;">Admin Queue — ${adminQueueTotal} open</h2>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:6px 8px;color:${queueText};font-size:14px;">Suspicious duplicate intakes (awaiting on-file provider)</td>
+            <td style="padding:6px 8px;color:${queueText};font-size:15px;font-weight:600;text-align:right;">${metrics.intake.pendingSuspicious}</td>
           </tr>
           <tr>
-            <td style="padding:8px;color:#475569;font-size:14px;">1. SSO Signups</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalSSOSignups}</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">${metrics.providers.newSSOSignups > 0 ? '+' + metrics.providers.newSSOSignups : '-'}</td>
-            <td style="padding:8px;color:#64748b;font-size:14px;text-align:center;">—</td>
-          </tr>
-          <tr style="background:#f8fafc;">
-            <td style="padding:8px;color:#475569;font-size:14px;">2. Profile Started</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalProvidersStarted}</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">${metrics.providers.newProvidersStarted > 0 ? '+' + metrics.providers.newProvidersStarted : '-'}</td>
-            <td style="padding:8px;color:#64748b;font-size:14px;text-align:center;">${metrics.providers.ssoToProfileRate}%</td>
+            <td style="padding:6px 8px;color:${queueText};font-size:14px;">Validation failures</td>
+            <td style="padding:6px 8px;color:${queueText};font-size:15px;font-weight:600;text-align:right;">${metrics.intake.pendingValidation}</td>
           </tr>
           <tr>
-            <td style="padding:8px;color:#475569;font-size:14px;">3. Profile Complete</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalProvidersComplete}</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">—</td>
-            <td style="padding:8px;color:#64748b;font-size:14px;text-align:center;">${metrics.providers.profileToCompleteRate}%</td>
+            <td style="padding:6px 8px;color:${queueText};font-size:14px;">Insert errors</td>
+            <td style="padding:6px 8px;color:${queueText};font-size:15px;font-weight:600;text-align:right;">${metrics.intake.pendingInsertError}</td>
           </tr>
-          <tr style="background:#f8fafc;">
-            <td style="padding:8px;color:#475569;font-size:14px;">4. Vacancy Posted</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalWithVacancies}</td>
-            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">${metrics.providers.newVacanciesPosted > 0 ? '+' + metrics.providers.newVacanciesPosted : '-'}</td>
-            <td style="padding:8px;color:#64748b;font-size:14px;text-align:center;">${metrics.providers.completeToVacancyRate}%</td>
+          <tr>
+            <td style="padding:6px 8px;color:${queueText};font-size:14px;">Providers awaiting approval (non-SF / non-ELFA)</td>
+            <td style="padding:6px 8px;color:${queueText};font-size:15px;font-weight:600;text-align:right;">${metrics.providers.pendingApproval}</td>
           </tr>
         </table>
-        
-        <div style="background:#fef3c7;padding:12px;border-radius:6px;margin-top:12px;">
-          <p style="color:#92400e;font-size:13px;margin:0;font-weight:600;">⚠️ Drop-off Points:</p>
-          <ul style="color:#78350f;font-size:13px;margin:4px 0 0;padding-left:20px;">
-            <li>${metrics.funnel.stuckAtSSO} users signed up but never started profile</li>
-            <li>${metrics.funnel.stuckAtProfile} providers with incomplete profiles</li>
-            <li>${metrics.funnel.stuckAtVacancy} complete profiles without vacancy posts</li>
-          </ul>
+        ${metrics.intake.suspiciousSample.length > 0 ? `
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.08);">
+          <p style="color:${queueText};font-size:13px;margin:0 0 8px;font-weight:600;">Suspicious duplicates in flight:</p>
+          ${metrics.intake.suspiciousSample.map((s: any) => `
+            <div style="background:white;padding:8px;margin-bottom:6px;border-radius:4px;font-size:12px;color:#334155;">
+              License <strong>${s.license}</strong> — submitted as "${s.submittedBusiness}" by ${s.submittedEmail}<br>
+              <span style="color:#64748b;">${s.daysAgo}d ago${s.expiresInDays !== null ? ` · token expires in ${s.expiresInDays}d` : ''}</span>
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
+        ${metrics.intake.validationSample.length > 0 ? `
+        <div style="margin-top:8px;">
+          <p style="color:${queueText};font-size:13px;margin:0 0 6px;font-weight:600;">Recent validation failures:</p>
+          ${metrics.intake.validationSample.map((s: any) => `
+            <div style="background:white;padding:6px 8px;margin-bottom:4px;border-radius:4px;font-size:12px;color:#334155;">
+              ${s.reason} <span style="color:#64748b;">· ${s.daysAgo}d ago</span>
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
+      </div>
+
+      <!-- INTAKE ACTIVITY (last 24h + totals) -->
+      <div style="background:#f0f9ff;border-left:4px solid #0284c7;padding:16px;margin-bottom:24px;border-radius:4px;">
+        <h2 style="color:#0c4a6e;font-size:18px;margin:0 0 16px;">Provider Intake</h2>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+          <tr style="background:#e0f2fe;">
+            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;">Source</td>
+            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;text-align:center;">Total</td>
+            <td style="padding:8px;font-weight:600;color:#0c4a6e;font-size:14px;text-align:center;">Last 24h</td>
+          </tr>
+          <tr>
+            <td style="padding:8px;color:#475569;font-size:14px;">Jotform drop form</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalJotform}</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">${metrics.providers.new24hJotform > 0 ? '+' + metrics.providers.new24hJotform : '—'}</td>
+          </tr>
+          <tr style="background:#f8fafc;">
+            <td style="padding:8px;color:#475569;font-size:14px;">Self-signup (SSO)</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalSelfSignup}</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">${metrics.providers.new24hSelfSignup > 0 ? '+' + metrics.providers.new24hSelfSignup : '—'}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px;color:#475569;font-size:14px;">Admin-added</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.totalAdmin}</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;text-align:center;">${metrics.providers.new24hAdmin > 0 ? '+' + metrics.providers.new24hAdmin : '—'}</td>
+          </tr>
+          <tr style="background:#f8fafc;">
+            <td style="padding:8px;color:#0c4a6e;font-size:14px;font-weight:600;">All providers</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:700;text-align:center;">${metrics.providers.total}</td>
+            <td style="padding:8px;color:#0f172a;font-size:15px;font-weight:600;text-align:center;">${metrics.providers.new24h > 0 ? '+' + metrics.providers.new24h : '—'}</td>
+          </tr>
+        </table>
+        <p style="color:#334155;font-size:13px;margin:0;">
+          ${metrics.intake.autoUpdates24h} returning-provider auto-update${metrics.intake.autoUpdates24h === 1 ? '' : 's'} applied in last 24h
+          · ${metrics.intake.intakeEvents24h} total Jotform submission${metrics.intake.intakeEvents24h === 1 ? '' : 's'} logged
+        </p>
+      </div>
+
+      <!-- VACANCY HEALTH -->
+      <div style="background:#faf5ff;border-left:4px solid #9333ea;padding:16px;margin-bottom:24px;border-radius:4px;">
+        <h2 style="color:#581c87;font-size:18px;margin:0 0 12px;">Vacancy Health</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Active listings</p>
+            <p style="color:#0f172a;font-size:22px;font-weight:bold;margin:4px 0;">${metrics.vacancies.totalActive}</p>
+          </div>
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Open spots</p>
+            <p style="color:#0f172a;font-size:22px;font-weight:bold;margin:4px 0;">${metrics.vacancies.totalSpots}</p>
+          </div>
+          <div>
+            <p style="color:#64748b;font-size:13px;margin:0;">Waitlist-only</p>
+            <p style="color:#0f172a;font-size:22px;font-weight:bold;margin:4px 0;">${metrics.vacancies.waitlistOnly}</p>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e9d5ff;font-size:13px;color:#64748b;">
+          Infant ${metrics.vacancies.byAge.infant} · Toddler ${metrics.vacancies.byAge.toddler} · Preschool ${metrics.vacancies.byAge.preschool} · School ${metrics.vacancies.byAge.schoolAge}
+        </div>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;font-size:13px;">
+          <div>
+            <span style="color:#64748b;">New in 24h:</span>
+            <strong style="color:#0f172a;"> ${metrics.vacancies.new24h}</strong>
+          </div>
+          <div>
+            <span style="color:#64748b;">Expiring ≤7d:</span>
+            <strong style="color:${metrics.vacancies.expiringSoon > 5 ? '#dc2626' : '#0f172a'};"> ${metrics.vacancies.expiringSoon}</strong>
+          </div>
+          <div>
+            <span style="color:#64748b;">Aged out 24h:</span>
+            <strong style="color:#0f172a;"> ${metrics.vacancies.expired24h}</strong>
+          </div>
         </div>
       </div>
 
-      <!-- INQUIRY ANALYSIS -->
+      <!-- PARENT INQUIRIES -->
       <div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:16px;margin-bottom:24px;border-radius:4px;">
-        <h2 style="color:#14532d;font-size:18px;margin:0 0 16px;">💬 Parent Inquiry Analysis</h2>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;">
+        <h2 style="color:#14532d;font-size:18px;margin:0 0 16px;">Parent Inquiries</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
           <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Real Inquiries (Total)</p>
-            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.inquiries.totalRealInquiries}</p>
-            <p style="color:#16a34a;font-size:12px;margin:0;">${metrics.inquiries.newRealInquiries > 0 ? '+' + metrics.inquiries.newRealInquiries + ' today' : 'None today'}</p>
+            <p style="color:#64748b;font-size:13px;margin:0;">Real inquiries (total)</p>
+            <p style="color:#0f172a;font-size:22px;font-weight:bold;margin:4px 0;">${metrics.inquiries.totalReal}</p>
+            <p style="color:#16a34a;font-size:12px;margin:0;">${metrics.inquiries.newReal24h > 0 ? '+' + metrics.inquiries.newReal24h + ' today' : 'None today'}</p>
           </div>
           <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Test Inquiries</p>
-            <p style="color:#94a3b8;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.inquiries.totalTestInquiries}</p>
-            <p style="color:#64748b;font-size:12px;margin:0;">${metrics.inquiries.newTestInquiries > 0 ? '+' + metrics.inquiries.newTestInquiries + ' today' : 'None today'}</p>
+            <p style="color:#64748b;font-size:13px;margin:0;">Test inquiries</p>
+            <p style="color:#94a3b8;font-size:22px;font-weight:bold;margin:4px 0;">${metrics.inquiries.totalTest}</p>
+            <p style="color:#64748b;font-size:12px;margin:0;">${metrics.inquiries.newTest24h > 0 ? '+' + metrics.inquiries.newTest24h + ' today' : 'None today'}</p>
           </div>
         </div>
-        
-        <div style="background:${metrics.inquiries.totalRealInquiries === 0 ? '#fef2f2' : '#f0f9ff'};padding:10px;border-radius:4px;">
-          <p style="color:${metrics.inquiries.totalRealInquiries === 0 ? '#991b1b' : '#0369a1'};font-size:13px;margin:0;font-weight:600;">
-            ${metrics.inquiries.totalRealInquiries === 0 ? '❌ No real parent inquiries yet' : '✅ Parents are finding and using the platform'}
-          </p>
-        </div>
-        
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0;">
-          <p style="color:#64748b;font-size:12px;margin:0;">Response Status: ${metrics.inquiries.repliedInquiries} replied, ${metrics.inquiries.pendingInquiries} pending</p>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #dcfce7;font-size:13px;color:#64748b;">
+          ${metrics.inquiries.replied} replied · ${metrics.inquiries.pending} pending
         </div>
       </div>
 
-      <!-- INCOMPLETE PROFILES SAMPLE -->
-      ${metrics.funnel.incompleteProfiles.length > 0 ? `
-      <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:16px;margin-bottom:24px;border-radius:4px;">
-        <h2 style="color:#78350f;font-size:18px;margin:0 0 12px;">🔧 Sample Incomplete Profiles</h2>
-        <p style="color:#92400e;font-size:13px;margin:0 0 12px;">Recent profiles with missing data:</p>
-        ${metrics.funnel.incompleteProfiles.map((p: any) => `
-        <div style="background:white;padding:8px;margin-bottom:8px;border-radius:4px;font-size:12px;">
-          <strong>${p.email}</strong> (${p.createdDaysAgo} days ago)<br>
-          Missing: ${p.missingFields.join(', ')}
-        </div>
-        `).join('')}
-      </div>
-      ` : ''}
-
-      <!-- SITE TRAFFIC (Yesterday) -->
+      <!-- SITE TRAFFIC -->
       <div style="background:#f0fdfa;border-left:4px solid #0d9488;padding:16px;margin-bottom:24px;border-radius:4px;">
-        <h2 style="color:#134e4a;font-size:18px;margin:0 0 16px;">👀 Site Traffic (Last 24h)</h2>
+        <h2 style="color:#134e4a;font-size:18px;margin:0 0 16px;">Site Traffic (Last 24h)</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
           <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Page Views</p>
+            <p style="color:#64748b;font-size:13px;margin:0;">Page views</p>
             <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.pageViews}</p>
           </div>
           <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Listing Views</p>
+            <p style="color:#64748b;font-size:13px;margin:0;">Listing views</p>
             <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.listingViews}</p>
           </div>
           <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Contact Clicks</p>
+            <p style="color:#64748b;font-size:13px;margin:0;">Contact clicks</p>
             <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.contactClicks}</p>
           </div>
           <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Unique Listings</p>
+            <p style="color:#64748b;font-size:13px;margin:0;">Unique listings</p>
             <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.views.uniqueListingsViewed}</p>
           </div>
         </div>
       </div>
 
-      <!-- VACANCY SUMMARY -->
-      <div style="background:#faf5ff;border-left:4px solid #9333ea;padding:16px;margin-bottom:24px;border-radius:4px;">
-        <h2 style="color:#581c87;font-size:18px;margin:0 0 12px;">📍 Active Vacancies</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Total Listings</p>
-            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.vacancies.totalActive}</p>
-          </div>
-          <div>
-            <p style="color:#64748b;font-size:13px;margin:0;">Total Open Spots</p>
-            <p style="color:#0f172a;font-size:20px;font-weight:bold;margin:4px 0;">${metrics.vacancies.totalSpots}</p>
-          </div>
-        </div>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:13px;color:#64748b;">
-          Infant: ${metrics.vacancies.byAge.infant} | Toddler: ${metrics.vacancies.byAge.toddler} | Preschool: ${metrics.vacancies.byAge.preschool} | School: ${metrics.vacancies.byAge.schoolAge}
-        </div>
-      </div>
-
-      <!-- ACTION ITEMS -->
-      <div style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px;border-radius:4px;">
-        <h2 style="color:#7f1d1d;font-size:18px;margin:0 0 12px;">📋 Recommended Actions</h2>
-        <ul style="color:#991b1b;font-size:14px;line-height:1.6;margin:0;padding-left:20px;">
-          ${metrics.funnel.stuckAtSSO > 5 ? '<li><strong>High SSO dropout:</strong> Consider simpler onboarding flow or email reminders</li>' : ''}
-          ${metrics.funnel.stuckAtProfile > 10 ? '<li><strong>Many incomplete profiles:</strong> Review required fields, add help text, or allow partial saves</li>' : ''}
-          ${metrics.inquiries.totalRealInquiries === 0 ? '<li><strong>No real inquiries:</strong> Need parent outreach, SEO, or marketing to families</li>' : ''}
-          ${metrics.providers.totalWithVacancies < 10 ? '<li><strong>Few vacancy posts:</strong> Email providers, simplify vacancy form, or add incentives</li>' : ''}
-          ${metrics.funnel.recentSSODropoffs > 3 ? '<li><strong>Recent SSO dropoffs:</strong> Check for login issues or confusing UI after SSO</li>' : ''}
-        </ul>
-      </div>
+      <!-- RECOMMENDED ACTIONS -->
+      ${buildActionsBlock(metrics)}
 
       <div style="margin-top:32px;padding-top:24px;border-top:1px solid #e2e8f0;text-align:center;">
         <a href="https://familychildcaresf.com" style="display:inline-block;background:#7c3aed;color:white;text-decoration:none;padding:10px 24px;border-radius:6px;font-size:14px;font-weight:600;">
-          View Dashboard
+          View Site
         </a>
       </div>
     </div>
@@ -435,35 +459,39 @@ async function sendDiagnosticReport(apiKey: string, recipient: string, metrics: 
 </html>`
 
   const text = `
-FamilyChildCareSF Diagnostic Report - ${dateStr}
+FamilyChildCareSF Daily Report — ${dateStr}
 
-PROVIDER FUNNEL
-1. SSO Signups: ${metrics.providers.totalSSOSignups} total (${metrics.providers.newSSOSignups} today)
-2. Profile Started: ${metrics.providers.totalProvidersStarted} (${metrics.providers.ssoToProfileRate}% conversion)
-3. Profile Complete: ${metrics.providers.totalProvidersComplete} (${metrics.providers.profileToCompleteRate}% conversion)
-4. Vacancy Posted: ${metrics.providers.totalWithVacancies} (${metrics.providers.completeToVacancyRate}% conversion)
+ADMIN QUEUE (${adminQueueTotal} open)
+- Suspicious duplicate intakes: ${metrics.intake.pendingSuspicious}
+- Validation failures: ${metrics.intake.pendingValidation}
+- Insert errors: ${metrics.intake.pendingInsertError}
+- Providers awaiting approval: ${metrics.providers.pendingApproval}
 
-DROP-OFF POINTS
-- ${metrics.funnel.stuckAtSSO} users signed up but never started profile
-- ${metrics.funnel.stuckAtProfile} providers with incomplete profiles
-- ${metrics.funnel.stuckAtVacancy} complete profiles without vacancies
+PROVIDER INTAKE
+- Jotform drop form: ${metrics.providers.totalJotform} total (${metrics.providers.new24hJotform} new in 24h)
+- Self-signup (SSO): ${metrics.providers.totalSelfSignup} total (${metrics.providers.new24hSelfSignup} new in 24h)
+- Admin-added: ${metrics.providers.totalAdmin} total (${metrics.providers.new24hAdmin} new in 24h)
+- Returning-provider auto-updates (24h): ${metrics.intake.autoUpdates24h}
+- Total Jotform submissions logged (24h): ${metrics.intake.intakeEvents24h}
+
+VACANCY HEALTH
+- Active listings: ${metrics.vacancies.totalActive} (${metrics.vacancies.totalSpots} open spots, ${metrics.vacancies.waitlistOnly} waitlist-only)
+- New in 24h: ${metrics.vacancies.new24h}
+- Expiring in next 7 days: ${metrics.vacancies.expiringSoon}
+- Aged out in last 24h: ${metrics.vacancies.expired24h}
 
 PARENT INQUIRIES
-Real Inquiries: ${metrics.inquiries.totalRealInquiries} total (${metrics.inquiries.newRealInquiries} today)
-Test Inquiries: ${metrics.inquiries.totalTestInquiries} total
-Status: ${metrics.inquiries.totalRealInquiries === 0 ? 'NO REAL INQUIRIES YET' : 'Parents are using the platform'}
+- Real inquiries: ${metrics.inquiries.totalReal} total (${metrics.inquiries.newReal24h} today)
+- Test inquiries: ${metrics.inquiries.totalTest} total
+- ${metrics.inquiries.replied} replied, ${metrics.inquiries.pending} pending
 
 SITE TRAFFIC (Last 24h)
-Page Views: ${metrics.views.pageViews}
-Listing Views: ${metrics.views.listingViews}
-Contact Clicks: ${metrics.views.contactClicks}
-Unique Listings Viewed: ${metrics.views.uniqueListingsViewed}
+- Page views: ${metrics.views.pageViews}
+- Listing views: ${metrics.views.listingViews}
+- Contact clicks: ${metrics.views.contactClicks}
+- Unique listings viewed: ${metrics.views.uniqueListingsViewed}
 
-ACTIVE VACANCIES
-Total Listings: ${metrics.vacancies.totalActive}
-Total Spots: ${metrics.vacancies.totalSpots}
-
-View dashboard: https://familychildcaresf.com
+familychildcaresf.com
 `
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -485,4 +513,46 @@ View dashboard: https://familychildcaresf.com
     const body = await res.text()
     throw new Error(`Resend API error (${res.status}): ${body}`)
   }
+}
+
+function buildActionsBlock(metrics: any): string {
+  const items: string[] = []
+
+  if (metrics.intake.pendingSuspicious > 0) {
+    items.push(`<strong>${metrics.intake.pendingSuspicious} suspicious duplicate${metrics.intake.pendingSuspicious === 1 ? '' : 's'}:</strong> on-file providers have unread confirm/deny emails. Chase any about to expire.`)
+  }
+  if (metrics.intake.pendingValidation > 0) {
+    items.push(`<strong>${metrics.intake.pendingValidation} validation failure${metrics.intake.pendingValidation === 1 ? '' : 's'}:</strong> review Jotform required-field setup — providers are getting rejected before reaching the DB.`)
+  }
+  if (metrics.providers.pendingApproval > 0) {
+    items.push(`<strong>${metrics.providers.pendingApproval} provider${metrics.providers.pendingApproval === 1 ? '' : 's'} awaiting approval:</strong> non-ELFA + non-SF zip. Decide include/exclude.`)
+  }
+  if (metrics.vacancies.expiringSoon > 5) {
+    items.push(`<strong>${metrics.vacancies.expiringSoon} listings expire within 7 days:</strong> make sure the reminder function is running.`)
+  }
+  if (metrics.providers.noVacancyEver > 0 && metrics.providers.noVacancyEver >= Math.max(3, metrics.providers.total * 0.1)) {
+    items.push(`<strong>${metrics.providers.noVacancyEver} providers have no vacancy row at all:</strong> likely legacy/admin imports — consider backfilling or pruning.`)
+  }
+  if (metrics.inquiries.totalReal === 0) {
+    items.push(`<strong>No real parent inquiries yet:</strong> parent-side awareness is the gap.`)
+  }
+  if (metrics.providers.new24h === 0 && metrics.intake.intakeEvents24h === 0) {
+    items.push(`<strong>No intake activity in 24h:</strong> verify Jotform webhook is hitting <code>jotform-intake</code>.`)
+  }
+
+  if (items.length === 0) {
+    return `
+      <div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:16px;border-radius:4px;">
+        <h2 style="color:#14532d;font-size:18px;margin:0 0 8px;">Recommended Actions</h2>
+        <p style="color:#166534;font-size:14px;margin:0;">Nothing urgent — queues are clear and activity looks healthy.</p>
+      </div>`
+  }
+
+  return `
+      <div style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px;border-radius:4px;">
+        <h2 style="color:#7f1d1d;font-size:18px;margin:0 0 12px;">Recommended Actions</h2>
+        <ul style="color:#991b1b;font-size:14px;line-height:1.6;margin:0;padding-left:20px;">
+          ${items.map((i) => `<li>${i}</li>`).join('')}
+        </ul>
+      </div>`
 }

@@ -10,7 +10,7 @@ const corsHeaders = {
 };
 
 const ADMIN_EMAIL = "oscar@familychildcaresf.com";
-const FROM_EMAIL = "noreply@familychildcaresf.com";
+const FROM_EMAIL = "noreply@notifications.familychildcaresf.com";
 const CONFIRM_TOKEN_TTL_DAYS = 7;
 
 type IntakeMode = "new" | "update";
@@ -204,6 +204,7 @@ async function sendEmail(
     },
     body: JSON.stringify({
       from: `Family Child Care SF <${FROM_EMAIL}>`,
+      reply_to: ADMIN_EMAIL,
       to: [to],
       subject,
       html,

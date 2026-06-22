@@ -59,9 +59,23 @@
     return '<a class="aud-lang-btn" href="' + href + '" hreflang="' + l.code + '">' + l.label + '</a>';
   }).join('');
 
+  // 🎈 Fair 2026 highlight — mirrors the SPA AudienceTopBar; opens the fair page
+  // in the current language. Auto-retires after the event (Jun 28, 00:00 PT).
+  var FAIR = {
+    'en':    { label: 'Fair 2026',   href: '/fcc-fair-2026' },
+    'es':    { label: 'Feria 2026',  href: '/fcc-fair-2026?lang=es' },
+    'zh-TW': { label: '博覽會 2026', href: '/fcc-fair-2026?lang=zh' },
+  };
+  var f = FAIR[current] || FAIR.en;
+  var fairHtml = Date.now() > Date.parse('2026-06-28T00:00:00-07:00') ? '' :
+    '<a class="aud-fair" href="' + f.href + '">' +
+      '<span class="aud-fair-full">🎈 ' + f.label + '</span>' +
+      '<span class="aud-fair-short" aria-hidden="true">🎈</span>' +
+    '</a>';
+
   // Static pages are all parent-facing content, so Find Child Care is active.
   bar.innerHTML =
     '<a class="aud-tab aud-tab-parent active" href="' + homeUrl + '">' + labels.parent + '</a>' +
     '<a class="aud-tab aud-tab-provider" href="' + providerUrl + '">' + labels.provider + '</a>' +
-    '<div class="aud-lang">' + pillHtml + '</div>';
+    '<div class="aud-right">' + fairHtml + '<div class="aud-lang">' + pillHtml + '</div></div>';
 })();

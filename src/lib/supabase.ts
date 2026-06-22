@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Provider, Vacancy, PublicListing, ParentInquiry, ParentInquiryFormData, InquiryStatus } from '../types/registry';
+import { Provider, Vacancy, PublicListing, ParentInquiry, ParentInquiryFormData, InquiryStatus, CommunitySnapshot } from '../types/registry';
 import { ProviderFormData } from '../components/registry/ProviderOnboarding';
 import { VacancyFormData } from '../components/registry/VacancyForm';
 import { checkElfaStatus } from './elfa';
@@ -234,6 +234,25 @@ export async function getPublicListings(): Promise<PublicListing[]> {
     return data || [];
   } catch (err) {
     console.error('[Supabase] getPublicListings exception:', err);
+    return [];
+  }
+}
+
+// Community Insights: monthly aggregate snapshots (public-readable). Returns [] if the
+// table doesn't exist yet (migration not applied) so the page degrades gracefully.
+export async function getCommunitySnapshots(): Promise<CommunitySnapshot[]> {
+  try {
+    const { data, error } = await supabase
+      .from('community_snapshots')
+      .select('*')
+      .order('snapshot_month', { ascending: true });
+    if (error) {
+      if (isDev) console.log('[Supabase] getCommunitySnapshots:', error.message);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error('[Supabase] getCommunitySnapshots exception:', err);
     return [];
   }
 }

@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { computeExpiresAt } from "../_shared/vacancyTtl.ts";
 
 const ADMIN_EMAIL = "oscar@familychildcaresf.com";
-const FROM_EMAIL = "noreply@familychildcaresf.com";
+const FROM_EMAIL = "noreply@notifications.familychildcaresf.com";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -41,7 +41,7 @@ async function sendEmail(resendApiKey: string, to: string, subject: string, html
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${resendApiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: `Family Child Care SF <${FROM_EMAIL}>`, to: [to], subject, html }),
+    body: JSON.stringify({ from: `Family Child Care SF <${FROM_EMAIL}>`, reply_to: ADMIN_EMAIL, to: [to], subject, html }),
   });
   if (!res.ok) console.error("Resend error:", res.status, await res.text());
 }

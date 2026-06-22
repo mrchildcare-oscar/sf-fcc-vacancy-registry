@@ -11,6 +11,11 @@
       "permanent": false
     },
     {
+      "source": "/insights",
+      "destination": "/#insights",
+      "permanent": false
+    },
+    {
       "source": "/details/:id",
       "destination": "/",
       "permanent": true

@@ -123,6 +123,21 @@ export interface PublicListing {
   expires_at?: string;
 }
 
+// Monthly aggregate snapshot for the Community Insights trend view (community_snapshots table)
+export interface CommunitySnapshot {
+  snapshot_month: string;
+  captured_at: string;
+  programs_with_openings: number;
+  open_spots: number;
+  waitlist_only: number;
+  elfa_programs: number;
+  beyond_elfa_programs: number;
+  spots_by_age: Record<string, number>;
+  programs_by_neighborhood: Record<string, number>;
+  programs_by_language: Record<string, number>;
+  freshness: Record<string, number>;
+}
+
 // Search/Filter options
 export interface SearchFilters {
   search?: string;
@@ -139,18 +154,26 @@ export const SF_NEIGHBORHOODS = [
   'Bernal Heights',
   'Castro',
   'Chinatown',
+  'Crocker Amazon',
+  'Diamond Heights',
   'Excelsior',
   'Financial District',
+  'Forest Hill',
+  'Glen Park',
   'Haight-Ashbury',
   'Hayes Valley',
+  'Ingleside',
   'Inner Richmond',
   'Inner Sunset',
+  'Lake Merced',
   'Marina',
   'Mission',
   'Mission Bay',
   'Nob Hill',
   'Noe Valley',
   'North Beach',
+  'Oceanview',
+  'Outer Mission',
   'Outer Richmond',
   'Outer Sunset',
   'Pacific Heights',
@@ -158,9 +181,12 @@ export const SF_NEIGHBORHOODS = [
   'Potrero Hill',
   'Russian Hill',
   'SoMa',
+  'Sunnyside',
   'Tenderloin',
   'Visitacion Valley',
+  'West Portal',
   'Western Addition',
+  'Other (not listed)',
 ] as const;
 
 // Common languages in SF childcare

@@ -1,7 +1,42 @@
 {
+  "insights": {
+    "backToListings": "Ver vacantes disponibles",
+    "title": "Cómo está la comunidad de cuidado infantil familiar de San Francisco este mes",
+    "subtitle": "Una instantánea en vivo de las vacantes de cuidado infantil familiar reportadas en San Francisco — compartida con la comunidad que las reporta.",
+    "asOf": "Actualizado al {date}. Refleja los programas que han publicado vacantes actuales en el registro; los programas llenos o que no se han actualizado recientemente no aparecen.",
+    "empty": "Ningún programa está reportando vacantes en este momento. Vuelva pronto.",
+    "programsWithOpenings": "programas con vacantes actuales",
+    "openSpots": "espacios disponibles en la ciudad",
+    "waitlistOnly": "{count} solo lista de espera",
+    "networkSection": "Vacantes por red",
+    "elfaNetwork": "Red ELFA",
+    "beyondElfa": "Fuera de ELFA",
+    "byAge": "Espacios por grupo de edad",
+    "freshnessSection": "Qué tan actualizados están estos datos",
+    "freshnessFresh": "Actualizado < 2 sem",
+    "freshnessAging": "Hace 2–4 semanas",
+    "freshnessStale": "Más de un mes",
+    "neighborhoodSection": "Programas por vecindario",
+    "unlisted": "Sin especificar",
+    "languageSection": "Idiomas ofrecidos",
+    "ctaTitle": "¿Tiene un cuidado infantil familiar en San Francisco?",
+    "ctaBody": "Publique sus vacantes para que las familias — y esta instantánea — puedan encontrarlo.",
+    "ctaButton": "Publicar vacantes",
+    "overTime": "A lo largo del tiempo",
+    "trendEmpty": "Las tendencias mes a mes aparecerán aquí a medida que se acumulen las instantáneas mensuales.",
+    "trendFirst": "Primera instantánea: {month}.",
+    "trendPrograms": "Programas con vacantes",
+    "trendSpots": "Espacios disponibles",
+    "footnote": "Fuente: reportes de proveedores en familychildcaresf.com. «Red ELFA» = proveedores en la red Early Learning for All de la ciudad; «Fuera de ELFA» = otros cuidados infantiles familiares con licencia que reportan aquí. Un programa puede ofrecer más de un idioma, por lo que los conteos de idiomas pueden superar el total de programas."
+  },
   "audienceBar": {
     "parent": "Buscar cuidado",
-    "provider": "Liste su vacante"
+    "provider": "Liste su vacante",
+    "fair": "Feria 2026"
+  },
+  "fairBanner": {
+    "text": "🎈 ¡Nuestra primera Feria de Cuidado Infantil Familiar — sáb 27 de junio · Gratis!",
+    "cta": "Confirmar gratis →"
   },
   "toolbox": {
     "heading": "Herramientas para familias",

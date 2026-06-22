@@ -1,0 +1,242 @@
+/* SF FCC redesign — design tokens (scoped to .fccsf-redesign) */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.fccsf-redesign {
+  --paper: #FAF8F5;
+  --paper-2: #F2EFE9;
+  --paper-3: #E7E2D9;
+  --line: #D8D2C6;
+  --line-strong: #B8B0A1;
+  --ink: #161514;
+  --ink-2: #3A3733;
+  --ink-3: #6B665E;
+  --ink-4: #97928A;
+
+  --coral: oklch(62% 0.14 35);
+  --coral-soft: oklch(94% 0.04 35);
+  --trust: oklch(48% 0.12 245);
+  --trust-soft: oklch(95% 0.03 245);
+  --sage: oklch(58% 0.10 155);
+  --sage-soft: oklch(94% 0.04 155);
+  --gold: oklch(72% 0.13 80);
+  --gold-soft: oklch(95% 0.05 80);
+  --warn: oklch(60% 0.16 55);
+
+  --font-display: "Inter Tight", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: "Inter", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.fccsf-redesign *,
+.fccsf-redesign *::before,
+.fccsf-redesign *::after { box-sizing: border-box; }
+
+.fccsf-redesign .h-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.fccsf-redesign .h-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.fccsf-redesign .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.fccsf-redesign .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.05s ease, background 0.15s ease;
+}
+.fccsf-redesign .btn:active { transform: translateY(1px); }
+.fccsf-redesign .btn-primary { background: var(--ink); color: var(--paper); }
+.fccsf-redesign .btn-coral { background: var(--coral); color: white; }
+.fccsf-redesign .btn-trust { background: var(--trust); color: white; }
+.fccsf-redesign .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.fccsf-redesign .btn-quiet { background: var(--paper-2); color: var(--ink); }
+
+.fccsf-redesign .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.fccsf-redesign .chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.fccsf-redesign .chip.green { background: var(--sage-soft); border-color: transparent; color: oklch(35% 0.07 155); }
+.fccsf-redesign .chip.coral { background: var(--coral-soft); border-color: transparent; color: oklch(40% 0.10 35); }
+.fccsf-redesign .chip.gold { background: var(--gold-soft); border-color: transparent; color: oklch(40% 0.10 80); }
+.fccsf-redesign .chip.trust { background: var(--trust-soft); border-color: transparent; color: oklch(35% 0.10 245); }
+
+.fccsf-redesign .card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.fccsf-redesign .placeholder-img {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--paper-3),
+    var(--paper-3) 6px,
+    var(--paper-2) 6px,
+    var(--paper-2) 12px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.fccsf-redesign .press {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.fccsf-redesign .press:active { background: var(--paper-2); }
+
+/* Mobile-first: viewport fills the screen */
+.fccsf-redesign .rd-app {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.fccsf-redesign .rd-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fccsf-redesign .rd-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+.fccsf-redesign .rd-scroll::-webkit-scrollbar { width: 0; height: 0; }
+.fccsf-redesign .rd-scroll { scrollbar-width: none; }
+
+/* Tab bar */
+.fccsf-redesign .tabbar {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  display: flex;
+  padding: 8px 4px max(22px, env(safe-area-inset-bottom));
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+}
+.fccsf-redesign .tabbar .tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: var(--ink-4);
+  padding: 4px 2px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+.fccsf-redesign .tabbar .tab.active { color: var(--ink); }
+
+/* Subnav for switching mockup screens */
+.fccsf-redesign .rd-subnav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  overflow-x: auto;
+}
+.fccsf-redesign .rd-subnav button {
+  background: transparent;
+  border: 1px solid rgba(250,248,245,0.15);
+  color: rgba(250,248,245,0.65);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.fccsf-redesign .rd-subnav button.active {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--paper);
+}
+.fccsf-redesign .rd-subnav .rd-subnav-label {
+  align-self: center;
+  opacity: 0.5;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+/* Sticky CTA bar */
+.fccsf-redesign .rd-cta {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 16px max(20px, env(safe-area-inset-bottom));
+  background: rgba(250,248,245,0.96);
+  border-top: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  display: flex;
+  gap: 8px;
+}

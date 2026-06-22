@@ -1,7 +1,42 @@
 {
+  "insights": {
+    "backToListings": "查看空缺列表",
+    "title": "舊金山家庭托兒社區近況",
+    "subtitle": "舊金山各區家庭托兒空缺的即時情況，分享給一直回報資料的各位。",
+    "asOf": "資料截至 {date}。只顯示目前有刊登空缺的家庭托兒；已額滿或近期沒更新的不會顯示。",
+    "empty": "目前還沒有家庭托兒回報空缺，請稍後再來看看。",
+    "programsWithOpenings": "間家庭托兒正在招生",
+    "openSpots": "個空缺名額",
+    "waitlistOnly": "{count} 個只收候補",
+    "networkSection": "ELFA 網絡與其他",
+    "elfaNetwork": "ELFA 網絡",
+    "beyondElfa": "ELFA 以外",
+    "byAge": "各年齡的空缺名額",
+    "freshnessSection": "資料更新情況",
+    "freshnessFresh": "2 週內更新",
+    "freshnessAging": "2–4 週前",
+    "freshnessStale": "超過一個月",
+    "neighborhoodSection": "各社區的家庭托兒數",
+    "unlisted": "未填寫",
+    "languageSection": "提供的語言",
+    "ctaTitle": "在舊金山經營家庭托兒？",
+    "ctaBody": "刊登您的空缺，讓家長（還有這個頁面）找到您。",
+    "ctaButton": "刊登您的空缺",
+    "overTime": "歷史趨勢",
+    "trendEmpty": "等每個月的資料累積起來，這裡就會顯示變化趨勢。",
+    "trendFirst": "首次記錄：{month}。",
+    "trendPrograms": "有空缺的家庭托兒",
+    "trendSpots": "空缺名額",
+    "footnote": "資料來源：familychildcaresf.com 上家庭托兒者的回報。「ELFA 網絡」指加入本市「全民幼兒學習」(ELFA) 的家庭托兒；「ELFA 以外」指其他在此回報的持照家庭托兒。一間家庭托兒可能提供多種語言，所以語言的數字加起來可能超過總數。"
+  },
   "audienceBar": {
     "parent": "尋找托兒",
-    "provider": "刊登您的空缺"
+    "provider": "刊登您的空缺",
+    "fair": "博覽會 2026"
+  },
+  "fairBanner": {
+    "text": "🎈 首屆家庭托兒博覽會 — 6月27日 星期六 · 免費！",
+    "cta": "免費報名 →"
   },
   "toolbox": {
     "heading": "家長工具箱",

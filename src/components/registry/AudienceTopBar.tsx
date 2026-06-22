@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLanguage, LanguageSwitcher } from '../../i18n/LanguageContext';
 import { trackListProgramClicked } from '../../lib/analytics';
+import { FAIR_HIDE_AFTER } from './Fair2026Banner';
 
 const PROVIDER_HASHES = ['#list-your-vacancy', '#auth', '#vacancies', '#inquiries', '#roster', '#projections', '#settings', '#org'];
 
@@ -57,7 +58,15 @@ export function AudienceTopBar() {
       >
         {t('audienceBar.provider')}
       </button>
-      <div className="flex items-center px-2 bg-white">
+      <div className="flex items-center gap-1 px-2 bg-white">
+        {Date.now() < FAIR_HIDE_AFTER && (
+          <a
+            href="/fcc-fair-2026"
+            className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.12em] text-pink-700 hover:bg-pink-50 whitespace-nowrap transition-all"
+          >
+            <span aria-hidden="true">🎈</span>{t('audienceBar.fair')}
+          </a>
+        )}
         <LanguageSwitcher compact />
       </div>
     </div>

@@ -1,7 +1,42 @@
 {
+  "insights": {
+    "backToListings": "See open listings",
+    "title": "How San Francisco's family child care community is doing this month",
+    "subtitle": "A live snapshot of family child care openings reported across San Francisco — shared back with the community that reports it.",
+    "asOf": "As of {date}. Reflects programs that have posted current openings to the registry; programs that are full or haven't updated recently aren't shown.",
+    "empty": "No programs are reporting openings right now. Check back soon.",
+    "programsWithOpenings": "programs with current openings",
+    "openSpots": "open spots across the city",
+    "waitlistOnly": "{count} waitlist-only",
+    "networkSection": "Openings by network",
+    "elfaNetwork": "ELFA network",
+    "beyondElfa": "Beyond ELFA",
+    "byAge": "Open spots by age group",
+    "freshnessSection": "How current is this data",
+    "freshnessFresh": "Updated < 2 wks",
+    "freshnessAging": "2–4 weeks ago",
+    "freshnessStale": "Over a month",
+    "neighborhoodSection": "Programs by neighborhood",
+    "unlisted": "Unlisted",
+    "languageSection": "Languages offered",
+    "ctaTitle": "Run a family child care in San Francisco?",
+    "ctaBody": "Post your openings so families — and this snapshot — can find you.",
+    "ctaButton": "Post your openings",
+    "overTime": "Over time",
+    "trendEmpty": "Month-over-month trends will appear here as monthly snapshots accumulate.",
+    "trendFirst": "First snapshot: {month}.",
+    "trendPrograms": "Programs with openings",
+    "trendSpots": "Open spots",
+    "footnote": "Source: familychildcaresf.com provider reports. \"ELFA network\" = providers in the city's Early Learning for All network; \"Beyond ELFA\" = other licensed family child cares reporting here. A program may offer more than one language, so language counts can exceed the program total."
+  },
   "audienceBar": {
     "parent": "Find Child Care",
-    "provider": "List Your Vacancy"
+    "provider": "List Your Vacancy",
+    "fair": "Fair 2026"
+  },
+  "fairBanner": {
+    "text": "🎈 Our first-ever Family Child Care Fair — Sat, June 27 · Free!",
+    "cta": "RSVP free →"
   },
   "toolbox": {
     "heading": "Parent Toolbox",

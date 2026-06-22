@@ -26,6 +26,7 @@ import { ProviderOnboarding, ProviderFormData } from './ProviderOnboarding';
 import { VacancyForm, VacancyFormData } from './VacancyForm';
 import { ProviderSettings } from './ProviderSettings';
 import { PublicListings } from './PublicListings';
+import { CommunityInsights } from './CommunityInsights';
 import { AdminAddProvider } from './AdminAddProvider';
 import { ChildList } from '../ChildList';
 import { ChildForm } from '../ChildForm';
@@ -46,13 +47,14 @@ const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || '')
   .map((e: string) => e.trim().toLowerCase())
   .filter(Boolean);
 
-type View = 'public' | 'auth' | 'onboarding' | 'dashboard' | 'inquiries' | 'roster' | 'projections' | 'settings' | 'admin' | 'org-dashboard';
+type View = 'public' | 'insights' | 'auth' | 'onboarding' | 'dashboard' | 'inquiries' | 'roster' | 'projections' | 'settings' | 'admin' | 'org-dashboard';
 
 // Hash to View mapping for URL routing
 const HASH_TO_VIEW: Record<string, View> = {
   '': 'public',
   '#': 'public',
   '#public': 'public',
+  '#insights': 'insights',
   '#list-your-vacancy': 'auth',
   '#auth': 'auth',
   '#vacancies': 'dashboard',
@@ -64,6 +66,7 @@ const HASH_TO_VIEW: Record<string, View> = {
 
 const VIEW_TO_HASH: Partial<Record<View, string>> = {
   'public': '#public',
+  'insights': '#insights',
   'auth': '#list-your-vacancy',
   'dashboard': '#vacancies',
   'inquiries': '#inquiries',
@@ -76,6 +79,7 @@ const VIEW_TO_HASH: Partial<Record<View, string>> = {
 // Map internal view names to analytics view names
 const VIEW_TO_ANALYTICS: Record<View, ViewName> = {
   'public': 'public',
+  'insights': 'insights',
   'auth': 'auth',
   'onboarding': 'onboarding',
   'dashboard': 'vacancies',
@@ -775,6 +779,16 @@ export function RegistryApp() {
       <div>
         {user && provider && <ProviderNav />}
         <PublicListings listings={publicListings} loading={listingsLoading} onSignIn={() => navigateTo('auth')} isProvider={!!provider} />
+      </div>
+    );
+  }
+
+  // Community Insights — public aggregate snapshot (reuses already-loaded listings)
+  if (view === 'insights') {
+    return (
+      <div>
+        {user && provider && <ProviderNav />}
+        <CommunityInsights listings={publicListings} loading={listingsLoading} />
       </div>
     );
   }

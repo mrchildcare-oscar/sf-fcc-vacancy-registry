@@ -647,4 +647,11 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Family Child Care Fair 2026 (event page) -->
+  <url>
+    <loc>https://familychildcaresf.com/fcc-fair-2026/</loc>
+    <lastmod>2026-06-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>

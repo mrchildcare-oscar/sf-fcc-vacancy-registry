@@ -68,3 +68,28 @@ body { padding-top: 44px; }
 #audience-top-bar .aud-lang-btn:not(:first-child):not(:last-child) { border-left: 0; }
 #audience-top-bar .aud-lang-btn:hover:not(.active) { background: #f3f4f6; }
 #audience-top-bar .aud-lang-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+/* 🎈 Fair 2026 highlight (next to the language pills). */
+#audience-top-bar .aud-right { display: flex; align-items: center; padding-left: 8px; }
+#audience-top-bar .aud-fair {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border: 1px solid #f4b6d4;
+  background: #fce9f2;
+  color: #b51f6c;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+#audience-top-bar .aud-fair:hover { background: #fbd9e8; }
+#audience-top-bar .aud-fair-short { display: none; }
+/* On narrow screens (static pages have no banner) show a compact balloon. */
+@media (max-width: 640px) {
+  #audience-top-bar .aud-fair-full { display: none; }
+  #audience-top-bar .aud-fair-short { display: inline; }
+  #audience-top-bar .aud-fair { padding: 4px 9px; }
+}

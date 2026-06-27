@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Community Survey — Scan Me (A4)</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: #000;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, "Segoe UI", system-ui, sans-serif;
+    color: #fff;
+  }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20mm 18mm 16mm;
+  }
+
+  /* --- Top: wordmark + kicker + headline --- */
+  .wordmark {
+    font-size: 15pt;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.62);
+    font-weight: 600;
+  }
+  .kicker {
+    margin-top: 12mm;
+    font-size: 14pt;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #fff;
+  }
+  .kicker::before, .kicker::after {
+    content: "";
+    display: inline-block;
+    width: 26px;
+    height: 2px;
+    background: #fff;
+    vertical-align: middle;
+    margin: 0 14px 4px;
+  }
+  h1 {
+    margin-top: 7mm;
+    font-size: 38pt;
+    line-height: 1.06;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    max-width: 16cm;
+  }
+  .subhead {
+    margin-top: 6mm;
+    font-size: 16pt;
+    line-height: 1.4;
+    font-weight: 400;
+    color: rgba(255,255,255,0.78);
+    max-width: 14.5cm;
+  }
+
+  /* --- Middle: QR panel --- */
+  .qr-wrap {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .qr-panel {
+    background: #fff;
+    border-radius: 10mm;
+    padding: 9mm;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+  }
+  .qr-panel img {
+    display: block;
+    width: 92mm;
+    height: 92mm;
+    image-rendering: pixelated;
+  }
+  .url {
+    margin-top: 6mm;
+    font-size: 16pt;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    font-family: "SF Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+    color: #fff;
+  }
+
+  /* --- Bottom: SCAN ME CTA --- */
+  .cta {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .arrow {
+    font-size: 40pt;
+    line-height: 1;
+    margin-bottom: 2mm;
+    color: #fff;
+  }
+  .scan {
+    font-size: 64pt;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .scan-sub {
+    margin-top: 5mm;
+    font-size: 13pt;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.72);
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="wordmark">familychildcaresf.com</div>
+    <div class="kicker">Community Survey</div>
+    <h1>What are you looking for in child care?</h1>
+    <p class="subhead">Help us understand how families see family child care — and what matters most to you. Just a few quick questions.</p>
+
+    <div class="qr-wrap">
+      <div class="qr-panel">
+        <img src="qr-survey.png" alt="Scan to take the survey">
+      </div>
+      <div class="url">familychildcaresf.com/go/survey</div>
+    </div>
+
+    <div class="cta">
+      <div class="arrow">&#9650;</div>
+      <div class="scan">Scan Me</div>
+      <div class="scan-sub">Open your phone camera and point it at the code</div>
+    </div>
+  </div>
+</body>
+</html>

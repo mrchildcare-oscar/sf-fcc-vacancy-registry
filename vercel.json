@@ -1,6 +1,66 @@
 {
   "redirects": [
     {
+      "source": "/go/rsvp",
+      "destination": "https://form.jotform.com/261554977910063",
+      "permanent": false
+    },
+    {
+      "source": "/go/rsvp-zh",
+      "destination": "https://form.jotform.com/261554977910063?language=zh",
+      "permanent": false
+    },
+    {
+      "source": "/go/rsvp-es",
+      "destination": "https://form.jotform.com/261554977910063?language=es",
+      "permanent": false
+    },
+    {
+      "source": "/go/eligibility",
+      "destination": "/#check-eligibility",
+      "permanent": false
+    },
+    {
+      "source": "/go/find",
+      "destination": "/#public",
+      "permanent": false
+    },
+    {
+      "source": "/go/list",
+      "destination": "/#list-your-vacancy",
+      "permanent": false
+    },
+    {
+      "source": "/go/en",
+      "destination": "/?lang=en",
+      "permanent": false
+    },
+    {
+      "source": "/go/es",
+      "destination": "/?lang=es",
+      "permanent": false
+    },
+    {
+      "source": "/go/zh",
+      "destination": "/?lang=zh",
+      "permanent": false
+    },
+    {
+      "source": "/go/survey",
+      "destination": "https://script.google.com/macros/s/AKfycbwtx1mfHmOIvVQ1wmSklU4GXua7bmORXt1MsP_LOoh9q-GhnFsP-XyBTriLbqUKTCyPNQ/exec",
+      "permanent": false
+    },
+    {
+      "source": "/go/consent",
+      "destination": "https://form.jotform.com/261566857875073",
+      "permanent": false
+    },
+    {
+      "source": "/go/volunteer",
+      "destination": "/volunteer.html",
+      "permanent": false
+    },
+    {
       "source": "/list-your-vacancy",
       "destination": "/#list-your-vacancy",
       "permanent": false

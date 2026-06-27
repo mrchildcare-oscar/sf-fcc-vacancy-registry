@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Go Links — quick reference</title>
+<style>
+  :root { --ink:#111; --muted:#5b6470; --line:#e6e9ec; --accent:#0f766e; --bg:#f6f7f9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); line-height:1.45;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:740px; margin:0 auto; padding:28px 18px 60px; }
+  h1 { font-size:24px; margin:0 0 2px; }
+  .tag { text-transform:uppercase; letter-spacing:.16em; font-size:11px; font-weight:700; color:var(--accent); }
+  .intro { color:var(--muted); font-size:14px; margin:6px 0 22px; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);
+    margin:24px 0 8px; }
+  ul { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  li { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+    display:grid; grid-template-columns:1fr; gap:3px; }
+  @media (min-width:560px){ li{ grid-template-columns:auto 1fr; align-items:baseline; column-gap:14px; } .label{grid-column:1/2;} .dest{grid-column:2/3; text-align:right;} .slug{grid-column:1/3;} }
+  .slug { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:14px; font-weight:600;
+    color:var(--ink); text-decoration:none; word-break:break-all; }
+  .slug:hover { color:var(--accent); text-decoration:underline; }
+  .label { font-size:13px; color:var(--ink); font-weight:600; }
+  .dest { font-size:12px; color:var(--muted); font-family:ui-monospace,Menlo,Consolas,monospace; word-break:break-all; }
+  .dest.int { color:#92400e; }
+  footer { color:var(--muted); font-size:12px; margin-top:28px; }
+  code { background:#eef0f2; padding:1px 5px; border-radius:5px; font-size:12px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="tag">Personal reference</div>
+    <h1>Go Links</h1>
+    <p class="intro">Every <code>/go/</code> short link and where it points. Tap a link to follow it. Generated from <code>vercel.json</code> — re-run <code>scripts/build-go-links.mjs</code> after adding links.</p>
+    <h2>Outreach</h2>
+    <ul>
+        <li>
+          <a class="slug" href="/go/survey">familychildcaresf.com/go/survey</a>
+          <span class="label">Community survey</span>
+          <span class="dest ext">↗ script.google.com/macros/s/AKfycbwtx1mfHmOIvVQ1w…</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/consent">familychildcaresf.com/go/consent</a>
+          <span class="label">Consent form</span>
+          <span class="dest ext">↗ form.jotform.com/261566857875073</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/volunteer">familychildcaresf.com/go/volunteer</a>
+          <span class="label">Volunteer helper page (both QRs)</span>
+          <span class="dest int">/volunteer.html</span>
+        </li>
+    </ul>
+    <h2>Events</h2>
+    <ul>
+        <li>
+          <a class="slug" href="/go/rsvp">familychildcaresf.com/go/rsvp</a>
+          <span class="label">Event RSVP</span>
+          <span class="dest ext">↗ form.jotform.com/261554977910063</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/rsvp-zh">familychildcaresf.com/go/rsvp-zh</a>
+          <span class="label">Event RSVP — 中文</span>
+          <span class="dest ext">↗ form.jotform.com/261554977910063?language=zh</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/rsvp-es">familychildcaresf.com/go/rsvp-es</a>
+          <span class="label">Event RSVP — Español</span>
+          <span class="dest ext">↗ form.jotform.com/261554977910063?language=es</span>
+        </li>
+    </ul>
+    <h2>Site</h2>
+    <ul>
+        <li>
+          <a class="slug" href="/go/eligibility">familychildcaresf.com/go/eligibility</a>
+          <span class="label">Eligibility checker</span>
+          <span class="dest int">/#check-eligibility</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/find">familychildcaresf.com/go/find</a>
+          <span class="label">Find vacancies</span>
+          <span class="dest int">/#public</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/list">familychildcaresf.com/go/list</a>
+          <span class="label">List your vacancy</span>
+          <span class="dest int">/#list-your-vacancy</span>
+        </li>
+    </ul>
+    <h2>Language</h2>
+    <ul>
+        <li>
+          <a class="slug" href="/go/en">familychildcaresf.com/go/en</a>
+          <span class="label">Site in English</span>
+          <span class="dest int">/?lang=en</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/es">familychildcaresf.com/go/es</a>
+          <span class="label">Site in Español</span>
+          <span class="dest int">/?lang=es</span>
+        </li>
+        <li>
+          <a class="slug" href="/go/zh">familychildcaresf.com/go/zh</a>
+          <span class="label">Site in 中文</span>
+          <span class="dest int">/?lang=zh</span>
+        </li>
+    </ul>
+    <h2>Reference</h2>
+    <ul>
+        <li>
+          <a class="slug" href="/go/links">familychildcaresf.com/go/links</a>
+          <span class="label">This page — all go links</span>
+          <span class="dest int">/links.html</span>
+        </li>
+    </ul>
+    <footer>familychildcaresf.com/go/links · 13 short links</footer>
+  </div>
+</body>
+</html>

@@ -61,6 +61,16 @@
       "permanent": false
     },
     {
+      "source": "/go/links",
+      "destination": "/links.html",
+      "permanent": false
+    },
+    {
+      "source": "/links",
+      "destination": "/links.html",
+      "permanent": false
+    },
+    {
       "source": "/list-your-vacancy",
       "destination": "/#list-your-vacancy",
       "permanent": false

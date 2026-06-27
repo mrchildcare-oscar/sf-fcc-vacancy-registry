@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b1220">
+<title>Sign-in Counter</title>
+<style>
+  :root { --bg:#0b1220; --card:#131c2e; --line:#243047; --ink:#fff; --muted:#9aa6bd; --accent:#10b981; --accent2:#0ea371; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex; flex-direction:column; min-height:100dvh; overscroll-behavior:none;
+  }
+  header { text-align:center; padding:16px 16px 6px; }
+  .title { font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:700; }
+  .date { font-size:13px; color:var(--muted); margin-top:3px; }
+
+  .count-wrap { flex:0 0 auto; text-align:center; padding:8px 16px 4px; }
+  .count { font-size:96px; font-weight:800; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; transition:transform .08s ease; }
+  .count.bump { transform:scale(1.08); }
+  .count-label { font-size:13px; color:var(--muted); margin-top:6px; }
+
+  .plus {
+    flex:1 1 auto; margin:14px 16px; border:none; border-radius:24px;
+    background:linear-gradient(180deg,var(--accent),var(--accent2)); color:#04150e;
+    font-size:40px; font-weight:800; letter-spacing:.02em;
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    cursor:pointer; user-select:none; touch-action:manipulation;
+    box-shadow:0 10px 30px rgba(16,185,129,.25); transition:transform .06s ease, filter .06s ease;
+    min-height:180px;
+  }
+  .plus:active { transform:translateY(2px) scale(.995); filter:brightness(.96); }
+  .plus .big { font-size:64px; line-height:1; }
+
+  .row { display:flex; gap:10px; padding:0 16px; }
+  .btn {
+    flex:1; padding:16px 12px; border-radius:14px; border:1px solid var(--line);
+    background:var(--card); color:var(--ink); font-size:16px; font-weight:600;
+    cursor:pointer; touch-action:manipulation;
+  }
+  .btn:active { background:#1b2740; }
+  .btn.danger { color:#fda4af; }
+
+  .stats { display:flex; gap:10px; padding:14px 16px 4px; }
+  .stat { flex:1; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; text-align:center; }
+  .stat .n { font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .stat .l { font-size:11px; color:var(--muted); margin-top:2px; text-transform:uppercase; letter-spacing:.05em; }
+
+  .foot { padding:14px 16px 22px; text-align:center; }
+  .export { background:none; border:none; color:var(--accent); font-size:14px; font-weight:600; cursor:pointer; padding:8px; }
+  .note { font-size:12px; color:var(--muted); margin-top:6px; }
+  .toast {
+    position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px);
+    background:#fff; color:#0b1220; padding:10px 16px; border-radius:999px; font-size:14px; font-weight:600;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+  <header>
+    <div class="title">Sign-in Counter</div>
+    <div class="date" id="date"></div>
+  </header>
+
+  <div class="count-wrap">
+    <div class="count" id="count">0</div>
+    <div class="count-label">people counted</div>
+  </div>
+
+  <button class="plus" id="plus" aria-label="Add one">
+    <span class="big">＋</span><span>Count one</span>
+  </button>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="lastHour">0</div><div class="l">last hour</div></div>
+    <div class="stat"><div class="n" id="first">—</div><div class="l">first in</div></div>
+    <div class="stat"><div class="n" id="last">—</div><div class="l">latest</div></div>
+  </div>
+
+  <div class="row">
+    <button class="btn" id="undo">↩ Undo</button>
+    <button class="btn danger" id="reset">Reset</button>
+  </div>
+
+  <div class="foot">
+    <button class="export" id="export">⬇ Copy log (CSV)</button>
+    <div class="note" id="note">Saved on this device · works offline · tap or press Space to count</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var KEY = 'fccsf-signin-counter-v1';
+  var events = [];   // arrival timestamps (ms)
+  try { events = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { events = []; }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var countEl = $('count'), plus = $('plus');
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(events)); } catch (e) {} }
+  function fmt(t) {
+    var d = new Date(t);
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 1400);
+  }
+  function render() {
+    countEl.textContent = events.length;
+    var now = Date.now();
+    $('lastHour').textContent = events.filter(function (t) { return now - t <= 3600000; }).length;
+    $('first').textContent = events.length ? fmt(events[0]) : '—';
+    $('last').textContent  = events.length ? fmt(events[events.length - 1]) : '—';
+  }
+  function bump() {
+    countEl.classList.remove('bump'); void countEl.offsetWidth; countEl.classList.add('bump');
+  }
+  function add() { events.push(Date.now()); save(); render(); bump();
+    if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) {} } }
+  function undo() {
+    if (!events.length) { toast('Nothing to undo'); return; }
+    events.pop(); save(); render(); toast('Removed one');
+  }
+  function reset() {
+    if (!events.length) { toast('Already at 0'); return; }
+    if (confirm('Reset the count to 0? Copy the log first if you need it.\n\nThis cannot be undone.')) {
+      events = []; save(); render(); toast('Reset to 0');
+    }
+  }
+  function csv() {
+    var lines = ['n,time_iso,time_local'];
+    events.forEach(function (t, i) {
+      lines.push((i + 1) + ',' + new Date(t).toISOString() + ',' + new Date(t).toLocaleString());
+    });
+    return lines.join('\n');
+  }
+  function exportLog() {
+    if (!events.length) { toast('No entries yet'); return; }
+    var text = csv();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast('Log copied (' + events.length + ' rows)'); },
+        function () { download(text); });
+    } else { download(text); }
+  }
+  function download(text) {
+    var blob = new Blob([text], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'signin-log.csv'; a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    toast('Log downloaded');
+  }
+
+  plus.addEventListener('click', add);
+  $('undo').addEventListener('click', undo);
+  $('reset').addEventListener('click', reset);
+  $('export').addEventListener('click', exportLog);
+  document.addEventListener('keydown', function (e) {
+    // Count on Space/Enter/+ when nothing is focused. A focused button is
+    // activated natively by the browser, so this avoids double-counting.
+    var ae = document.activeElement;
+    var onButton = ae && ae.tagName === 'BUTTON';
+    if ((e.key === ' ' || e.key === 'Enter' || e.key === '+') && !onButton) {
+      e.preventDefault(); add();
+    }
+  });
+
+  $('date').textContent = new Date().toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  render();
+})();
+</script>
+</body>
+</html>

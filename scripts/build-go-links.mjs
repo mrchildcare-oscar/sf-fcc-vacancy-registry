@@ -22,9 +22,10 @@ const META = {
   '/go/en':          { group: 'Language',  label: 'Site in English' },
   '/go/es':          { group: 'Language',  label: 'Site in Español' },
   '/go/zh':          { group: 'Language',  label: 'Site in 中文' },
+  '/go/counter':     { group: 'Tools',     label: 'Sign-in / door counter' },
   '/go/links':       { group: 'Reference', label: 'This page — all go links' },
 };
-const ORDER = ['Outreach', 'Events', 'Site', 'Language', 'Reference', 'Other'];
+const ORDER = ['Outreach', 'Events', 'Tools', 'Site', 'Language', 'Reference', 'Other'];
 
 const links = redirects
   .filter(r => r.source.startsWith('/go/'))

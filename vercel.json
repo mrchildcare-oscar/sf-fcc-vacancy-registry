@@ -71,6 +71,16 @@
       "permanent": false
     },
     {
+      "source": "/go/counter",
+      "destination": "/counter.html",
+      "permanent": false
+    },
+    {
+      "source": "/counter",
+      "destination": "/counter.html",
+      "permanent": false
+    },
+    {
       "source": "/list-your-vacancy",
       "destination": "/#list-your-vacancy",
       "permanent": false

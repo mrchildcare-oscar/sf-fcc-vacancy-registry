@@ -20,7 +20,9 @@ The FAQPage/Breadcrumb/Article JSON-LD in this one file stored text as `\uXXXX` 
 - FAQPage JSON-LD `name`/`text` **replaced verbatim with the visible on-page FAQ text** (the reviewed source of truth) — 8 Q&As synced.
 - Breadcrumb/Article strings mechanically normalized (託兒→托兒, 収入→收入, old ELFA term→全民早期教育計劃).
 - Blocks re-serialized as raw UTF-8 (no more escape-hiding from grep).
-- **12 strings changed — zh copy, please eyeball the diff on this file.**
+- **12 strings changed — zh copy, please eyeball the diff on this file.** (Reviewed by Oscar 2026-07-02.)
+- Post-review, per Oscar: `mainEntity[4]` answer keeps the deep link `mychildcareplan.org/zh-tw/resource/child-care-subsidy-programs/` — an intentional divergence from the visible text (which shows the short domain as anchor text). The dropped bare domains in `mainEntity[1]` (childrenscouncil.org / wuyee.org) stay dropped, faithful to visible text.
+- Bonus: the sync fixed a latent typo in the hidden JSON-LD — 嘰兒 → 嬰兒.
 - Repo-wide decode-aware rescan: zero old variants remain anywhere (raw or escaped).
 
 ### WP1 — Localized crawlable homepages

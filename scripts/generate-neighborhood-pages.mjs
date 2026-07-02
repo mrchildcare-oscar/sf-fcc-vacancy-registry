@@ -129,7 +129,7 @@ const STRINGS = {
     bilingualTitle: (n) => `${n.nameZh}的${n.bilingual.languageZh}雙語托兒服務`,
     financialTitle: (n) => `${n.nameZh}家庭的財務援助`,
     financialBody: (n) =>
-      `所有三藩市（舊金山）托兒財務援助計劃——包括全民早教 (ELFA)、Head Start、CSPP 及 CalWORKs——均適用於${n.nameZh}的家庭。${n.nameZh}許多家庭托兒所是 ELFA 網絡的一部分，意味著收入在地區收入中位數 200% 以下的家庭可在本社區獲得免費或減費托兒服務。`,
+      `所有三藩市（舊金山）托兒財務援助計劃——包括全民早期教育計劃 (ELFA)、Head Start、CSPP 及 CalWORKs——均適用於${n.nameZh}的家庭。${n.nameZh}許多家庭托兒所是 ELFA 網絡的一部分，意味著收入在地區收入中位數 200% 以下的家庭可在本社區獲得免費或減費托兒服務。`,
     seeFullGuide: "查看三藩市托兒財務援助完整指南",
     checkEligibility: "立即檢查您的資格",
     openingsTitle: (n) => `${n.nameZh}目前的空位`,

@@ -27,7 +27,7 @@
     "trendFirst": "首次記錄：{month}。",
     "trendPrograms": "有空缺的家庭托兒",
     "trendSpots": "空缺名額",
-    "footnote": "資料來源：familychildcaresf.com 上家庭托兒者的回報。「ELFA 網絡」指加入本市「全民幼兒學習」(ELFA) 的家庭托兒；「ELFA 以外」指其他在此回報的持照家庭托兒。一間家庭托兒可能提供多種語言，所以語言的數字加起來可能超過總數。"
+    "footnote": "資料來源：familychildcaresf.com 上家庭托兒者的回報。「ELFA 網絡」指加入本市「全民早期教育計劃」(ELFA) 的家庭托兒；「ELFA 以外」指其他在此回報的持照家庭托兒。一間家庭托兒可能提供多種語言，所以語言的數字加起來可能超過總數。"
   },
   "audienceBar": {
     "parent": "尋找托兒",
@@ -67,7 +67,7 @@
     "results": {
       "invalid": "請輸入 9 位數字的執照編號（只限數字）。",
       "elfa": "此機構接受 ELFA",
-      "elfaBody": "ELFA 機構為符合資格的舊金山家庭提供免費或減價托兒，並達到「全民幼兒學習」品質標準。",
+      "elfaBody": "ELFA 機構為符合資格的舊金山家庭提供免費或減價托兒，並達到「全民早期教育計劃」品質標準。",
       "elfaSource": "資料來源：sf.gov",
       "viewListing": "查看他們的空缺列表",
       "notElfa": "不接受 ELFA",
@@ -75,7 +75,7 @@
     },
     "cdssLink": "查詢加州執照資料庫",
     "disclaimer": "本工具反映我們最近一次 ELFA 機構的記錄，並非轉介服務。瞭解更多：",
-    "elfaInfoLink": "sf.gov 全民幼兒學習計畫"
+    "elfaInfoLink": "sf.gov 全民早期教育計劃"
   },
   "inAppBrowser": {
     "title": "您正在使用 {{browser}} 內建瀏覽器",

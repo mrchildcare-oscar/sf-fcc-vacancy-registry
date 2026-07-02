@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "generate:neighborhoods": "node scripts/generate-neighborhood-pages.mjs",
+    "generate:openings": "node scripts/generate-openings.mjs",
     "generate:zh-pdf": "node scripts/generate-zh-subsidy-pdf.mjs",
     "generate:flyer": "node scripts/generate-provider-flyer.mjs"
   },

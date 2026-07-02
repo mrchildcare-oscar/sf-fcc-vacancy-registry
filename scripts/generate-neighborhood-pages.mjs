@@ -184,6 +184,12 @@ function agesFor(n, lang) {
   return n.typicalAgeGroupsEn;
 }
 
+function hoursFor(n, lang) {
+  if (lang === "es") return n.typicalHoursEs;
+  if (lang === "zh") return n.typicalHoursZh;
+  return n.typicalHoursEn;
+}
+
 function bilingualFor(n, lang) {
   if (!n.bilingual) return null;
   const b = n.bilingual;
@@ -501,7 +507,7 @@ function renderFccSection(n, lang) {
   const t = STRINGS[lang];
   const glanceRows = [
     { label: t.commonLanguages, value: langsFor(n, lang).join(", ") },
-    { label: t.typicalHours, value: n.typicalHours },
+    { label: t.typicalHours, value: hoursFor(n, lang) },
     { label: t.licenseTypes, value: t.licenseTypesValue },
     { label: t.ageGroups, value: agesFor(n, lang) },
   ];

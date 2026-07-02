@@ -14,8 +14,8 @@
 
     <!-- Hreflang -->
     <link rel="alternate" hreflang="en" href="https://familychildcaresf.com/" />
-    <link rel="alternate" hreflang="es" href="https://familychildcaresf.com/?lang=es" />
-    <link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/?lang=zh-TW" />
+    <link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/" />
+    <link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/" />
     <link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/" />
 
     <!-- Open Graph / Facebook -->
@@ -55,6 +55,26 @@
     }
     </script>
 
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Family Child Care SF",
+      "url": "https://familychildcaresf.com/",
+      "logo": "https://familychildcaresf.com/og-image.svg",
+      "areaServed": {
+        "@type": "City",
+        "name": "San Francisco"
+      },
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "Family Child Care Association of San Francisco",
+        "url": "https://fccasf.com"
+      }
+    }
+    </script>
+
     <!-- TruConversion for familychildcaresf.com -->
     <script type="text/javascript">
       var _tip = _tip || [];
@@ -69,9 +89,9 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
-    <!-- Static content for search engines (hidden when JS loads) -->
-    <noscript>
+    <div id="root">
+      <!-- Pre-hydration content: real HTML for crawlers/answer engines.
+           React's createRoot() replaces this the moment the SPA mounts. -->
       <div style="max-width:800px;margin:40px auto;padding:20px;font-family:system-ui,sans-serif;">
         <h1>SF Family Child Care Vacancy Registry</h1>
         <p>Find licensed family child care providers with current openings in San Francisco. Search by neighborhood, age group, and language.</p>
@@ -96,7 +116,7 @@
           <li><a href="https://familychildcaresf.com/infant-care-san-francisco/">Infant Child Care in San Francisco</a></li>
         </ul>
       </div>
-    </noscript>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /es/
+Allow: /zh/
 Allow: /child-care-san-francisco
 Allow: /family-child-care-vs-centers
 Allow: /infant-care-san-francisco

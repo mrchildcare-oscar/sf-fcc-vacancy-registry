@@ -37,6 +37,10 @@
     legacy.innerHTML = LANGS.map(function (l) {
       var href = l.prefix + subPath;
       if (href === '') href = '/';
+      // The EN homepage is the SPA at "/", which honors ?lang= before stored
+      // language — force it so switching to EN doesn't stick on the visitor's
+      // last language. (Localized homepages /es/ /zh/ are static, no param needed.)
+      if (href === '/' && l.code === 'en') href = '/?lang=en';
       if (l.code === current) {
         return '<span class="active" aria-current="page">' + l.label + '</span>';
       }
@@ -53,6 +57,9 @@
   var pillHtml = LANGS.map(function (l) {
     var href = l.prefix + subPath;
     if (href === '') href = '/';
+    // See note above: force EN homepage to the SPA with ?lang=en so it doesn't
+    // inherit the visitor's stored (e.g. Chinese) language.
+    if (href === '/' && l.code === 'en') href = '/?lang=en';
     if (l.code === current) {
       return '<span class="aud-lang-btn active" aria-current="page">' + l.label + '</span>';
     }

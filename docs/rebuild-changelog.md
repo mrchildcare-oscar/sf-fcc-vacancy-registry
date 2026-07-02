@@ -57,6 +57,11 @@ The FAQPage/Breadcrumb/Article JSON-LD in this one file stored text as `\uXXXX` 
 
 ---
 
+## Post-merge fix (2026-07-02) — language switch on localized homepages
+**Bug (Oscar, preview review):** clicking **EN** from `/zh/` or `/es/` landed on the SPA at `/` stuck in the previous language. Root cause: content pages have static English counterparts (`/openings/` etc.), but the English homepage *is* the SPA at `/`, which reads stored language before anything else — so the EN pill (`/`) inherited the visitor's Chinese/Spanish.
+**Fix:** `public/assets/lang-switcher.js` — the homepage EN pill (both the audience-bar and the hidden legacy mount) now targets `/?lang=en`. The SPA's `LanguageContext` checks `?lang=` before localStorage, so English is forced. Content-page pills are unchanged (they already resolve to static per-language pages). Verified via headless DOM dump across `/zh/`, `/es/`, `/zh/openings/`, `/zh/financial-assistance/` + SPA title check for `?lang=en|zh`.
+**Known remaining (pre-existing, not in scope):** from the SPA at `/`, the in-app React language switcher changes language in place rather than navigating to `/es/` `/zh/` — inconsistent with the static pages but unchanged here.
+
 ## Latent issues found (not fixed — need your call)
 
 1. **`generate-neighborhood-pages.mjs` is stale vs committed HTML.** Regenerating overwrites manual post-generation edits: the audience-top-bar include, `lang-switcher.js`, the 三藩市 footer (generator still emits 舊金山家庭托兒協會), and newer nav labels. **Do not run `npm run generate:neighborhoods` until the template is reconciled** — I updated the hours + ELFA term in the generator source so the *content* is right, but the scaffolding drift remains.

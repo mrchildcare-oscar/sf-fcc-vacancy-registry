@@ -68,21 +68,37 @@
 
   <!-- Structured Data: FAQPage -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "¿Quién cuenta como \"tamaño de la familia\" al solicitar subsidios de cuidado infantil en SF?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Para la elegibilidad de ELFA, el \"tamaño de la familia\" se determina según la cantidad de padres o guardianes en la familia inmediata, así como cualquier niño dependiente menor de 18 años. Los niños nonatos cuentan (las solicitantes embarazadas pueden incluir al bebé esperado). Los parientes adultos no dependientes que viven en el hogar (hermanos adultos, abuelos que se mantienen solos) NO cuentan para el tamaño de la familia. Los compañeros de cuarto no cuentan. Los niños en custodia compartida cuentan como miembros de la familia en AMBOS hogares si pasan al menos el 50% del tiempo allí. Se deben conservar copias de las actas de nacimiento de todos los niños menores de 18 años."
-        }
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Quién cuenta como \"tamaño de la familia\" al solicitar subsidios de cuidado infantil en SF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Para la elegibilidad de ELFA, el \"tamaño de la familia\" se determina según la cantidad de padres o guardianes en la familia inmediata, así como cualquier niño dependiente menor de 18 años. Los niños nonatos cuentan (las solicitantes embarazadas pueden incluir al bebé esperado). Los parientes adultos no dependientes que viven en el hogar (hermanos adultos, abuelos que se mantienen solos) NO cuentan para el tamaño de la familia. Los compañeros de cuarto no cuentan. Los niños en custodia compartida cuentan como miembros de la familia en AMBOS hogares si pasan al menos el 50% del tiempo allí. Se deben conservar copias de las actas de nacimiento de todos los niños menores de 18 años."
       }
-    ]
-  }
-  </script>
+    },
+    {
+      "@type": "Question",
+      "name": "¿Quién cuenta para el tamaño de la familia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El tamaño de la familia es importante porque los límites de ingresos de ELFA aumentan según el tamaño del hogar. Según el formulario oficial FY 2025-26 (en español), una familia de 1 o 2 personas puede ganar hasta $15,587/mes para el Apoyo parcial de inscripción de ELFA; una familia de 6 personas hasta $22,600/mes. Contar correctamente puede determinar el nivel al que califica. Se deben conservar copias de las actas de nacimiento de todos los niños de la familia menores de 18 años. El padre, la madre o el tutor legal solicitante que firma la solicitud. Todos los hijos biológicos, adoptados, hijastros o niños en crianza menores de 18 años que viven en el hogar. Niños de 18 a 21 años que son estudiantes de tiempo completo y son reclamados como dependientes en la declaración de impuestos del solicitante. Niños con discapacidades que son reclamados como dependientes, independientemente de su edad. Niños nonatos — las solicitantes embarazadas pueden incluir al bebé esperado en el conteo familiar. Niños en custodia compartida que pasan al menos el 50% de su tiempo en el hogar del solicitante — cuentan en AMBOS hogares. Cualquier otro dependiente incluido en el Formulario 1040 del IRS más reciente del solicitante."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Quién NO cuenta para el tamaño de la familia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compañeros de cuarto que comparten el alquiler pero no están relacionados y no son reclamados como dependientes. Hermanos adultos u otros parientes adultos que viven en el hogar pero tienen sus propios ingresos y no son dependientes fiscales. Abuelos que viven con la familia pero se mantienen solos (reciben Seguro Social o ingresos de pensión que usan para sus propios gastos). Parejas de hecho o copadres no casados que no comparten finanzas con el solicitante. Niños que viven con el otro padre más del 50% del tiempo en un acuerdo de custodia compartida. Niños de 18 años o más que no son estudiantes de tiempo completo y no son reclamados como dependientes fiscales."
+      }
+    }
+  ]
+}
+</script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }

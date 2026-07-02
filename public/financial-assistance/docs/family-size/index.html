@@ -68,21 +68,37 @@
 
   <!-- Structured Data: FAQPage -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Who counts as \"family size\" when applying for SF child care subsidies?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "For ELFA eligibility, \"family size\" includes the applicant parent(s) or guardian(s), ALL children under 18 living in the household, and any dependents claimed on the applicant's most recent tax return. Unborn children count (pregnant applicants can include the expected child). Non-dependent relatives living in the home (adult siblings, grandparents supporting themselves) do NOT count toward family size. Roommates do not count. Joint-custody children count as family members in BOTH households if they spend at least 50% of time there."
-        }
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Who counts as \"family size\" when applying for SF child care subsidies?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For ELFA eligibility, \"family size\" includes the applicant parent(s) or guardian(s), ALL children under 18 living in the household, and any dependents claimed on the applicant's most recent tax return. Unborn children count (pregnant applicants can include the expected child). Non-dependent relatives living in the home (adult siblings, grandparents supporting themselves) do NOT count toward family size. Roommates do not count. Joint-custody children count as family members in BOTH households if they spend at least 50% of time there."
       }
-    ]
-  }
-  </script>
+    },
+    {
+      "@type": "Question",
+      "name": "Who counts toward family size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Family size matters because ELFA income ceilings scale with household size. Per the official FY 2025-26 form, a family of 1–2 can earn up to $15,587/month for Tuition Credit; a family of 6 up to $22,600/month. Getting the count right can determine which tier you qualify for. Birth certificates for all children under 18 must be kept on file by your child care provider. The applicant parent(s) or legal guardian(s) who are signing the application. All biological, adopted, step, or foster children under age 18 living in the home. Children age 18–21 who are full-time students and claimed as dependents on the applicant's tax return. Children with disabilities who are claimed as dependents, regardless of age. Unborn children — pregnant applicants may include the expected baby in the family count. Joint-custody children who spend at least 50% of their time in the applicant's home — they count in BOTH households. Any other dependent listed on the applicant's most recent IRS Form 1040."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who does NOT count toward family size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roommates who share rent but aren't related and aren't claimed as dependents. Adult siblings or other adult relatives who live in the home but earn their own income and aren't tax dependents. Grandparents who live with the family but support themselves (receive Social Security or pension income they use for their own expenses). Domestic partners or unmarried co-parents who don't share finances with the applicant. Children who live with their other parent more than 50% of the time in a joint-custody arrangement. Children age 18 or older who are not full-time students and are not claimed as tax dependents."
+      }
+    }
+  ]
+}
+</script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }

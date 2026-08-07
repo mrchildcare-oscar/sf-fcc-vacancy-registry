@@ -587,5 +587,17 @@
     "reply": "Reply",
     "markReplied": "Mark as Replied",
     "archive": "Archive"
+  },
+  "donate": {
+    "title": "Support family child care in San Francisco",
+    "intro": "The Family Child Care Association of San Francisco is run by the providers themselves — licensed programs operating out of homes, in the neighborhoods where families already live. Your gift goes to the association, not to any one program.",
+    "supportsHeading": "What your gift supports",
+    "support1": "Training and peer support for providers, offered in English, Cantonese, and Spanish",
+    "support2": "Helping families find and understand licensed care near them",
+    "support3": "Advocacy so providers are at the table when the city and state make child care decisions",
+    "navLabel": "Donate",
+    "formHeading": "Make a donation",
+    "fallback": "Trouble with the form? Donate on the Join It page instead.",
+    "metaTitle": "Donate to FCCASF | Family Child Care SF"
   }
 }

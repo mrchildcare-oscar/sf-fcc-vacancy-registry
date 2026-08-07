@@ -1333,6 +1333,14 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
               <ExternalLink size={12} />
             </a>
           </p>
+          <p className="mt-2">
+            <a
+              href="#donate"
+              className="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 rounded"
+            >
+              {t('donate.navLabel')}
+            </a>
+          </p>
           <p className="mt-4 text-xs text-gray-400">
             v{__APP_VERSION__}
           </p>

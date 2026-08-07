@@ -588,5 +588,17 @@
     "reply": "Responder",
     "markReplied": "Marcar como respondida",
     "archive": "Archivar"
+  },
+  "donate": {
+    "title": "Apoye el cuidado infantil familiar en San Francisco",
+    "intro": "La Asociación de Cuidado Infantil Familiar de San Francisco está dirigida por las propias proveedoras — programas con licencia que funcionan en hogares, en los barrios donde ya viven las familias. Su donación va a la asociación, no a un programa en particular.",
+    "supportsHeading": "Su donación apoya",
+    "support1": "Capacitación y apoyo entre proveedoras, en inglés, cantonés y español",
+    "support2": "Ayuda para que las familias encuentren y entiendan el cuidado con licencia cerca de ellas",
+    "support3": "Incidencia para que las proveedoras participen en las decisiones sobre cuidado infantil de la ciudad y el estado",
+    "navLabel": "Donar",
+    "formHeading": "Hacer una donación",
+    "fallback": "¿Problemas con el formulario? Done en la página de Join It.",
+    "metaTitle": "Done a FCCASF | Family Child Care SF"
   }
 }

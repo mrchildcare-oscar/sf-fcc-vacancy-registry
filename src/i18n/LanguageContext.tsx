@@ -116,7 +116,7 @@ export function LanguageSwitcher({ className, compact }: { className?: string; c
     <div className={`inline-flex items-center rounded-lg border border-gray-300 overflow-hidden flex-shrink-0 ${className || ''}`}>
       <button
         onClick={() => setLanguage('en')}
-        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap ${
+        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset ${
           language === 'en'
             ? 'bg-blue-600 text-white'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -126,7 +126,7 @@ export function LanguageSwitcher({ className, compact }: { className?: string; c
       </button>
       <button
         onClick={() => setLanguage('es')}
-        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap ${
+        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset ${
           language === 'es'
             ? 'bg-blue-600 text-white'
             : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -136,7 +136,7 @@ export function LanguageSwitcher({ className, compact }: { className?: string; c
       </button>
       <button
         onClick={() => setLanguage('zh-TW')}
-        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap ${
+        className={`${buttonPadding} font-medium transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset ${
           language === 'zh-TW'
             ? 'bg-blue-600 text-white'
             : 'bg-white text-gray-600 hover:bg-gray-100'

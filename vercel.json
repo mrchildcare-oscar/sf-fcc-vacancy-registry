@@ -96,6 +96,16 @@
       "permanent": false
     },
     {
+      "source": "/donate",
+      "destination": "/#donate",
+      "permanent": false
+    },
+    {
+      "source": "/go/donate",
+      "destination": "/#donate",
+      "permanent": false
+    },
+    {
       "source": "/details/:id",
       "destination": "/",
       "permanent": true

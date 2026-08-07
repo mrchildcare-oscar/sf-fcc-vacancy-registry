@@ -61,6 +61,7 @@ function logView(eventType: 'page_view' | 'listing_view' | 'contact_click', data
 export type ViewName =
   | 'public'
   | 'insights'
+  | 'donate'
   | 'auth'
   | 'onboarding'
   | 'vacancies'

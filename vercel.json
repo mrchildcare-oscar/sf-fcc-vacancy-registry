@@ -96,13 +96,8 @@
       "permanent": false
     },
     {
-      "source": "/donate",
-      "destination": "/#donate",
-      "permanent": false
-    },
-    {
       "source": "/go/donate",
-      "destination": "/#donate",
+      "destination": "/donate/",
       "permanent": false
     },
     {

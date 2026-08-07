@@ -705,4 +705,33 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Donate (trilingual) -->
+  <url>
+    <loc>https://familychildcaresf.com/donate/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/donate/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/donate/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/donate/"/>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/es/donate/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/donate/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/donate/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/donate/"/>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://familychildcaresf.com/zh/donate/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://familychildcaresf.com/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://familychildcaresf.com/es/donate/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://familychildcaresf.com/zh/donate/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://familychildcaresf.com/donate/"/>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

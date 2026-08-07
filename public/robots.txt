@@ -17,6 +17,9 @@ Allow: /zh/financial-assistance
 Allow: /choose
 Allow: /es/choose
 Allow: /zh/choose
+Allow: /donate
+Allow: /es/donate
+Allow: /zh/donate
 
 # Auth-protected routes (hash-based, but include for completeness)
 Disallow: /provider/

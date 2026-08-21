@@ -17,6 +17,8 @@ import {
   Shuffle,
   ExternalLink,
   AlertTriangle,
+  Link2,
+  Check,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -30,6 +32,61 @@ import {
 } from '../../lib/analytics';
 import { shuffleListingsForUser } from '../../lib/randomOrder';
 import { getListingFreshness } from '../../lib/vacancyTtl';
+
+// True SF neighborhood borders (reviewed with Oscar). Used ONLY as a fallback:
+// when a selected neighborhood has few/no openings we surface openings in
+// bordering neighborhoods. Keyed by canonical filter names; Inner/Outer Sunset
+// & Richmond collapse to Sunset/Richmond via NEIGHBORHOOD_ALIASES.
+const NEIGHBORHOOD_ADJACENCY: Record<string, string[]> = {
+  // West / Ocean
+  'Sunset': ['Richmond', 'Forest Hill', 'West Portal', 'Lake Merced'],
+  'Richmond': ['Sunset', 'Pacific Heights'],
+  'Lake Merced': ['Sunset', 'Oceanview', 'Ingleside'],
+  'West Portal': ['Forest Hill', 'Sunset', 'Sunnyside', 'Ingleside'],
+  'Forest Hill': ['West Portal', 'Sunset', 'Diamond Heights', 'Sunnyside'],
+  'Sunnyside': ['Glen Park', 'Ingleside', 'West Portal', 'Forest Hill'],
+  'Oceanview': ['Ingleside', 'Lake Merced', 'Outer Mission'],
+  'Ingleside': ['Oceanview', 'Outer Mission', 'Sunnyside', 'West Portal', 'Lake Merced'],
+  // Southeast
+  'Outer Mission': ['Excelsior', 'Crocker Amazon', 'Ingleside', 'Oceanview', 'Glen Park'],
+  'Excelsior': ['Portola', 'Outer Mission', 'Crocker Amazon', 'Visitacion Valley', 'Ingleside', 'Bernal Heights'],
+  'Crocker Amazon': ['Excelsior', 'Outer Mission', 'Visitacion Valley'],
+  'Visitacion Valley': ['Portola', 'Bayview', 'Excelsior', 'Crocker Amazon'],
+  'Portola': ['Bernal Heights', 'Bayview', 'Excelsior', 'Visitacion Valley'],
+  'Bayview': ['Potrero Hill', 'Portola', 'Visitacion Valley', 'Mission Bay', 'Bernal Heights'],
+  'Mission Bay': ['SoMa', 'Potrero Hill', 'Bayview'],
+  'Potrero Hill': ['Mission', 'SoMa', 'Mission Bay', 'Bayview'],
+  // Mission / Central
+  'Mission': ['Castro', 'Noe Valley', 'Bernal Heights', 'Potrero Hill', 'SoMa', 'Hayes Valley'],
+  'Bernal Heights': ['Mission', 'Noe Valley', 'Glen Park', 'Portola', 'Bayview', 'Excelsior'],
+  'Noe Valley': ['Castro', 'Mission', 'Glen Park', 'Diamond Heights', 'Bernal Heights'],
+  'Glen Park': ['Noe Valley', 'Diamond Heights', 'Bernal Heights', 'Sunnyside', 'Outer Mission'],
+  'Diamond Heights': ['Glen Park', 'Noe Valley', 'Castro', 'Forest Hill'],
+  'Castro': ['Noe Valley', 'Mission', 'Haight-Ashbury', 'Diamond Heights'],
+  'Haight-Ashbury': ['Castro', 'Sunset', 'Western Addition', 'Hayes Valley'],
+  // Downtown / North
+  'Hayes Valley': ['Western Addition', 'SoMa', 'Tenderloin', 'Mission', 'Haight-Ashbury'],
+  'Western Addition': ['Pacific Heights', 'Hayes Valley', 'Haight-Ashbury', 'Tenderloin'],
+  'SoMa': ['Mission', 'Financial District', 'Mission Bay', 'Potrero Hill', 'Tenderloin', 'Hayes Valley'],
+  'Tenderloin': ['Nob Hill', 'SoMa', 'Hayes Valley', 'Western Addition'],
+  'Nob Hill': ['Chinatown', 'Russian Hill', 'Tenderloin', 'Financial District'],
+  'Financial District': ['Chinatown', 'North Beach', 'SoMa', 'Nob Hill'],
+  'Chinatown': ['North Beach', 'Financial District', 'Nob Hill'],
+  'North Beach': ['Russian Hill', 'Chinatown', 'Financial District', 'Marina'],
+  'Russian Hill': ['Nob Hill', 'North Beach', 'Marina', 'Pacific Heights'],
+  'Pacific Heights': ['Marina', 'Western Addition', 'Richmond', 'Russian Hill'],
+  'Marina': ['Pacific Heights', 'Russian Hill', 'North Beach'],
+};
+
+// Nearby-fallback tuning:
+// - THRESHOLD: the selected neighborhood must have FEWER than this many openings
+//   to trigger the nearby section (so a thin one like Noe Valley still helps).
+// - TARGET: reach outward ring by ring until we've gathered at least this many
+//   nearby openings (expand-when-dry — closest neighborhoods shown first)...
+// - MAX_RINGS: ...but never hop more than this far from the selected neighborhood.
+const NEARBY_THRESHOLD = 3;
+const NEARBY_TARGET = 4;
+const NEARBY_MAX_RINGS = 3;
 
 interface PublicListingsProps {
   listings: PublicListing[];
@@ -45,6 +102,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   const [expandedListing, setExpandedListing] = useState<string | null>(null);
   const [showWaitlistSection, setShowWaitlistSection] = useState(false);
   const [inquiryListing, setInquiryListing] = useState<PublicListing | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   // Render freshness-aware "last updated" timestamp
   const renderLastUpdated = useCallback((listing: PublicListing) => {
@@ -180,26 +238,76 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     setShowFilters(true);
   };
 
-  // Read neighborhood filter from URL hash on mount (e.g. #public?neighborhood=excelsior)
-  // Normalizes slugs to canonical DB values so the dropdown reflects the active filter.
+  // On mount, hydrate filters from the URL hash query so a shared link like
+  //   #public?neighborhood=excelsior&age=infant&language=Cantonese&schedule=full_time&elfa=1&q=94112
+  // opens the registry already filtered. (Previously only `neighborhood` was
+  // read.) Unknown or invalid values are ignored.
   useEffect(() => {
-    const hashParts = window.location.hash.split('?');
-    if (hashParts.length > 1) {
-      const params = new URLSearchParams(decodeURIComponent(hashParts[1]));
-      const neighborhood = params.get('neighborhood');
-      if (neighborhood) {
-        const fLower = neighborhood.trim().toLowerCase();
-        // If the URL param is one of our known slugs, store the canonical
-        // Title-Case name. Otherwise (arbitrary neighborhood passed in),
-        // pass through as-is.
-        const displayValue = NEIGHBORHOOD_ALIASES[fLower]
-          ? fLower[0].toUpperCase() + fLower.slice(1)
-          : neighborhood;
-        setFilters(prev => ({ ...prev, neighborhood: displayValue }));
+    const queryString = window.location.hash.split('?').slice(1).join('?');
+    if (!queryString) return;
+    const params = new URLSearchParams(queryString);
+    const next: SearchFilters = {};
+
+    const neighborhood = params.get('neighborhood');
+    if (neighborhood) {
+      const fLower = neighborhood.trim().toLowerCase();
+      // Known slug (excelsior) → canonical Title-Case ("Excelsior"); any other
+      // neighborhood value passes through as-is.
+      next.neighborhood = NEIGHBORHOOD_ALIASES[fLower]
+        ? fLower[0].toUpperCase() + fLower.slice(1)
+        : neighborhood;
+    }
+
+    const age = params.get('age') || params.get('age_group');
+    if (age && ['infant', 'toddler', 'preschool', 'school_age'].includes(age)) {
+      next.age_group = age as SearchFilters['age_group'];
+    }
+
+    const language = params.get('language');
+    if (language) next.language = language;
+
+    const schedule = params.get('schedule');
+    if (schedule && ['full_time', 'part_time', 'weekend', 'evening', 'overnight'].includes(schedule)) {
+      next.schedule = schedule as SearchFilters['schedule'];
+    }
+
+    const elfa = params.get('elfa');
+    if (elfa && ['1', 'true', 'yes'].includes(elfa.toLowerCase())) next.elfa_only = true;
+
+    const q = params.get('q') || params.get('search');
+    if (q) next.search = q;
+
+    if (Object.keys(next).length > 0) {
+      setFilters(prev => ({ ...prev, ...next }));
+      // Open the filter panel when a panel-based filter is active so the
+      // applied filters are visible (search has its own always-visible box).
+      if (next.neighborhood || next.age_group || next.language || next.schedule) {
         setShowFilters(true);
       }
     }
   }, []);
+
+  // Mirror active filters back into the URL hash so the address bar itself is a
+  // shareable link and "Copy link" just copies location.href. replaceState =
+  // no history spam and no hashchange event, so RegistryApp's hash router is
+  // untouched (it only reads the part before '?'). The first run is skipped so
+  // it never strips the params the effect above is still hydrating.
+  const didInitUrlSync = useRef(false);
+  useEffect(() => {
+    if (!didInitUrlSync.current) {
+      didInitUrlSync.current = true;
+      return;
+    }
+    const params = new URLSearchParams();
+    if (filters.neighborhood) params.set('neighborhood', filters.neighborhood);
+    if (filters.age_group) params.set('age', filters.age_group);
+    if (filters.language) params.set('language', filters.language);
+    if (filters.schedule) params.set('schedule', filters.schedule);
+    if (filters.elfa_only) params.set('elfa', '1');
+    if (filters.search) params.set('q', filters.search);
+    const qs = params.toString();
+    window.history.replaceState(null, '', qs ? `#public?${qs}` : '#public');
+  }, [filters]);
 
   // Handle listing click with analytics tracking
   const handleListingClick = useCallback((listing: PublicListing) => {
@@ -254,8 +362,19 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     return Array.from(languages).sort();
   }, [listings]);
 
-  // Apply filters to all listings first
-  const applyFilters = (listing: PublicListing) => {
+  // Count of ELFA programs that currently have openings. Drives the
+  // always-visible ELFA quick toggle so it self-gates: parents see up front
+  // how many ELFA programs to expect. Independent of the other active filters
+  // so the number stays stable as you narrow by neighborhood/age/etc.
+  const elfaOpenCount = useMemo(
+    () => listings.filter(l => l.is_elfa_network && l.total_spots_available > 0).length,
+    [listings]
+  );
+
+  // Does a listing pass the active filters? `ignoreNeighborhood` lets the
+  // nearby-neighborhood fallback reuse the same search/ELFA/language/age/schedule
+  // logic while relaxing only the neighborhood constraint.
+  const matchesFilters = (listing: PublicListing, opts: { ignoreNeighborhood?: boolean } = {}) => {
     if (filters.search) {
       const q = filters.search.toLowerCase();
       const digitsOnly = filters.search.replace(/\D/g, '');
@@ -266,7 +385,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
         digitsOnly.length >= 4 && listing.license_number?.includes(digitsOnly);
       if (!matchesZip && !matchesNeighborhood && !matchesName && !matchesLicense) return false;
     }
-    if (filters.neighborhood) {
+    if (!opts.ignoreNeighborhood && filters.neighborhood) {
       const fLower = filters.neighborhood.trim().toLowerCase();
       const aliasList = NEIGHBORHOOD_ALIASES[fLower];
       if (aliasList) {
@@ -322,12 +441,52 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
 
   // Separate listings: with openings vs full with waitlist
   // Memoize allFiltered so expand/collapse doesn't re-filter + re-shuffle
-  const allFiltered = useMemo(() => listings.filter(applyFilters), [listings, filters]);
+  const allFiltered = useMemo(() => listings.filter(l => matchesFilters(l)), [listings, filters]);
   const listingsWithOpenings = useMemo(() => {
     const filtered = allFiltered.filter(l => l.total_spots_available > 0);
     return shuffleListingsForUser(filtered);
   }, [allFiltered]);
   const fullWithWaitlist = useMemo(() => allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available), [allFiltered]);
+
+  // Nearby-neighborhood fallback: when the selected neighborhood is thin
+  // (fewer than NEARBY_THRESHOLD openings), reach outward through the adjacency
+  // graph — closest ring first, expanding only when the closer neighborhoods
+  // are dry — until we've gathered NEARBY_TARGET openings or hit NEARBY_MAX_RINGS
+  // hops. Every result still matches the OTHER active filters (age/language/ELFA).
+  const nearbyListings = useMemo(() => {
+    if (!filters.neighborhood || listingsWithOpenings.length >= NEARBY_THRESHOLD) return [];
+    const selected = canonicalNeighborhood(filters.neighborhood);
+    const startKey = Object.keys(NEIGHBORHOOD_ADJACENCY).find(k => k.toLowerCase() === selected.toLowerCase());
+    if (!startKey) return [];
+
+    // Index open, filter-matching listings by canonical neighborhood.
+    const openByHood = new Map<string, PublicListing[]>();
+    listings.forEach(l => {
+      if (l.total_spots_available <= 0 || !l.neighborhood) return;
+      if (!matchesFilters(l, { ignoreNeighborhood: true })) return;
+      const canon = canonicalNeighborhood(l.neighborhood).toLowerCase();
+      const arr = openByHood.get(canon);
+      if (arr) arr.push(l); else openByHood.set(canon, [l]);
+    });
+
+    // Breadth-first outward from the selected neighborhood.
+    const visited = new Set<string>([selected.toLowerCase()]);
+    let frontier: string[] = NEIGHBORHOOD_ADJACENCY[startKey];
+    const collected: PublicListing[] = [];
+    for (let ring = 0; ring < NEARBY_MAX_RINGS && collected.length < NEARBY_TARGET && frontier.length; ring++) {
+      const next: string[] = [];
+      for (const hood of frontier) {
+        const hoodLower = hood.toLowerCase();
+        if (visited.has(hoodLower)) continue;
+        visited.add(hoodLower);
+        const here = openByHood.get(hoodLower);
+        if (here) collected.push(...here);
+        next.push(...(NEIGHBORHOOD_ADJACENCY[hood] ?? []));
+      }
+      frontier = next;
+    }
+    return shuffleListingsForUser(collected);
+  }, [listings, filters, listingsWithOpenings.length]);
 
   // Split listings into fresh/aging (shown normally) vs stale (shown in separate section)
   const [freshListings, staleListings] = useMemo(() => {
@@ -430,7 +589,194 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     setFilters({});
   };
 
+  // Copy the current (filter-synced) URL so it can be shared as a pre-filtered link.
+  const handleCopyLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      // Clipboard blocked (rare) — the URL bar still holds the shareable link.
+    }
+  }, []);
+
   const hasActiveFilters = Object.values(filters).some(v => v);
+
+  // A single "has openings" listing card. Shared by the main grouped results
+  // and the nearby-neighborhood fallback so both render identically.
+  const renderOpeningCard = (listing: PublicListing) => (
+    <div
+      key={listing.provider_id}
+      data-provider-id={listing.provider_id}
+      className="bg-white rounded-xl shadow hover:shadow-md transition-shadow mb-3"
+    >
+      <div
+        className="p-4 cursor-pointer"
+        onClick={() => handleListingClick(listing)}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-gray-900">{listing.business_name}</h3>
+              {listing.is_elfa_network && (
+                <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
+                  <Star size={12} />
+                  ELFA
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+              <span className="flex items-center gap-1">
+                <MapPin size={14} />
+                {listing.neighborhood || listing.zip_code}
+              </span>
+              <span>
+                {listing.program_type === 'small_family' ? t('publicListings.smallFamily') : t('publicListings.largeFamily')}
+              </span>
+              <span className="text-gray-400">
+                {t('publicListings.license')} #{listing.license_number}
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right flex items-center gap-4">
+            <div>
+              {isProvider ? (
+                <>
+                  <p className="text-2xl font-bold text-green-600">
+                    {listing.total_spots_available}
+                  </p>
+                  <p className="text-xs text-gray-500">{t('publicListings.spotsOpen')}</p>
+                </>
+              ) : (
+                <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                  {t('publicListings.hasOpenings')}
+                </span>
+              )}
+            </div>
+            {expandedListing === listing.provider_id ? (
+              <ChevronUp size={20} className="text-gray-400" />
+            ) : (
+              <ChevronDown size={20} className="text-gray-400" />
+            )}
+          </div>
+        </div>
+
+        {/* Quick spots overview - counts only shown to providers */}
+        <div className="flex gap-2 mt-3 flex-wrap">
+          {listing.accepting_infants && (
+            <span className="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded">
+              {t('vacancy.infant')}{isProvider && listing.infant_spots > 0 && ` (${listing.infant_spots})`}
+            </span>
+          )}
+          {listing.accepting_toddlers && (
+            <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">
+              {t('vacancy.toddler')}{isProvider && listing.toddler_spots > 0 && ` (${listing.toddler_spots})`}
+            </span>
+          )}
+          {listing.accepting_preschool && (
+            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
+              {t('vacancy.preschool')}{isProvider && listing.preschool_spots > 0 && ` (${listing.preschool_spots})`}
+            </span>
+          )}
+          {listing.accepting_school_age && (
+            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
+              {t('vacancy.schoolAge')}{isProvider && listing.school_age_spots > 0 && ` (${listing.school_age_spots})`}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Expanded Details */}
+      {expandedListing === listing.provider_id && (
+        <div className="px-4 pb-4 pt-2 border-t">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(listing.phone || listing.website) && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
+                <div className="space-y-2 text-sm">
+                  {listing.phone && (
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`tel:${listing.phone}`}
+                        onClick={() => handleContactClick(listing, 'phone')}
+                        className="flex items-center gap-2 text-blue-600 hover:underline"
+                      >
+                        <Phone size={14} />
+                        {listing.phone}
+                      </a>
+                      {listing.phone_accepts_text === true && (
+                        <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                          {t('publicListings.textOk')}
+                        </span>
+                      )}
+                      {listing.phone_accepts_text === false && (
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                          {t('publicListings.callOnly')}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  {listing.website && (
+                    <a
+                      href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleContactClick(listing, 'website')}
+                      className="flex items-center gap-2 text-blue-600 hover:underline"
+                    >
+                      <Globe size={14} />
+                      {t('publicListings.visitWebsite')}
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
+              <div className="space-y-1 text-sm text-gray-600">
+                <p className="flex items-center gap-2">
+                  <Clock size={14} />
+                  {[
+                    listing.full_time_available && t('vacancy.fullTime'),
+                    listing.part_time_available && t('vacancy.partTime'),
+                    listing.weekend_available && t('vacancy.weekend'),
+                    listing.evening_available && t('vacancy.evening'),
+                    listing.overnight_available && t('vacancy.overnight')
+                  ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
+                </p>
+                {listing.languages.length > 0 && (
+                  <p>{t('publicListings.languagesSpoken')}: {listing.languages.join(', ')}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {listing.notes && (
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800">{listing.notes}</p>
+            </div>
+          )}
+
+          {/* Send Inquiry Button */}
+          <div className="mt-4 pt-4 border-t flex items-center justify-between">
+            {renderLastUpdated(listing)}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setInquiryListing(listing);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <MessageSquare size={16} />
+              {t('inquiry.sendInquiry')}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -451,8 +797,12 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
               {/* Stats - horizontal on desktop, compact on mobile */}
               <div className="flex items-center gap-4 sm:gap-2">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{listingsWithOpenings.length}</span>
-                  <span className="text-xs sm:text-sm text-gray-500">{t('publicListings.programsWithOpenings')}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-blue-600">{listingsWithOpenings.length + nearbyListings.length}</span>
+                  <span className="text-xs sm:text-sm text-gray-500">
+                    {nearbyListings.length > 0
+                      ? t('publicListings.programsWithOpeningsNearby')
+                      : t('publicListings.programsWithOpenings')}
+                  </span>
                 </div>
                 {isProvider && (
                   <>
@@ -551,6 +901,45 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
             })}
           </div>
 
+          {/* ELFA quick toggle — always visible (not buried in the filter
+              panel) and count-aware. ELFA programs offer free / reduced-cost
+              subsidized care, so surfacing this prominently lets subsidy
+              families self-select. The count self-gates: a low number reads
+              as "few right now," a high one pulls people in. */}
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+            <button
+              type="button"
+              onClick={() => setFilters(prev => ({ ...prev, elfa_only: prev.elfa_only ? undefined : true }))}
+              aria-pressed={!!filters.elfa_only}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border transition-colors ${
+                filters.elfa_only
+                  ? 'bg-yellow-500 text-white border-yellow-500 hover:bg-yellow-600'
+                  : 'bg-yellow-50 text-yellow-800 border-yellow-300 hover:bg-yellow-100'
+              }`}
+            >
+              <Star size={13} />
+              {t('publicListings.onlyElfa')}
+              <span
+                className={`ml-0.5 px-1.5 py-0.5 rounded-full text-xs font-semibold ${
+                  filters.elfa_only ? 'bg-white/25 text-white' : 'bg-yellow-200 text-yellow-900'
+                }`}
+              >
+                {elfaOpenCount}
+              </span>
+            </button>
+            <span className="text-gray-500 text-xs">{t('publicListings.elfaFreeNote')}</span>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors ml-auto"
+              >
+                {linkCopied ? <Check size={13} className="text-green-600" /> : <Link2 size={13} />}
+                {linkCopied ? t('publicListings.linkCopied') : t('publicListings.copyLink')}
+              </button>
+            )}
+          </div>
+
           {/* Filter Panel */}
           {showFilters && (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
@@ -567,7 +956,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                 )}
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Neighborhood */}
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -644,22 +1033,6 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                     <option value="overnight">{t('vacancy.overnight')}</option>
                   </select>
                 </div>
-
-                {/* ELFA */}
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    {t('publicListings.elfaNetwork')}
-                  </label>
-                  <label className="flex items-center gap-2 mt-1">
-                    <input
-                      type="checkbox"
-                      checked={filters.elfa_only || false}
-                      onChange={e => setFilters(prev => ({ ...prev, elfa_only: e.target.checked || undefined }))}
-                      className="rounded"
-                    />
-                    <span className="text-sm">{t('publicListings.onlyElfa')}</span>
-                  </label>
-                </div>
               </div>
             </div>
           )}
@@ -704,7 +1077,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
             <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
             <p className="text-gray-600">{t('common.loading')}</p>
           </div>
-        ) : listingsWithOpenings.length === 0 && fullWithWaitlist.length === 0 ? (
+        ) : listingsWithOpenings.length === 0 && fullWithWaitlist.length === 0 && nearbyListings.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl shadow">
             <Baby size={48} className="mx-auto text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">{t('publicListings.noMatches')}</h3>
@@ -744,182 +1117,26 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
                     </>
                   )}
                 </div>
-                {groupListings.map(listing => (
-              <div
-                key={listing.provider_id}
-                data-provider-id={listing.provider_id}
-                className="bg-white rounded-xl shadow hover:shadow-md transition-shadow mb-3"
-              >
-                <div
-                  className="p-4 cursor-pointer"
-                  onClick={() => handleListingClick(listing)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{listing.business_name}</h3>
-                        {listing.is_elfa_network && (
-                          <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
-                            <Star size={12} />
-                            ELFA
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
-                        <span className="flex items-center gap-1">
-                          <MapPin size={14} />
-                          {listing.neighborhood || listing.zip_code}
-                        </span>
-                        <span>
-                          {listing.program_type === 'small_family' ? t('publicListings.smallFamily') : t('publicListings.largeFamily')}
-                        </span>
-                        <span className="text-gray-400">
-                          {t('publicListings.license')} #{listing.license_number}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="text-right flex items-center gap-4">
-                      <div>
-                        {isProvider ? (
-                          <>
-                            <p className="text-2xl font-bold text-green-600">
-                              {listing.total_spots_available}
-                            </p>
-                            <p className="text-xs text-gray-500">{t('publicListings.spotsOpen')}</p>
-                          </>
-                        ) : (
-                          <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                            {t('publicListings.hasOpenings')}
-                          </span>
-                        )}
-                      </div>
-                      {expandedListing === listing.provider_id ? (
-                        <ChevronUp size={20} className="text-gray-400" />
-                      ) : (
-                        <ChevronDown size={20} className="text-gray-400" />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Quick spots overview - counts only shown to providers */}
-                  <div className="flex gap-2 mt-3 flex-wrap">
-                    {listing.accepting_infants && (
-                      <span className="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded">
-                        {t('vacancy.infant')}{isProvider && listing.infant_spots > 0 && ` (${listing.infant_spots})`}
-                      </span>
-                    )}
-                    {listing.accepting_toddlers && (
-                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded">
-                        {t('vacancy.toddler')}{isProvider && listing.toddler_spots > 0 && ` (${listing.toddler_spots})`}
-                      </span>
-                    )}
-                    {listing.accepting_preschool && (
-                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
-                        {t('vacancy.preschool')}{isProvider && listing.preschool_spots > 0 && ` (${listing.preschool_spots})`}
-                      </span>
-                    )}
-                    {listing.accepting_school_age && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">
-                        {t('vacancy.schoolAge')}{isProvider && listing.school_age_spots > 0 && ` (${listing.school_age_spots})`}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Expanded Details */}
-                {expandedListing === listing.provider_id && (
-                  <div className="px-4 pb-4 pt-2 border-t">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {(listing.phone || listing.website) && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
-                          <div className="space-y-2 text-sm">
-                            {listing.phone && (
-                              <div className="flex items-center gap-2">
-                                <a
-                                  href={`tel:${listing.phone}`}
-                                  onClick={() => handleContactClick(listing, 'phone')}
-                                  className="flex items-center gap-2 text-blue-600 hover:underline"
-                                >
-                                  <Phone size={14} />
-                                  {listing.phone}
-                                </a>
-                                {listing.phone_accepts_text === true && (
-                                  <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
-                                    {t('publicListings.textOk')}
-                                  </span>
-                                )}
-                                {listing.phone_accepts_text === false && (
-                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                    {t('publicListings.callOnly')}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                            {listing.website && (
-                              <a
-                                href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() => handleContactClick(listing, 'website')}
-                                className="flex items-center gap-2 text-blue-600 hover:underline"
-                              >
-                                <Globe size={14} />
-                                {t('publicListings.visitWebsite')}
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
-                        <div className="space-y-1 text-sm text-gray-600">
-                          <p className="flex items-center gap-2">
-                            <Clock size={14} />
-                            {[
-                              listing.full_time_available && t('vacancy.fullTime'),
-                              listing.part_time_available && t('vacancy.partTime'),
-                              listing.weekend_available && t('vacancy.weekend'),
-                              listing.evening_available && t('vacancy.evening'),
-                              listing.overnight_available && t('vacancy.overnight')
-                            ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
-                          </p>
-                          {listing.languages.length > 0 && (
-                            <p>{t('publicListings.languagesSpoken')}: {listing.languages.join(', ')}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {listing.notes && (
-                      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-blue-800">{listing.notes}</p>
-                      </div>
-                    )}
-
-                    {/* Send Inquiry Button */}
-                    <div className="mt-4 pt-4 border-t flex items-center justify-between">
-                      {renderLastUpdated(listing)}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setInquiryListing(listing);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                        <MessageSquare size={16} />
-                        {t('inquiry.sendInquiry')}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-                ))}
+                {groupListings.map(renderOpeningCard)}
               </div>
               );
             })}
+
+            {/* Nearby-neighborhood fallback — openings in bordering areas when
+                the selected neighborhood is thin (e.g. a Noe Valley search). */}
+            {nearbyListings.length > 0 && (
+              <div className="mt-8">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <MapPin size={14} className="text-blue-400" />
+                  <h2 className="text-sm font-semibold text-gray-700">{t('publicListings.nearbyTitle')}</h2>
+                  <span className="text-xs text-gray-400">({nearbyListings.length})</span>
+                </div>
+                <p className="text-xs text-gray-500 mb-3">
+                  {t('publicListings.nearbyNote').replace('{neighborhood}', filters.neighborhood || '')}
+                </p>
+                {nearbyListings.map(renderOpeningCard)}
+              </div>
+            )}
 
             {/* Collapsed section for stale listings (30+ days old) */}
             {staleListings.length > 0 && (

@@ -20,9 +20,9 @@ const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
 const SITE_URL = "https://familychildcaresf.com";
 
 const LANGS = [
-  { key: "en", htmlLang: "en", ogLocale: "en_US", pathPrefix: "", zhDualName: "" },
-  { key: "es", htmlLang: "es", ogLocale: "es_ES", pathPrefix: "/es", zhDualName: "" },
-  { key: "zh", htmlLang: "zh-Hant", ogLocale: "zh_TW", pathPrefix: "/zh", zhDualName: "（舊金山）" },
+  { key: "en", htmlLang: "en", ogLocale: "en_US", ogImage: "/og-image.png", pathPrefix: "", zhDualName: "" },
+  { key: "es", htmlLang: "es", ogLocale: "es_ES", ogImage: "/og-image-es.png", pathPrefix: "/es", zhDualName: "" },
+  { key: "zh", htmlLang: "zh-Hant", ogLocale: "zh_TW", ogImage: "/og-image-zh.png", pathPrefix: "/zh", zhDualName: "（舊金山）" },
 ];
 
 const STRINGS = {
@@ -360,13 +360,13 @@ function renderHead(n, lang) {
   <meta property="og:url" content="${canonical}">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
-  <meta property="og:image" content="${SITE_URL}/og-image.png">
+  <meta property="og:image" content="${SITE_URL}${langCfg.ogImage}">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${langCfg.ogLocale}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
-  <meta name="twitter:image" content="${SITE_URL}/og-image.png">
+  <meta name="twitter:image" content="${SITE_URL}${langCfg.ogImage}">
   ${breadcrumb}
   ${childCare}
   ${faq}
@@ -769,7 +769,7 @@ function renderIndexPage(lang) {
   <meta property="og:url" content="${canonical}">
   <meta property="og:title" content="${escapeHtml(it.title)}">
   <meta property="og:description" content="${escapeHtml(it.description)}">
-  <meta property="og:image" content="${SITE_URL}/og-image.png">
+  <meta property="og:image" content="${SITE_URL}${langCfg.ogImage}">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${langCfg.ogLocale}">
   ${renderJsonLd(breadcrumb)}

@@ -39,10 +39,36 @@ in if you want them versioned):
 
 Re-run both after any homepage UI change and the card is current again.
 
-## Still open (optional)
+## Language-specific cards (added 2026-09-01, second commit)
 
-- **Language-specific cards for ES and ZH pages.** All 77 pages currently share one English card.
-  Same pipeline: change the headline, capture the site in that language, output
-  `og-image-es.png` / `og-image-zh.png`, and point the `public/es/**` and `public/zh/**` pages at them.
-- **After deploying**, re-run LinkedIn's Post Inspector on the live URL to force a re-scrape —
-  LinkedIn will otherwise keep serving the cached "no image" result.
+`public/og-image-es.png` and `public/og-image-zh.png`, same layout and pipeline. The phone in each
+is the live app captured at `?lang=es` / `?lang=zh` — the URL params the app already supports for
+flyer QR codes.
+
+**Every string on those two cards is copied verbatim from reviewed, shipped i18n — no new
+translation was written.** Sources, all from `src/i18n/`:
+
+| Card element | ES | ZH |
+|---|---|---|
+| Headline | `publicListings.title` | `publicListings.title` |
+| Subhead | `publicListings.introSentence` | `publicListings.introSentence` |
+| Attribution | `publicListings.footerPrefix` + `footerOrgName` | `footerPrefix` + `footerOrgName` + `footerSuffix` |
+
+Wiring: `public/es/**` → `og-image-es.png`, `public/zh/**` → `og-image-zh.png`, English pages
+unchanged. Both generators now carry an `ogImage` field per language entry (`LANGS`) and emit
+`${langCfg.ogImage}` / `${cfg.ogImage}`, so regenerated pages keep the right card.
+
+⚠ **Known naming inconsistency, not resolved here.** The ZH card uses 舊金山 for San Francisco,
+because that is what the shipped `publicListings.title` and `footerOrgName` use. The translation
+glossary records the association as 三藩市家庭托兒協會, and the live `/zh/` page description mixes
+both. PLANNING.md already carries "decide 三藩市 vs 舊金山 site-wide" as an open item — once decided,
+the card is a one-word change and a re-render.
+
+## Still open
+
+- **After deploying**, re-run LinkedIn's Post Inspector on the live URLs to force a re-scrape —
+  LinkedIn will otherwise keep serving whatever it cached.
+- The three `/donate` static pages are already corrected **in the working tree** (English → PNG,
+  ES/ZH → their language cards) but were left out of both commits, because they also carry
+  unrelated in-flight donate work. Until that work is committed and deployed, production keeps
+  serving the old `og-image.svg` on those three pages only.

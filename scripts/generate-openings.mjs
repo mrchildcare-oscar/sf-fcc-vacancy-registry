@@ -43,6 +43,7 @@ const LANGS = {
     urlPrefix: '',
     htmlLang: 'en',
     ogLocale: 'en_US',
+    ogImage: '/og-image.png',
     spaLang: '',
     scaffoldFrom: 'public/financial-assistance/index.html',
     dateLocale: 'en-US',
@@ -53,6 +54,7 @@ const LANGS = {
     urlPrefix: '/es',
     htmlLang: 'es',
     ogLocale: 'es_ES',
+    ogImage: '/og-image-es.png',
     spaLang: '?lang=es',
     scaffoldFrom: 'public/es/financial-assistance/index.html',
     dateLocale: 'es-US',
@@ -63,6 +65,7 @@ const LANGS = {
     urlPrefix: '/zh',
     htmlLang: 'zh-Hant',
     ogLocale: 'zh_TW',
+    ogImage: '/og-image-zh.png',
     spaLang: '?lang=zh-TW',
     scaffoldFrom: 'public/zh/financial-assistance/index.html',
     dateLocale: 'zh-TW',
@@ -228,7 +231,7 @@ function buildPage(langKey, cfg, rows, totals, generatedAt) {
   <meta property="og:url" content="${canonical}">
   <meta property="og:title" content="${esc(pageTitle)}">
   <meta property="og:description" content="${esc(subtitle)}">
-  <meta property="og:image" content="${SITE}/og-image.png">
+  <meta property="og:image" content="${SITE}${cfg.ogImage}">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${cfg.ogLocale}">
 

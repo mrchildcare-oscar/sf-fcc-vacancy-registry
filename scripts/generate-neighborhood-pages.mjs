@@ -360,13 +360,13 @@ function renderHead(n, lang) {
   <meta property="og:url" content="${canonical}">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
-  <meta property="og:image" content="${SITE_URL}/og-image.svg">
+  <meta property="og:image" content="${SITE_URL}/og-image.png">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${langCfg.ogLocale}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
-  <meta name="twitter:image" content="${SITE_URL}/og-image.svg">
+  <meta name="twitter:image" content="${SITE_URL}/og-image.png">
   ${breadcrumb}
   ${childCare}
   ${faq}
@@ -769,7 +769,7 @@ function renderIndexPage(lang) {
   <meta property="og:url" content="${canonical}">
   <meta property="og:title" content="${escapeHtml(it.title)}">
   <meta property="og:description" content="${escapeHtml(it.description)}">
-  <meta property="og:image" content="${SITE_URL}/og-image.svg">
+  <meta property="og:image" content="${SITE_URL}/og-image.png">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${langCfg.ogLocale}">
   ${renderJsonLd(breadcrumb)}

@@ -64,10 +64,33 @@ glossary records the association as 三藩市家庭托兒協會, and the live `/
 both. PLANNING.md already carries "decide 三藩市 vs 舊金山 site-wide" as an open item — once decided,
 the card is a one-word change and a re-render.
 
-## Still open
+## Image dimensions declared (added 2026-09-01, third commit)
 
-- **After deploying**, re-run LinkedIn's Post Inspector on the live URLs to force a re-scrape —
-  LinkedIn will otherwise keep serving whatever it cached.
+Every `og:image` is now followed by `og:image:width` (1200), `og:image:height` (630) and
+`og:image:type` (image/png) — 75 pages plus all three templates in the two generators.
+
+Why: without declared dimensions, the **first** time a platform scrapes a URL it has to fetch and
+measure the image before it can lay the card out, so that first share often renders with no image
+and only later ones show it. Most of these 77 pages have never been scraped by anyone, so this is
+what makes them render correctly the first time somebody shares them.
+
+`public/fcc-fair-2026/index.html` already declared dimensions and was left alone.
+
+## Cache invalidation is per-URL, and per-platform
+
+Fixing the tags does not fix anything already cached. Each platform holds its own copy, keyed by
+URL, and will keep serving the old result until forced:
+
+- **Facebook** — Sharing Debugger (`developers.facebook.com/tools/debug/`), "Scrape Again"; the
+  Batch Invalidator takes a list. On 2026-09-01 the homepage was still serving a cache from
+  **August 18** that reported *"Unsupported Image File Extension"* against the old SVG, two weeks
+  after the file stopped being referenced. Re-scraped and correct now.
+- **LinkedIn** — Post Inspector (`linkedin.com/post-inspector/`).
+
+Facebook's `Missing Properties: fb:app_id` warning is safe to ignore — it only attributes traffic
+to a Facebook app for domain insights and has no effect on link previews.
+
+## Still open
 - The three `/donate` static pages are already corrected **in the working tree** (English → PNG,
   ES/ZH → their language cards) but were left out of both commits, because they also carry
   unrelated in-flight donate work. Until that work is committed and deployed, production keeps

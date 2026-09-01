@@ -232,6 +232,9 @@ function buildPage(langKey, cfg, rows, totals, generatedAt) {
   <meta property="og:title" content="${esc(pageTitle)}">
   <meta property="og:description" content="${esc(subtitle)}">
   <meta property="og:image" content="${SITE}${cfg.ogImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${cfg.ogLocale}">
 

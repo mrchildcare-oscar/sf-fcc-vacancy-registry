@@ -361,6 +361,9 @@ function renderHead(n, lang) {
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:image" content="${SITE_URL}${langCfg.ogImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${langCfg.ogLocale}">
   <meta name="twitter:card" content="summary_large_image">
@@ -770,6 +773,9 @@ function renderIndexPage(lang) {
   <meta property="og:title" content="${escapeHtml(it.title)}">
   <meta property="og:description" content="${escapeHtml(it.description)}">
   <meta property="og:image" content="${SITE_URL}${langCfg.ogImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:site_name" content="Family Child Care SF">
   <meta property="og:locale" content="${langCfg.ogLocale}">
   ${renderJsonLd(breadcrumb)}

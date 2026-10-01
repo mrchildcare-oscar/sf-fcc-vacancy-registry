@@ -1,5 +1,8 @@
 // Childcare Financial Assistance Eligibility Calculator
-// Updated January 2026 with Mayor Lurie's ELFA expansion announcement
+// Income ceilings: FY 2026-27, from SF DEC's combined eligibility sheet (all five standards on
+// one table). DEC REISSUES IT EVERY JULY and has amended it mid-year before, so check the
+// fiscal year on the sheet before trusting these. Superseded FY 2025-26 on 2026-09-07; every
+// old ceiling was lower, which told families they did not qualify when they did.
 
 // Federal Poverty Level 2026 - for Head Start (200% FPL)
 const FPL_2026 = {
@@ -7,36 +10,59 @@ const FPL_2026 = {
   perPerson: 5680,  // additional per person
 };
 
-// California State Median Income 2025-26 (100% SMI values)
-// Source: California Department of Education
-const SMI_2025: Record<number, number> = {
-  1: 96854,
-  2: 96854,   // 1-2 persons same
-  3: 109904,
-  4: 127338,
-  5: 147712,
-  6: 168086,
-  7: 171906,
-  8: 175726,
-  9: 179547,
-  10: 183367,
-  11: 187187,
-  12: 191007,
+// California State Median Income, FY 2026-27 (100% SMI, annual, by family size)
+// Source: SF DEC "FY 2026-2027 San Francisco Family Income Eligibility"; CSPP column, which cites
+// CDE Management Bulletin 26-03 off the 2024 ACS PUMS. DEC reissues this sheet every July.
+const SMI_FY2627: Record<number, number> = {
+  1: 100510,
+  2: 100510,  // DEC combines 1- and 2-person households on the 2-person figure
+  3: 113708,
+  4: 136044,
+  5: 157811,
+  6: 179578,
+  7: 183659,
+  8: 187741,
+  9: 191822,
+  10: 195903,
+  11: 199985,
+  12: 204066,
 };
 
-// SF Area Median Income 2025-26 - ELFA Program
-// Source: SF MOHCD, HUD median family income for SF HMFA
-const SF_AMI_2025: Record<number, { ami110: number; ami150: number; ami200: number }> = {
-  1: { ami110: 137150, ami150: 187050, ami200: 249400 },
-  2: { ami110: 137150, ami150: 187050, ami200: 249400 },
-  3: { ami110: 154300, ami150: 210400, ami200: 280500 },
-  4: { ami110: 171450, ami150: 233800, ami200: 311700 },
-  5: { ami110: 185150, ami150: 252450, ami200: 336600 },
-  6: { ami110: 198900, ami150: 271200, ami200: 361600 },
-  7: { ami110: 212600, ami150: 289900, ami200: 386500 },
-  8: { ami110: 226250, ami150: 308550, ami200: 411400 },
-  9: { ami110: 240000, ami150: 327300, ami200: 436400 },
-  10: { ami110: 253700, ami150: 346000, ami200: 461300 },
+// 85% SMI - the CCTR / CalWORKs ceiling, as PUBLISHED. Do not derive this from the 100% column:
+// 0.85 x 136,044 = 115,637, but the published family-of-four ceiling is 115,632, and eligibility
+// turns on the published figure rather than our arithmetic.
+// Source: same sheet, CCTR column, citing CDSS via Dept of Finance, March 2026.
+const SMI85_FY2627: Record<number, number> = {
+  1: 85428,
+  2: 85428,
+  3: 96648,
+  4: 115632,
+  5: 134136,
+  6: 152640,
+  7: 156108,
+  8: 159576,
+  9: 163044,
+  10: 166512,
+  11: 169992,
+  12: 173460,
+};
+
+// SF Area Median Income, FY 2026-27 - the three ELFA tiers, annual, by family size.
+// Source: same sheet, citing HUD published 2026-05-01 via sf.gov/find-your-area-median-income-ami-level.
+// DEC's note: its source data stops at 11 people, so the 12-person row mirrors the 11-person row.
+const SF_AMI_FY2627: Record<number, { ami110: number; ami150: number; ami200: number }> = {
+  1: { ami110: 142650, ami150: 194550, ami200: 259400 },
+  2: { ami110: 142650, ami150: 194550, ami200: 259400 },
+  3: { ami110: 160500, ami150: 218850, ami200: 291800 },
+  4: { ami110: 178300, ami150: 243150, ami200: 324200 },
+  5: { ami110: 192550, ami150: 262600, ami200: 350100 },
+  6: { ami110: 206850, ami150: 282100, ami200: 376100 },
+  7: { ami110: 221100, ami150: 301500, ami200: 402000 },
+  8: { ami110: 235350, ami150: 320950, ami200: 427900 },
+  9: { ami110: 249650, ami150: 340450, ami200: 453900 },
+  10: { ami110: 263900, ami150: 359850, ami200: 479800 },
+  11: { ami110: 278200, ami150: 379350, ami200: 505800 },
+  12: { ami110: 278200, ami150: 379350, ami200: 505800 },
 };
 
 export interface EligibilityResult {
@@ -63,15 +89,15 @@ export interface IncomeThresholds {
  */
 export function getThresholds(householdSize: number): IncomeThresholds {
   const clampedSize = Math.max(1, Math.min(householdSize, 12));
-  const amiSize = Math.max(1, Math.min(householdSize, 10));
 
   const fpl100 = FPL_2026.base + (clampedSize - 1) * FPL_2026.perPerson;
-  const smi100 = SMI_2025[clampedSize] || SMI_2025[12];
-  const ami = SF_AMI_2025[amiSize] || SF_AMI_2025[10];
+  const smi100 = SMI_FY2627[clampedSize] || SMI_FY2627[12];
+  const smi85 = SMI85_FY2627[clampedSize] || SMI85_FY2627[12];
+  const ami = SF_AMI_FY2627[clampedSize] || SF_AMI_FY2627[12];
 
   return {
     fpl200: fpl100 * 2,
-    smi85: Math.round(smi100 * 0.85),
+    smi85: smi85,
     smi100: smi100,
     ami110: ami.ami110,
     ami150: ami.ami150,

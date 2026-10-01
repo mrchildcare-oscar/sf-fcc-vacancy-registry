@@ -19,7 +19,7 @@
   'use strict';
 
   // ============================================
-  // Income Threshold Data (California 2025-26)
+  // Income Threshold Data (California FY 2026-27)
   // ============================================
 
   // Federal Poverty Level 2026 - for Head Start (200% FPL)
@@ -28,20 +28,40 @@
     perPerson: 5680,  // additional per person
   };
 
-  // California State Median Income 2025-26 (100% SMI values)
-  const SMI_2025 = {
-    1: 96854,
-    2: 96854,
-    3: 109904,
-    4: 127338,
-    5: 147712,
-    6: 168086,
-    7: 171906,
-    8: 175726,
-    9: 179547,
-    10: 183367,
-    11: 187187,
-    12: 191007,
+  // California State Median Income, FY 2026-27 (100% SMI, annual).
+  // Source: CDE Management Bulletin 26-03 off the 2024 ACS PUMS, as tabulated by SF DEC on its
+  // combined eligibility sheet. REISSUED EVERY JULY - check the fiscal year before trusting these.
+  const SMI_FY2627 = {
+    1: 100510,
+    2: 100510,
+    3: 113708,
+    4: 136044,
+    5: 157811,
+    6: 179578,
+    7: 183659,
+    8: 187741,
+    9: 191822,
+    10: 195903,
+    11: 199985,
+    12: 204066,
+  };
+
+  // 85% SMI - the CCTR / CalWORKs ceiling, as PUBLISHED. Not derived: 0.85 x 136,044 = 115,637,
+  // but the published family-of-four ceiling is 115,632, and eligibility turns on the published
+  // figure. Source: CDSS via Dept of Finance, March 2026, same sheet.
+  const SMI85_FY2627 = {
+    1: 85428,
+    2: 85428,
+    3: 96648,
+    4: 115632,
+    5: 134136,
+    6: 152640,
+    7: 156108,
+    8: 159576,
+    9: 163044,
+    10: 166512,
+    11: 169992,
+    12: 173460,
   };
 
   // ============================================
@@ -182,11 +202,12 @@
   function getThresholds(householdSize) {
     const clampedSize = Math.max(1, Math.min(householdSize, 12));
     const fpl100 = FPL_2026.base + (clampedSize - 1) * FPL_2026.perPerson;
-    const smi100 = SMI_2025[clampedSize] || SMI_2025[12];
+    const smi100 = SMI_FY2627[clampedSize] || SMI_FY2627[12];
+    const smi85 = SMI85_FY2627[clampedSize] || SMI85_FY2627[12];
 
     return {
       fpl200: fpl100 * 2,
-      smi85: Math.round(smi100 * 0.85),
+      smi85: smi85,
       smi100: smi100,
     };
   }

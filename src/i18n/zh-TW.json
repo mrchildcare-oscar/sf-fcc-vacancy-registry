@@ -472,6 +472,8 @@
     "incomeHint": "稅前收入",
     "checkButton": "查看資格",
     "disclaimer": "這只是一個快速估算。不會保存任何資訊。",
+    "sourceNote": "Income limits come from the SF Department of Early Childhood, FY 2026-27 (updated July 1, 2026).",
+    "sourceLink": "See the official page on sf.gov",
     "startOver": "重新開始",
     "findProviders": "尋找托兒服務",
     "nextStep": "下一步：聯繫資源與轉介機構",

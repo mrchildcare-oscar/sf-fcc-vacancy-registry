@@ -222,6 +222,18 @@ export function EligibilityScreener({ isOpen, onToggle, elfaStats }: Eligibility
               />
             </div>
           )}
+
+          <p className="text-xs text-gray-500 mt-4 pt-3 border-t border-gray-100">
+            {t('eligibility.sourceNote')}{' '}
+            <a
+              href="https://www.sf.gov/eligibility-for-free-or-low-cost-preschool-and-child-care"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              {t('eligibility.sourceLink')}
+            </a>
+          </p>
         </div>
       )}
     </div>

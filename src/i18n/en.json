@@ -472,6 +472,8 @@
     "incomeHint": "Before taxes",
     "checkButton": "Check Eligibility",
     "disclaimer": "This is a quick estimate only. No information is saved.",
+    "sourceNote": "Income limits come from the SF Department of Early Childhood, FY 2026-27 (updated July 1, 2026).",
+    "sourceLink": "See the official page on sf.gov",
     "startOver": "Start Over",
     "findProviders": "Find Providers",
     "nextStep": "Next Step: Contact a Resource & Referral Agency",

@@ -62,7 +62,7 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
   "description": "San Francisco's first Family Child Care Fair — a free morning for families to connect with local child care programs in their neighborhood. Sat, June 27, 2026, 10:30 AM-1:00 PM at City College of SF. Gifts, resources, face painting & balloons. RSVP free.",
   "isAccessibleForFree": true,
   "organizer": { "@type": "Organization", "name": "Family Child Care Association of San Francisco", "url": "https://fccasf.com" },
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "url": "https://xchildcare.com/FCCASF/rsvp", "availability": "https://schema.org/InStock" }
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "url": "https://form.jotform.com/261554977910063", "availability": "https://schema.org/InStock" }
 }
 </script>
 
@@ -255,7 +255,7 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
   <section id="rsvp" data-screen-label="RSVP" data-m="sec" style="max-width:1120px;margin:64px auto 0;padding:0 24px;">
     <div data-m="rsvp-grid card-pad" style="background:#fff;border:3px solid #E5388A;border-radius:32px;padding:46px;display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;box-shadow:0 10px 0 rgba(229,56,138,.12);">
       <div style="flex:none;background:#fff;border:4px solid #2A2342;border-radius:22px;padding:14px;">
-        <img src="/fcc-fair-2026/assets/qr.png" alt="Scan to RSVP" style="width:208px;height:208px;display:block;">
+        <img data-rsvp-qr src="/fcc-fair-2026/assets/qr.png" alt="Scan to RSVP" style="width:208px;height:208px;display:block;">
       </div>
       <div>
         <div data-i18n="rsvp.eyebrow" style="font-family:'Fredoka','Noto Sans TC',sans-serif;font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#E5388A;">Save your spot</div>
@@ -263,7 +263,7 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
         <p data-i18n="rsvp.sub" style="font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:800;font-size:18px;color:#4a4456;margin:8px 0 0;">Point your phone camera at the code to register.</p>
         <p data-i18n="rsvp.p" style="font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:700;font-size:16px;color:#6b6470;margin:14px 0 0;line-height:1.55;">RSVPs help us prepare enough gifts and goodie bags for everyone.</p>
         <div data-m="rsvp-actions" style="margin-top:20px;display:flex;gap:13px;flex-wrap:wrap;align-items:center;">
-          <a data-i18n="rsvp.btn" href="https://xchildcare.com/FCCASF/rsvp" target="_blank" rel="noopener" style="text-decoration:none;background:#E5388A;color:#fff;font-family:'Fredoka','Noto Sans TC',sans-serif;font-weight:600;font-size:19px;padding:14px 34px;border-radius:999px;box-shadow:0 5px 0 #b51f6c;">Open RSVP form →</a>
+          <a data-i18n="rsvp.btn" data-rsvp-link href="https://form.jotform.com/261554977910063" target="_blank" rel="noopener" style="text-decoration:none;background:#E5388A;color:#fff;font-family:'Fredoka','Noto Sans TC',sans-serif;font-weight:600;font-size:19px;padding:14px 34px;border-radius:999px;box-shadow:0 5px 0 #b51f6c;">Open RSVP form →</a>
           <a data-i18n="rsvp.email" href="mailto:fccasf@gmail.com" style="text-decoration:none;font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:800;font-size:15px;color:#8a8392;">or email fccasf@gmail.com</a>
         </div>
       </div>
@@ -285,13 +285,14 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
         <div style="height:84px;display:flex;align-items:center;justify-content:center;margin-top:10px;"><img src="/fcc-fair-2026/assets/dec-logo.png" style="max-height:50px;max-width:230px;display:block;"></div>
         <div data-i18n="part.o2" style="font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:800;font-size:13px;color:#4a4456;margin-top:8px;">SF Department of Early Childhood</div>
       </div>
-      <div style="background:#fff;border:2px solid #f0e7d8;border-radius:22px;padding:22px 26px;min-width:230px;">
-        <div data-i18n="part.l3" style="font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a59ead;">In partnership with</div>
-        <div style="height:84px;display:flex;align-items:center;justify-content:center;margin-top:10px;gap:14px;">
-          <img src="/fcc-fair-2026/assets/melgar-d7.png" style="max-height:78px;max-width:150px;display:block;border-radius:8px;">
-          <img src="/fcc-fair-2026/assets/chen-d11.png" alt="Supervisor Chyanne Chen, District 11" style="max-height:78px;max-width:150px;display:block;border-radius:8px;">
+      <div style="background:#fff;border:2px solid #f0e7d8;border-radius:22px;padding:26px 40px;min-width:230px;">
+        <div data-i18n="part.l3" style="font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a59ead;text-align:center;margin-bottom:20px;">In partnership with</div>
+        <div style="min-height:74px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:20px 38px;">
+          <img src="/fcc-fair-2026/assets/melgar-d7.png" alt="Supervisor Myrna Melgar, District 7" style="max-height:68px;max-width:148px;display:block;border-radius:8px;">
+          <img src="/fcc-fair-2026/assets/chen-d11.png" alt="Supervisor Chyanne Chen, District 11" style="max-height:68px;max-width:148px;display:block;border-radius:8px;">
+          <img src="/fcc-fair-2026/assets/ccsf-logo.png" alt="City College of San Francisco" style="max-height:64px;max-width:96px;display:block;">
+          <img src="/fcc-fair-2026/assets/wu-yee-logo.png" alt="Wu Yee Children's Services" style="max-height:52px;max-width:165px;display:block;">
         </div>
-        <div data-i18n="part.o3" style="font-family:'Nunito','Noto Sans TC',sans-serif;font-weight:800;font-size:13px;color:#4a4456;margin-top:8px;">Supervisors of District 7 &amp; District 11</div>
       </div>
     </div>
   </section>
@@ -330,7 +331,7 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
       "qf4.s": {en:"Free parking 🚗", zh:"免費停車 🚗", es:"Estac. gratis 🚗"},
       "why.eyebrow": {en:"Why come", zh:"為何參加", es:"Por qué venir"},
       "why.h2": {en:"Where families &amp; child care<br>find each other", zh:"家庭與托兒服務<br>相聚的地方", es:"Donde las familias y el cuidado<br>infantil se encuentran"},
-      "why.p1": {en:"Our very first fair brings San Francisco families together with the family child care programs in their own neighborhood. Meet caring providers, ask questions, and discover the support that's right for your child — all in one friendly morning.", zh:"我們的首屆博覽會，讓舊金山的家庭與社區內的家庭托兒計劃相聚。認識用心的托兒服務者、提出問題，並找到最適合孩子的支援——就在這個溫馨的早晨。", es:"Nuestra primera feria reúne a las familias de San Francisco con los programas de cuidado infantil de su propio vecindario. Conozca a proveedores dedicados, haga preguntas y descubra el apoyo ideal para su hijo, todo en una mañana acogedora."},
+      "why.p1": {en:"Our very first fair brings San Francisco families together with the family child care programs in their own neighborhood. Meet caring providers, ask questions, and discover the support that's right for your child — all in one friendly morning.", zh:"我們的首屆博覽會，讓三藩市的家庭與社區內的家庭托兒計劃相聚。認識用心的托兒服務者、提出問題，並找到最適合孩子的支援——就在這個溫馨的早晨。", es:"Nuestra primera feria reúne a las familias de San Francisco con los programas de cuidado infantil de su propio vecindario. Conozca a proveedores dedicados, haga preguntas y descubra el apoyo ideal para su hijo, todo en una mañana acogedora."},
       "act.eyebrow": {en:"What's happening", zh:"活動內容", es:"Qué habrá"},
       "act.h2": {en:"Fun for the whole family", zh:"全家同樂", es:"Diversión para toda la familia"},
       "act1": {en:"Meet local child care programs", zh:"認識本地托兒計劃", es:"Conoce programas de cuidado infantil"}, "act1.sub": {en:"Infant–toddler · Preschool · Before &amp; after school · Non-traditional hours", zh:"嬰幼兒 · 學前班 · 課前課後 · 非傳統時段", es:"Bebés y niños pequeños · Preescolar · Antes y después de clases · Horarios no tradicionales"},
@@ -359,12 +360,10 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
       "part.l1": {en:"Presented by", zh:"主辦", es:"Presentado por"},
       "part.l2": {en:"Funded by", zh:"資助", es:"Financiado por"},
       "part.l3": {en:"In partnership with", zh:"合作", es:"En colaboración con"},
-      "part.o1": {en:"Family Child Care Association of San Francisco", zh:"舊金山家庭托兒協會", es:"Asociación de Cuidado Infantil Familiar de San Francisco"},
-      "part.o2": {en:"SF Department of Early Childhood", zh:"舊金山幼兒發展局", es:"Departamento de Primera Infancia de SF"},
-      
-      "part.o3": {en:"Supervisors of District 7 &amp; District 11", zh:"第7區及第11區市參事", es:"Supervisores del Distrito 7 y 11"},
+      "part.o1": {en:"Family Child Care Association of San Francisco", zh:"三藩市家庭托兒協會", es:"Asociación de Cuidado Infantil Familiar de San Francisco"},
+      "part.o2": {en:"SF Department of Early Childhood", zh:"三藩市幼兒教育部", es:"Departamento de Primera Infancia de SF"},
       "foot.s": {en:"Saturday, June 27 · City College of SF · Free &amp; open to all families", zh:"6月27日 星期六 · 三藩市市立社區大學 · 免費，歡迎所有家庭", es:"Sábado 27 de junio · City College of SF · Gratis y abierto a todas las familias"},
-      "foot.org": {en:"Organized by the Family Child Care Association of San Francisco", zh:"由舊金山家庭托兒協會主辦", es:"Organizado por la Asociación de Cuidado Infantil Familiar de San Francisco"}
+      "foot.org": {en:"Organized by the Family Child Care Association of San Francisco", zh:"由三藩市家庭托兒協會主辦", es:"Organizado por la Asociación de Cuidado Infantil Familiar de San Francisco"}
     };
   var LANGS = ["en", "zh", "es"];
   var HTML_LANG = { en: "en", zh: "zh-Hant", es: "es" };
@@ -381,6 +380,10 @@ posthog.init('phc_yoJipbovzRHkzwLoAypfRfsexyPZw4Cc78EeEaFzqjKP', {
       b.style.color = on ? "#fff" : "#8a8392";
     });
     document.documentElement.lang = HTML_LANG[lang] || lang;
+    var JF = "https://form.jotform.com/261554977910063";
+    document.querySelectorAll("[data-rsvp-link]").forEach(function (a) { a.href = JF + (lang === "en" ? "" : "?language=" + lang); });
+    var qimg = document.querySelector("[data-rsvp-qr]");
+    if (qimg) qimg.src = "/fcc-fair-2026/assets/" + (lang === "en" ? "qr.png" : "qr-" + lang + ".png");
     try { localStorage.setItem("fccFairLang", lang); } catch (e) {}
     if (updateUrl) {
       var u = new URL(window.location.href);

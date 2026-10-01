@@ -31,8 +31,8 @@ describe('checkElfaStatus', () => {
 });
 
 describe('getElfaLicenseCount', () => {
-  it('returns 380', () => {
-    expect(getElfaLicenseCount()).toBe(380);
+  it('returns 381', () => {
+    expect(getElfaLicenseCount()).toBe(381);
   });
 
   it('returns a positive number', () => {

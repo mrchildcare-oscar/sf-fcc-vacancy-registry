@@ -1,7 +1,7 @@
 // ELFA Network Verification
 // Checks if a provider's license number is in the SF ELFA network
 // Data sourced from: https://sfdec.org/early-learning-for-all/early-learning-programs/
-// Last updated: October 2026 (380 providers)
+// Last updated: October 2026 (381 providers)
 
 // ELFA FCC License Numbers (updated from SFDEC website)
 const ELFA_FCC_LICENSES = new Set([
@@ -69,7 +69,7 @@ const ELFA_FCC_LICENSES = new Set([
   '384005078',  '384005081',  '384005102',  '384005121',  '384005137',  '384005145',
   '384005148',  '384005162',  '384005176',  '384005179',
   // Added Oct 2026 after a live SFDEC directory check (CARES 3.0 cross-check)
-  '384004639',  '384004888',  '384005192',  '384005252',
+  '384004639',  '384004888',  '384005192',  '384004825',  '384005252',
 ]);
 
 /**

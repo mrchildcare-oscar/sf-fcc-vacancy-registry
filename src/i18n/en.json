@@ -604,7 +604,8 @@
     "support3": "Advocacy so providers are at the table when the city and state make child care decisions",
     "navLabel": "Donate",
     "formHeading": "Make a donation",
-    "fallback": "Trouble with the form? Donate on the Join It page instead.",
-    "metaTitle": "Donate to FCCASF | Family Child Care SF"
+    "fallback": "Trouble with the form? Donate on the Zeffy page instead.",
+    "metaTitle": "Donate to FCCASF | Family Child Care SF",
+    "legal": "Family Child Care Providers Association of San Francisco, Inc. is a registered 501(c)(3) nonprofit organization. EIN 71-0958628. Your donation is tax-deductible to the extent allowed by law."
   }
 }

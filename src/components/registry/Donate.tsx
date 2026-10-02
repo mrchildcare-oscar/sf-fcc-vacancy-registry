@@ -2,13 +2,11 @@ import { useEffect } from 'react';
 import { ExternalLink, Heart } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 
-// Join It ships this widget as a <script> snippet that injects the form. That snippet
-// never executes here (Vite/React renders the DOM after the parser has moved on), so we
-// embed the hosted widget in an iframe instead — same widget, same widget id.
-const DONATION_WIDGET_SRC = 'https://app.joinit.com/embed/donation-widget/MtwudgEsY9TFFhWgK';
+// Zeffy's embeddable version of the FCCASF donation form (Zeffy charges no platform fees).
+const DONATION_WIDGET_SRC = 'https://www.zeffy.com/embed/donation-form/donate-to-support-fccasf';
 
 // Shown when the browser blocks third-party frames (some in-app browsers do).
-const DONATION_PAGE_URL = 'https://app.joinit.com/o/fccasf-member';
+const DONATION_PAGE_URL = 'https://www.zeffy.com/en-US/donation-form/donate-to-support-fccasf';
 
 // `t()` resolves string keys only — it warns and returns the key for arrays — so the
 // bullets are numbered keys under donate.*, matching how the rest of i18n/*.json is shaped.
@@ -73,10 +71,6 @@ export function Donate() {
               loading="lazy"
               style={{ width: '100%', height: '800px', border: 'none', display: 'block' }}
             />
-            {/* Join It's widget checks for this attribution link — keep it in the DOM. */}
-            <a href="https://joinit.com" className="sr-only">
-              Join It
-            </a>
           </div>
 
           <p className="mt-4 text-sm text-gray-600">
@@ -90,6 +84,9 @@ export function Donate() {
               {t('donate.formHeading')}
               <ExternalLink size={12} />
             </a>
+          </p>
+          <p className="mt-6 border-t border-gray-100 pt-4 text-xs leading-relaxed text-gray-500">
+            {t('donate.legal')}
           </p>
         </div>
       </div>

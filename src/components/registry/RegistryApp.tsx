@@ -797,7 +797,7 @@ export function RegistryApp() {
     );
   }
 
-  // Donate — public page embedding FCCASF's Join It donation widget.
+  // Donate — public page embedding FCCASF's Zeffy donation form.
   // Must stay above the `!user` catch-all below: donors are not signed in.
   if (view === 'donate') {
     return (

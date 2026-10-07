@@ -483,7 +483,7 @@
       "eligible": "Great news! You may qualify for FREE childcare",
       "eligibleDesc": "Based on your household size and income, you may be eligible for:",
       "discount": "You may qualify for reduced-cost childcare",
-      "discountDesc": "Starting July 2026, ELFA will contribute a tuition credit toward the cost of care. You would pay the remaining balance.",
+      "discountDesc": "ELFA contributes a tuition credit toward the cost of care. You would pay the remaining balance.",
       "overIncome": "You may not qualify for ELFA financial assistance",
       "overIncomeDesc": "But you can still use the vacancy registry to find licensed providers, and R&R agencies below can help you find care."
     },
@@ -493,12 +493,12 @@
         "desc": "Fully-funded tuition for SF residents earning up to 110% AMI"
       },
       "elfaCredit100": {
-        "title": "SF ELFA - 100% Tuition Credit (FREE)",
-        "desc": "100% tuition credit for SF residents earning 111-150% AMI"
+        "title": "SF ELFA - Full Tuition Credit",
+        "desc": "A credit equal to 100% of ELFA's rate for your child's age group (111-150% AMI). Your family pays the balance."
       },
       "elfaDiscount50": {
-        "title": "SF ELFA - Tuition Credit",
-        "desc": "ELFA contributes toward cost of care for SF residents earning 151-200% AMI. Families pay the remaining balance."
+        "title": "SF ELFA - Half Tuition Credit",
+        "desc": "A credit equal to 50% of ELFA's rate for your child's age group (151-200% AMI). Your family pays the balance."
       },
       "cspp": {
         "title": "CA State Preschool Program (CSPP)",

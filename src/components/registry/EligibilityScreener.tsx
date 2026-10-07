@@ -251,8 +251,9 @@ interface ResultsDisplayProps {
 
 function ResultsDisplay({ result, onReset, onFindProviders, language, t }: ResultsDisplayProps) {
   // Determine which banner to show
-  const hasFreeBenefit = result.elfaFree || result.elfaCredit100 || result.headStart || result.generalSubsidy || result.statePreschool;
-  const hasDiscountOnly = !hasFreeBenefit && result.elfaDiscount50;
+  // The ELFA tuition credits (111-200% AMI) are a dollar amount tied to ELFA's rate, not free care.
+  const hasFreeBenefit = result.elfaFree || result.headStart || result.generalSubsidy || result.statePreschool;
+  const hasDiscountOnly = !hasFreeBenefit && (result.elfaCredit100 || result.elfaDiscount50);
   const noPrograms = !result.anyProgram;
 
   return (
@@ -301,7 +302,6 @@ function ResultsDisplay({ result, onReset, onFindProviders, language, t }: Resul
               icon="🌟"
               title={t('eligibility.programs.elfaCredit100.title')}
               description={t('eligibility.programs.elfaCredit100.desc')}
-              highlight
             />
           )}
           {result.elfaDiscount50 && (
@@ -309,7 +309,6 @@ function ResultsDisplay({ result, onReset, onFindProviders, language, t }: Resul
               icon="🌟"
               title={t('eligibility.programs.elfaDiscount50.title')}
               description={t('eligibility.programs.elfaDiscount50.desc')}
-              comingSoon
             />
           )}
           {result.statePreschool && (

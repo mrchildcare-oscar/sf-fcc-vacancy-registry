@@ -484,7 +484,7 @@
       "eligible": "¡Buenas noticias! Puede calificar para cuidado infantil GRATIS",
       "eligibleDesc": "Basado en el tamaño de su hogar e ingresos, puede ser elegible para:",
       "discount": "Puede calificar para cuidado infantil de costo reducido",
-      "discountDesc": "A partir de julio 2026, ELFA contribuirá un crédito de matrícula hacia el costo del cuidado. Usted pagaría el saldo restante.",
+      "discountDesc": "ELFA contribuye un crédito de matrícula hacia el costo del cuidado. Usted pagaría el saldo restante.",
       "overIncome": "Es posible que no califique para asistencia financiera de ELFA",
       "overIncomeDesc": "Pero aún puede usar el registro de vacantes para encontrar proveedores con licencia, y las agencias de R&R pueden ayudarle a encontrar cuidado."
     },
@@ -494,12 +494,12 @@
         "desc": "Matrícula totalmente financiada para residentes de SF que ganan hasta 110% AMI"
       },
       "elfaCredit100": {
-        "title": "SF ELFA - 100% Crédito de matrícula (GRATIS)",
-        "desc": "100% de crédito de matrícula para residentes de SF que ganan 111-150% AMI"
+        "title": "SF ELFA - Crédito de matrícula completo",
+        "desc": "Un crédito equivalente al 100% de la tarifa ELFA para la edad de su hijo (111-150% AMI). Su familia paga el saldo."
       },
       "elfaDiscount50": {
-        "title": "SF ELFA - Crédito de matrícula",
-        "desc": "ELFA contribuye al costo del cuidado para residentes de SF que ganan 151-200% AMI. Las familias pagan el saldo restante."
+        "title": "SF ELFA - Crédito de media matrícula",
+        "desc": "Un crédito equivalente al 50% de la tarifa ELFA para la edad de su hijo (151-200% AMI). Su familia paga el saldo."
       },
       "cspp": {
         "title": "Programa Preescolar del Estado de CA (CSPP)",

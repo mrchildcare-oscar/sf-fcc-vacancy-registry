@@ -70,8 +70,8 @@ export interface EligibilityResult {
   generalSubsidy: boolean;    // 85% SMI (CalWORKs, CCTR, CAPP)
   statePreschool: boolean;    // 100% SMI (CSPP)
   elfaFree: boolean;          // ≤110% AMI (fully funded)
-  elfaCredit100: boolean;     // 111-150% AMI (100% credit = FREE/nearly free)
-  elfaDiscount50: boolean;    // 151-200% AMI (tuition credit, starting July 2026)
+  elfaCredit100: boolean;     // 111-150% AMI (full tuition credit = 100% of ELFA's rate by age group, not of the program's price)
+  elfaDiscount50: boolean;    // 151-200% AMI (half tuition credit = 50% of ELFA's rate, in effect since July 1, 2026)
   anyProgram: boolean;
 }
 

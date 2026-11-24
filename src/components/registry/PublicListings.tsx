@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Link2,
   Check,
+  Calendar,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -95,6 +96,20 @@ interface PublicListingsProps {
   isProvider?: boolean; // Whether viewer is a signed-in provider
 }
 
+// "Opening soon": available_date is in a later calendar month, at most 6 months ahead, and the home reported
+// spots or age groups for it. Same rule as the provider dashboard (OrganizationDashboard) and daycaresf.com.
+function parseDay(d: string | null | undefined): Date | null {
+  const m = d ? /^(\d{4})-(\d{2})-(\d{2})/.exec(d) : null;
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+}
+export function isUpcoming(l: PublicListing, now: Date = new Date()): boolean {
+  const a = parseDay(l.available_date);
+  if (!a) return false;
+  const months = (a.getFullYear() - now.getFullYear()) * 12 + (a.getMonth() - now.getMonth());
+  if (months <= 0 || months > 6) return false;
+  return l.total_spots_available > 0 || l.accepting_infants || l.accepting_toddlers || l.accepting_preschool || l.accepting_school_age;
+}
+
 export function PublicListings({ listings, loading, isProvider = false }: PublicListingsProps) {
   const { t, language } = useLanguage();
   const [filters, setFilters] = useState<SearchFilters>({});
@@ -105,6 +120,20 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   const [linkCopied, setLinkCopied] = useState(false);
 
   // Render freshness-aware "last updated" timestamp
+  const openingMonth = (l: PublicListing) => {
+    const d = parseDay(l.available_date);
+    const locale = language === 'zh-TW' ? 'zh-TW' : language === 'es' ? 'es' : 'en-US';
+    return d ? d.toLocaleDateString(locale, { month: 'short', year: 'numeric' }) : '';
+  };
+  const upcomingAges = (l: PublicListing) => {
+    const ages = ([
+      [l.infant_spots, l.accepting_infants, 'vacancy.infant'],
+      [l.toddler_spots, l.accepting_toddlers, 'vacancy.toddler'],
+      [l.preschool_spots, l.accepting_preschool, 'vacancy.preschool'],
+      [l.school_age_spots, l.accepting_school_age, 'vacancy.schoolAge'],
+    ] as [number, boolean, string][]).filter(([n, ok]) => n > 0 || ok).map(([n, , k]) => (n > 0 ? `${t(k)} ${n}` : t(k)));
+    return ages.join(' · ');
+  };
   const renderLastUpdated = useCallback((listing: PublicListing) => {
     const freshness = getListingFreshness(listing.last_updated, listing.expires_at);
     const timeAgo = formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true });
@@ -367,7 +396,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   // how many ELFA programs to expect. Independent of the other active filters
   // so the number stays stable as you narrow by neighborhood/age/etc.
   const elfaOpenCount = useMemo(
-    () => listings.filter(l => l.is_elfa_network && l.total_spots_available > 0).length,
+    () => listings.filter(l => l.is_elfa_network && l.total_spots_available > 0 && !isUpcoming(l)).length,
     [listings]
   );
 
@@ -443,10 +472,15 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   // Memoize allFiltered so expand/collapse doesn't re-filter + re-shuffle
   const allFiltered = useMemo(() => listings.filter(l => matchesFilters(l)), [listings, filters]);
   const listingsWithOpenings = useMemo(() => {
-    const filtered = allFiltered.filter(l => l.total_spots_available > 0);
+    const filtered = allFiltered.filter(l => l.total_spots_available > 0 && !isUpcoming(l));
     return shuffleListingsForUser(filtered);
   }, [allFiltered]);
-  const fullWithWaitlist = useMemo(() => allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available), [allFiltered]);
+  // Opening soon: not open today, but an opening is reported for the next 6 months.
+  const upcomingListings = useMemo(
+    () => allFiltered.filter(l => isUpcoming(l)).sort((a, b) => a.available_date.localeCompare(b.available_date)),
+    [allFiltered],
+  );
+  const fullWithWaitlist = useMemo(() => allFiltered.filter(l => l.total_spots_available === 0 && l.waitlist_available && !isUpcoming(l)), [allFiltered]);
 
   // Nearby-neighborhood fallback: when the selected neighborhood is thin
   // (fewer than NEARBY_THRESHOLD openings), reach outward through the adjacency
@@ -462,7 +496,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     // Index open, filter-matching listings by canonical neighborhood.
     const openByHood = new Map<string, PublicListing[]>();
     listings.forEach(l => {
-      if (l.total_spots_available <= 0 || !l.neighborhood) return;
+      if (l.total_spots_available <= 0 || isUpcoming(l) || !l.neighborhood) return;
       if (!matchesFilters(l, { ignoreNeighborhood: true })) return;
       const canon = canonicalNeighborhood(l.neighborhood).toLowerCase();
       const arr = openByHood.get(canon);
@@ -604,6 +638,178 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
 
   // A single "has openings" listing card. Shared by the main grouped results
   // and the nearby-neighborhood fallback so both render identically.
+  // Card for homes without an opening today: "Opening soon" (soon=true) or full with a waitlist.
+  const renderStatusCard = (listing: PublicListing, soon: boolean) => (
+    <div
+    key={listing.provider_id}
+    data-provider-id={listing.provider_id}
+    className={`bg-white rounded-xl shadow border-l-4 ${soon ? 'border-emerald-500' : 'border-amber-400'}`}
+    >
+    <div
+      className="p-4 cursor-pointer"
+      onClick={() => setExpandedListing(
+        expandedListing === listing.provider_id ? null : listing.provider_id
+      )}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-semibold text-gray-900">{listing.business_name}</h3>
+            {listing.is_elfa_network && (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
+                <Star size={12} />
+                ELFA
+              </span>
+            )}
+            {soon ? (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                <Calendar size={12} />
+                {t('publicListings.openingSoon')}
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                <ClipboardList size={12} />
+                {t('publicListings.waitlist')}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+            <span className="flex items-center gap-1">
+              <MapPin size={14} />
+              {listing.neighborhood || listing.zip_code}
+            </span>
+            <span>
+              {listing.program_type === 'small_family' ? t('publicListings.smallFamily') : t('publicListings.largeFamily')}
+            </span>
+            <span className="text-gray-400">
+              {t('publicListings.license')} #{listing.license_number}
+            </span>
+          </div>
+        </div>
+
+        <div className="text-right flex items-center gap-4">
+          <div>
+            {soon ? (
+                  <>
+                    <p className="text-lg font-medium text-emerald-700">
+                      {t('publicListings.openingMonth', { month: openingMonth(listing) })}
+                    </p>
+                    <p className="text-xs text-gray-500">{upcomingAges(listing)}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg font-medium text-amber-600">
+                      {t('publicListings.full')}
+                    </p>
+                    <p className="text-xs text-gray-500">{t('publicListings.joinWaitlist')}</p>
+                  </>
+                )}
+          </div>
+          {expandedListing === listing.provider_id ? (
+            <ChevronUp size={20} className="text-gray-400" />
+          ) : (
+            <ChevronDown size={20} className="text-gray-400" />
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Expanded Details */}
+    {expandedListing === listing.provider_id && (
+      <div className="px-4 pb-4 pt-2 border-t">
+        <div className={`${soon ? 'bg-emerald-50' : 'bg-amber-50'} p-3 rounded-lg mb-4`}>
+              <p className={`text-sm ${soon ? 'text-emerald-800' : 'text-amber-800'}`}>
+                {soon ? t('publicListings.openingSoonInfo') : t('publicListings.waitlistInfo')}
+              </p>
+            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(listing.phone || listing.website) && (
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
+              <div className="space-y-2 text-sm">
+                {listing.phone && (
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`tel:${listing.phone}`}
+                      onClick={() => handleContactClick(listing, 'phone')}
+                      className="flex items-center gap-2 text-blue-600 hover:underline"
+                    >
+                      <Phone size={14} />
+                      {listing.phone}
+                    </a>
+                    {listing.phone_accepts_text === true && (
+                      <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
+                        {t('publicListings.textOk')}
+                      </span>
+                    )}
+                    {listing.phone_accepts_text === false && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                        {t('publicListings.callOnly')}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {listing.website && (
+                  <a
+                    href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => handleContactClick(listing, 'website')}
+                    className="flex items-center gap-2 text-blue-600 hover:underline"
+                  >
+                    <Globe size={14} />
+                    {t('publicListings.visitWebsite')}
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
+            <div className="space-y-1 text-sm text-gray-600">
+              <p className="flex items-center gap-2">
+                <Clock size={14} />
+                {[
+                  listing.full_time_available && t('vacancy.fullTime'),
+                  listing.part_time_available && t('vacancy.partTime'),
+                  listing.weekend_available && t('vacancy.weekend'),
+                  listing.evening_available && t('vacancy.evening'),
+                  listing.overnight_available && t('vacancy.overnight')
+                ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
+              </p>
+              {listing.languages.length > 0 && (
+                <p>{t('publicListings.languagesSpoken')}: {listing.languages.join(', ')}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {listing.notes && (
+          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800">{listing.notes}</p>
+          </div>
+        )}
+
+        {/* Send Inquiry Button for waitlist */}
+        <div className="mt-4 pt-4 border-t flex items-center justify-between">
+          {renderLastUpdated(listing)}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setInquiryListing(listing);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <MessageSquare size={16} />
+            {t('inquiry.sendInquiry')}
+          </button>
+        </div>
+      </div>
+    )}
+    </div>
+  );
+
   const renderOpeningCard = (listing: PublicListing) => (
     <div
       key={listing.provider_id}
@@ -1323,6 +1529,20 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
               </div>
             )}
 
+            {/* Opening soon: future openings in the next 6 months */}
+            {upcomingListings.length > 0 && (
+              <div className="mt-8">
+                <div className="flex items-center gap-2 mb-4 text-gray-800">
+                  <Calendar size={18} className="text-emerald-600" />
+                  <h2 className="font-semibold">{t('publicListings.openingSoon')} ({upcomingListings.length})</h2>
+                  <span className="text-sm text-gray-500">— {t('publicListings.openingSoonHint')}</span>
+                </div>
+                <div className="space-y-4">
+                  {upcomingListings.map(listing => renderStatusCard(listing, true))}
+                </div>
+              </div>
+            )}
+
             {/* Collapsed section for full programs with waitlist */}
             {fullWithWaitlist.length > 0 && (
               <div className="mt-8">
@@ -1348,158 +1568,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
 
                 {showWaitlistSection && (
                   <div className="mt-4 space-y-4">
-                    {fullWithWaitlist.map(listing => (
-                      <div
-                        key={listing.provider_id}
-                        data-provider-id={listing.provider_id}
-                        className="bg-white rounded-xl shadow border-l-4 border-amber-400"
-                      >
-                        <div
-                          className="p-4 cursor-pointer"
-                          onClick={() => setExpandedListing(
-                            expandedListing === listing.provider_id ? null : listing.provider_id
-                          )}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-gray-900">{listing.business_name}</h3>
-                                {listing.is_elfa_network && (
-                                  <span className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
-                                    <Star size={12} />
-                                    ELFA
-                                  </span>
-                                )}
-                                <span className="flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
-                                  <ClipboardList size={12} />
-                                  {t('publicListings.waitlist')}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
-                                <span className="flex items-center gap-1">
-                                  <MapPin size={14} />
-                                  {listing.neighborhood || listing.zip_code}
-                                </span>
-                                <span>
-                                  {listing.program_type === 'small_family' ? t('publicListings.smallFamily') : t('publicListings.largeFamily')}
-                                </span>
-                                <span className="text-gray-400">
-                                  {t('publicListings.license')} #{listing.license_number}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="text-right flex items-center gap-4">
-                              <div>
-                                <p className="text-lg font-medium text-amber-600">
-                                  {t('publicListings.full')}
-                                </p>
-                                <p className="text-xs text-gray-500">{t('publicListings.joinWaitlist')}</p>
-                              </div>
-                              {expandedListing === listing.provider_id ? (
-                                <ChevronUp size={20} className="text-gray-400" />
-                              ) : (
-                                <ChevronDown size={20} className="text-gray-400" />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Expanded Details */}
-                        {expandedListing === listing.provider_id && (
-                          <div className="px-4 pb-4 pt-2 border-t">
-                            <div className="bg-amber-50 p-3 rounded-lg mb-4">
-                              <p className="text-sm text-amber-800">
-                                {t('publicListings.waitlistInfo')}
-                              </p>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {(listing.phone || listing.website) && (
-                                <div>
-                                  <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.contact')}</h4>
-                                  <div className="space-y-2 text-sm">
-                                    {listing.phone && (
-                                      <div className="flex items-center gap-2">
-                                        <a
-                                          href={`tel:${listing.phone}`}
-                                          onClick={() => handleContactClick(listing, 'phone')}
-                                          className="flex items-center gap-2 text-blue-600 hover:underline"
-                                        >
-                                          <Phone size={14} />
-                                          {listing.phone}
-                                        </a>
-                                        {listing.phone_accepts_text === true && (
-                                          <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
-                                            {t('publicListings.textOk')}
-                                          </span>
-                                        )}
-                                        {listing.phone_accepts_text === false && (
-                                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                            {t('publicListings.callOnly')}
-                                          </span>
-                                        )}
-                                      </div>
-                                    )}
-                                    {listing.website && (
-                                      <a
-                                        href={listing.website.startsWith('http') ? listing.website : `https://${listing.website}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={() => handleContactClick(listing, 'website')}
-                                        className="flex items-center gap-2 text-blue-600 hover:underline"
-                                      >
-                                        <Globe size={14} />
-                                        {t('publicListings.visitWebsite')}
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              <div>
-                                <h4 className="text-sm font-medium text-gray-700 mb-2">{t('publicListings.details')}</h4>
-                                <div className="space-y-1 text-sm text-gray-600">
-                                  <p className="flex items-center gap-2">
-                                    <Clock size={14} />
-                                    {[
-                                      listing.full_time_available && t('vacancy.fullTime'),
-                                      listing.part_time_available && t('vacancy.partTime'),
-                                      listing.weekend_available && t('vacancy.weekend'),
-                                      listing.evening_available && t('vacancy.evening'),
-                                      listing.overnight_available && t('vacancy.overnight')
-                                    ].filter(Boolean).join(', ') || t('publicListings.contactForSchedule')}
-                                  </p>
-                                  {listing.languages.length > 0 && (
-                                    <p>{t('publicListings.languagesSpoken')}: {listing.languages.join(', ')}</p>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                            {listing.notes && (
-                              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                                <p className="text-sm text-blue-800">{listing.notes}</p>
-                              </div>
-                            )}
-
-                            {/* Send Inquiry Button for waitlist */}
-                            <div className="mt-4 pt-4 border-t flex items-center justify-between">
-                              {renderLastUpdated(listing)}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setInquiryListing(listing);
-                                }}
-                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                              >
-                                <MessageSquare size={16} />
-                                {t('inquiry.sendInquiry')}
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                    {fullWithWaitlist.map(listing => renderStatusCard(listing, false))}
                   </div>
                 )}
               </div>

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { isUpcoming } from './PublicListings';
+import { isUpcoming } from '../../lib/upcoming';
 import type { PublicListing } from '../../types/registry';
 
 // "Opening soon" = available_date in a later calendar month, at most 6 months ahead, with spots or age groups
-// reported. Cases mirror real records on 2026-11-23 (ME Playschool Portola, MEFC Sunset, MEFC SoMa).
+// reported. Cases mirror real records on 2026-11-23 (ME Playschool in the Portola, MEFC Sunset, MEFC SoMa).
 const base = {
   total_spots_available: 0, infant_spots: 0, toddler_spots: 0, preschool_spots: 0, school_age_spots: 0,
   accepting_infants: false, accepting_toddlers: false, accepting_preschool: false, accepting_school_age: false,
@@ -12,7 +12,7 @@ const L = (o: Partial<PublicListing>) => ({ ...base, ...o }) as PublicListing;
 const now = new Date(2026, 10, 23); // Nov 23, 2026
 
 describe('isUpcoming', () => {
-  it('Portola: no spots yet, toddler/preschool accepting, opening Jan 4 2027', () => {
+  it('ME Playschool: no spots yet, toddler/preschool accepting, opening Jan 4 2027', () => {
     expect(isUpcoming(L({ available_date: '2027-01-04', accepting_toddlers: true, accepting_preschool: true }), now)).toBe(true);
   });
   it('Sunset: 2 toddler spots reported for Jan 17 2027 are not open today', () => {

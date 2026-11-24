@@ -33,6 +33,7 @@ import {
 } from '../../lib/analytics';
 import { shuffleListingsForUser } from '../../lib/randomOrder';
 import { getListingFreshness } from '../../lib/vacancyTtl';
+import { isUpcoming, parseDay } from '../../lib/upcoming';
 
 // True SF neighborhood borders (reviewed with Oscar). Used ONLY as a fallback:
 // when a selected neighborhood has few/no openings we surface openings in
@@ -96,19 +97,6 @@ interface PublicListingsProps {
   isProvider?: boolean; // Whether viewer is a signed-in provider
 }
 
-// "Opening soon": available_date is in a later calendar month, at most 6 months ahead, and the home reported
-// spots or age groups for it. Same rule as the provider dashboard (OrganizationDashboard) and daycaresf.com.
-function parseDay(d: string | null | undefined): Date | null {
-  const m = d ? /^(\d{4})-(\d{2})-(\d{2})/.exec(d) : null;
-  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
-}
-export function isUpcoming(l: PublicListing, now: Date = new Date()): boolean {
-  const a = parseDay(l.available_date);
-  if (!a) return false;
-  const months = (a.getFullYear() - now.getFullYear()) * 12 + (a.getMonth() - now.getMonth());
-  if (months <= 0 || months > 6) return false;
-  return l.total_spots_available > 0 || l.accepting_infants || l.accepting_toddlers || l.accepting_preschool || l.accepting_school_age;
-}
 
 export function PublicListings({ listings, loading, isProvider = false }: PublicListingsProps) {
   const { t, language } = useLanguage();
@@ -1283,7 +1271,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
             <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
             <p className="text-gray-600">{t('common.loading')}</p>
           </div>
-        ) : listingsWithOpenings.length === 0 && fullWithWaitlist.length === 0 && nearbyListings.length === 0 ? (
+        ) : listingsWithOpenings.length === 0 && upcomingListings.length === 0 && fullWithWaitlist.length === 0 && nearbyListings.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl shadow">
             <Baby size={48} className="mx-auto text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">{t('publicListings.noMatches')}</h3>

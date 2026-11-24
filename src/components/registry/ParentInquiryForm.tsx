@@ -4,6 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { PublicListing, ParentInquiryFormData, AgeGroupInterested } from '../../types/registry';
 import { submitInquiry } from '../../lib/supabase';
 import { trackInquiryStarted, trackInquirySubmitted } from '../../lib/analytics';
+import { isUpcoming } from '../../lib/upcoming';
 
 const PARENT_INFO_KEY = 'sf_fcc_parent_info';
 
@@ -70,7 +71,8 @@ export function ParentInquiryForm({ listing, onClose }: ParentInquiryFormProps) 
     const groups: { value: AgeGroupInterested; label: string }[] = [];
 
     // For waitlist providers (no openings), show all age groups
-    const isWaitlistOnly = listing.total_spots_available === 0 && listing.waitlist_available;
+    // A home with an upcoming opening lists only the age groups it reported, even if it also keeps a waitlist.
+    const isWaitlistOnly = listing.total_spots_available === 0 && listing.waitlist_available && !isUpcoming(listing);
 
     if (listing.accepting_infants || isWaitlistOnly) {
       groups.push({ value: 'infant', label: `${t('vacancy.infant')} (${t('vacancy.infantAge')})` });

@@ -46,6 +46,22 @@ or Chinese wording is always listed under "Needs review" until Oscar signs it of
 - Hidden `?redesign=1` mockup screen (`src/redesign/screens/EligibilityScreen.tsx`) still says "ELFA covers your
   full tuition" with a made-up "$0/mo" and "About $400/mo". Not linked from the site.
 
+## 2026-11-25: "Opening soon" section on the listings
+Prod deployment `dpl_FoGwu7pHJqBibtnNra7KtznEhwnh` (commits `1979bee`, `5869209`; clean export, deployed 2026-11-25).
+Roll back to: `dpl_7TWJHb1hxBmxoGLsuMFKKg5bWEDD`. Preview reviewed by Oscar (`sf-fcc-vacancy-registry-pfry6f3zg`).
+
+- **Added:** an "Opening soon" group on the public listings, between homes open now and "Currently full". A home
+  lands there when its available date is in a later month, at most 6 months ahead, and it reported spots or age
+  groups. Cards say "Opening <Mon YYYY>" with the age groups. Rule in `src/lib/upcoming.ts`, tests in
+  `src/components/registry/isUpcoming.test.ts`.
+- **Changed:** homes with future-dated spots no longer count as open today (MEFC Sunset's 2 January toddler spots;
+  ME Playschool moved out of "Currently full"). The open-now totals, ELFA count and nearby fallback count only homes
+  open today. The inquiry form for an upcoming home offers only the age groups it reported.
+- **Needs review:** new Spanish ("Próximas vacantes", "Vacante en {month}", hint and info lines) and Chinese
+  (即將開放, 未來6個月內預計開放的名額, {month}開放, the info line) strings. Open questions: spots dated more than
+  6 months out still count as open (Lijun Ma, June 2027); the provider dashboard and Community Insights still
+  count future-dated spots as open; the dashboard reads dates as UTC (a date on the 1st can show the prior month).
+
 ## 2026-10-09: corrected citywide facility counts
 Prod deployment `dpl_7TWJHb1hxBmxoGLsuMFKKg5bWEDD` (commit `7d45fc7`, deployed 2026-10-09 00:33). Roll back to:
 `dpl_FTvNsbfJYvq7ubmrhR7mpHeVyBCy`.

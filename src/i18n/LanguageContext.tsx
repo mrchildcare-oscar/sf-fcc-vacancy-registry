@@ -3,7 +3,7 @@ import en from './en.json';
 import zhTW from './zh-TW.json';
 import es from './es.json';
 
-type Language = 'en' | 'zh-TW' | 'es';
+import type { Language } from './languages';
 type Translations = typeof en;
 
 interface LanguageContextType {

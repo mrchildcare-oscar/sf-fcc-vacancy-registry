@@ -20,6 +20,8 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { escapeHtml as esc } from './lib/html.mjs';
+import { isOpenNow } from '../src/lib/upcoming.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -34,6 +36,12 @@ const APPROVED_COLUMNS = [
   'school_age_spots',
   'total_spots_available',
   'expires_at',
+  // Read only to apply the same "open today" rule as the listings page (isOpenNow); never rendered.
+  'available_date',
+  'accepting_infants',
+  'accepting_toddlers',
+  'accepting_preschool',
+  'accepting_school_age',
 ];
 
 const LANGS = {
@@ -103,7 +111,8 @@ async function fetchListings() {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
   });
   if (!res.ok) throw new Error(`public_listings fetch failed: ${res.status} ${await res.text()}`);
-  return res.json();
+  // Same "open today" rule as the listings page: has spots and isn't a future-dated ("Opening soon") listing.
+  return (await res.json()).filter(l => isOpenNow(l));
 }
 
 // ---- aggregation ------------------------------------------------------------
@@ -134,10 +143,6 @@ function aggregate(listings) {
 }
 
 // ---- page composition -------------------------------------------------------
-
-function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 function t(i18nData, dottedKey) {
   let v = i18nData;

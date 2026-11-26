@@ -4,7 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { PublicListing, ParentInquiryFormData, AgeGroupInterested } from '../../types/registry';
 import { submitInquiry } from '../../lib/supabase';
 import { trackInquiryStarted, trackInquirySubmitted } from '../../lib/analytics';
-import { isUpcoming } from '../../lib/upcoming';
+import { AGE_GROUPS, isUpcoming, reportedAgeGroups } from '../../lib/upcoming';
 
 const PARENT_INFO_KEY = 'sf_fcc_parent_info';
 
@@ -53,43 +53,25 @@ export function ParentInquiryForm({ listing, onClose }: ParentInquiryFormProps) 
     trackInquiryStarted(listing.provider_id);
   }, [listing.provider_id]);
 
+  // Age groups come from the same rule the listing card uses (spots or "accepting" flag per age), so a home
+  // never shows an age group on its card that the form leaves out.
   function getDefaultAgeGroup(l: PublicListing): AgeGroupInterested {
-    const accepting = [
-      l.accepting_infants && 'infant',
-      l.accepting_toddlers && 'toddler',
-      l.accepting_preschool && 'preschool',
-      l.accepting_school_age && 'school_age',
-    ].filter(Boolean);
-
-    if (accepting.length > 1) return 'multiple';
-    if (accepting.length === 1) return accepting[0] as AgeGroupInterested;
-    // For waitlist providers with no accepting flags, default to infant
+    const reported = reportedAgeGroups(l);
+    if (reported.length > 1) return 'multiple';
+    if (reported.length === 1) return reported[0].value;
+    // For waitlist providers with no reported age groups, default to infant
     return 'infant';
   }
 
   function getAvailableAgeGroups(): { value: AgeGroupInterested; label: string }[] {
-    const groups: { value: AgeGroupInterested; label: string }[] = [];
-
     // For waitlist providers (no openings), show all age groups
     // A home with an upcoming opening lists only the age groups it reported, even if it also keeps a waitlist.
     const isWaitlistOnly = listing.total_spots_available === 0 && listing.waitlist_available && !isUpcoming(listing);
-
-    if (listing.accepting_infants || isWaitlistOnly) {
-      groups.push({ value: 'infant', label: `${t('vacancy.infant')} (${t('vacancy.infantAge')})` });
-    }
-    if (listing.accepting_toddlers || isWaitlistOnly) {
-      groups.push({ value: 'toddler', label: `${t('vacancy.toddler')} (${t('vacancy.toddlerAge')})` });
-    }
-    if (listing.accepting_preschool || isWaitlistOnly) {
-      groups.push({ value: 'preschool', label: `${t('vacancy.preschool')} (${t('vacancy.preschoolAge')})` });
-    }
-    if (listing.accepting_school_age || isWaitlistOnly) {
-      groups.push({ value: 'school_age', label: `${t('vacancy.schoolAge')} (${t('vacancy.schoolAgeAge')})` });
-    }
+    const groups: { value: AgeGroupInterested; label: string }[] = (isWaitlistOnly ? AGE_GROUPS : reportedAgeGroups(listing))
+      .map(g => ({ value: g.value, label: `${t(g.labelKey)} (${t(g.ageKey)})` }));
     if (groups.length > 1) {
       groups.push({ value: 'multiple', label: t('inquiry.multipleAgeGroups') });
     }
-
     return groups;
   }
 

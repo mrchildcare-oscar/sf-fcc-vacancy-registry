@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { LANGUAGES } from '../../i18n/languages';
 
 const STORAGE_KEY = 'whyFcc_seen';
 
@@ -60,7 +61,7 @@ const TRUST_FACTORS = [
 export function WhyFamilyChildCare() {
   const { t, language } = useLanguage();
 
-  const langPrefix = language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : '';
+  const langPrefix = LANGUAGES[language].pathPrefix;
 
   // Build YouTube URL with CC enabled in the user's language
   const ccLang = YT_CC_LANG[language] || 'en';

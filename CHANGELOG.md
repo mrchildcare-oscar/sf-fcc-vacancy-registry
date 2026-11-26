@@ -33,12 +33,24 @@ or Chinese wording is always listed under "Needs review" until Oscar signs it of
   ahead of production.
 - **Tuition credit amounts (FY 2026-27, DEC rate sheet and sf.gov):** the age-group table on the
   financial-assistance, choose and infant-care pages in three languages.
+- **"Open today" vs "Opening soon":** one rule, `isOpenNow` / `isUpcoming` in `src/lib/upcoming.ts`, used by the
+  listings page, the inquiry form and `scripts/generate-openings.mjs`. Change it there, not in a copy.
 - **Citywide facility counts:** the stat blocks on `family-child-care-vs-centers`, `child-care-san-francisco`
   and `infant-care-san-francisco`, in three languages. These were hard-coded in March 2026 and drifted; refresh
   from state licensing data.
 
 ## Parked and open (not shipped)
 
+- On `staging`, not deployed (2026-11-26, code-review fixes):
+  - The zh child-care page still said 892 facilities / 370 centers. It now says 1,252（2026年9月）/ 400, the same as
+    en/es (state licensing data of Sept. 20, 2026, per commit `7d45fc7`).
+  - `/openings/` counted homes opening in a later month, and waitlist-only homes, as current openings. It now
+    uses the listings page's rule. Regenerated 2026-11-26: 20 programs, 84 spots (the old rule gave 26 and 86).
+  - The inquiry form now offers the same age groups the listing card shows (spots or "accepting" flag).
+  - zh donate copy uses the glossary terms 家庭托兒者 and 家庭托兒所 (`src/i18n/zh-TW.json`, `public/zh/donate/`).
+  - Removed the unused `language.spanish` key from `es.json`; en/es/zh are back to 534 keys each.
+  - Needs review: new Chinese tax line 「在法律允許的範圍內，您的捐款可以用作扣稅。」 ("to the extent allowed by
+    law", which the English had and the Chinese dropped).
 - Branch `fair-2026-wip` (`b1846ca`): Fair 2026 page edits (Jotform RSVP, per-language QR codes, partner logos).
   The Fair is over; contains unreviewed Chinese. Not merged.
 - 13 family child care license numbers on DEC's CARES 3.0 list are closed and replaced; the draft message to

@@ -14,6 +14,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { neighborhoods, getNeighborhoodBySlug } from "../src/data/neighborhoods.mjs";
+import { escapeHtml } from "./lib/html.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
@@ -145,14 +146,6 @@ const STRINGS = {
     footerOrg: "三藩市家庭托兒協會 (Family Child Care Association of San Francisco)",
   },
 };
-
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 function nameFor(n, lang) {
   if (lang === "es") return n.nameEs;

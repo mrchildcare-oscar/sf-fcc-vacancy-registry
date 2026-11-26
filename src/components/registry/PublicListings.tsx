@@ -33,7 +33,8 @@ import {
 } from '../../lib/analytics';
 import { shuffleListingsForUser } from '../../lib/randomOrder';
 import { getListingFreshness } from '../../lib/vacancyTtl';
-import { isUpcoming, parseDay } from '../../lib/upcoming';
+import { isOpenNow, isUpcoming, parseDay, reportedAgeGroups } from '../../lib/upcoming';
+import { LANGUAGES } from '../../i18n/languages';
 
 // True SF neighborhood borders (reviewed with Oscar). Used ONLY as a fallback:
 // when a selected neighborhood has few/no openings we surface openings in
@@ -110,18 +111,12 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   // Render freshness-aware "last updated" timestamp
   const openingMonth = (l: PublicListing) => {
     const d = parseDay(l.available_date);
-    const locale = language === 'zh-TW' ? 'zh-TW' : language === 'es' ? 'es' : 'en-US';
-    return d ? d.toLocaleDateString(locale, { month: 'short', year: 'numeric' }) : '';
+    return d ? d.toLocaleDateString(LANGUAGES[language].locale, { month: 'short', year: 'numeric' }) : '';
   };
-  const upcomingAges = (l: PublicListing) => {
-    const ages = ([
-      [l.infant_spots, l.accepting_infants, 'vacancy.infant'],
-      [l.toddler_spots, l.accepting_toddlers, 'vacancy.toddler'],
-      [l.preschool_spots, l.accepting_preschool, 'vacancy.preschool'],
-      [l.school_age_spots, l.accepting_school_age, 'vacancy.schoolAge'],
-    ] as [number, boolean, string][]).filter(([n, ok]) => n > 0 || ok).map(([n, , k]) => (n > 0 ? `${t(k)} ${n}` : t(k)));
-    return ages.join(' · ');
-  };
+  const upcomingAges = (l: PublicListing) =>
+    reportedAgeGroups(l)
+      .map(g => (l[g.spots] > 0 ? `${t(g.labelKey)} ${l[g.spots]}` : t(g.labelKey)))
+      .join(' · ');
   const renderLastUpdated = useCallback((listing: PublicListing) => {
     const freshness = getListingFreshness(listing.last_updated, listing.expires_at);
     const timeAgo = formatDistanceToNow(new Date(listing.last_updated), { addSuffix: true });
@@ -384,7 +379,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   // how many ELFA programs to expect. Independent of the other active filters
   // so the number stays stable as you narrow by neighborhood/age/etc.
   const elfaOpenCount = useMemo(
-    () => listings.filter(l => l.is_elfa_network && l.total_spots_available > 0 && !isUpcoming(l)).length,
+    () => listings.filter(l => l.is_elfa_network && isOpenNow(l)).length,
     [listings]
   );
 
@@ -460,7 +455,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
   // Memoize allFiltered so expand/collapse doesn't re-filter + re-shuffle
   const allFiltered = useMemo(() => listings.filter(l => matchesFilters(l)), [listings, filters]);
   const listingsWithOpenings = useMemo(() => {
-    const filtered = allFiltered.filter(l => l.total_spots_available > 0 && !isUpcoming(l));
+    const filtered = allFiltered.filter(l => isOpenNow(l));
     return shuffleListingsForUser(filtered);
   }, [allFiltered]);
   // Opening soon: not open today, but an opening is reported for the next 6 months.
@@ -484,7 +479,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
     // Index open, filter-matching listings by canonical neighborhood.
     const openByHood = new Map<string, PublicListing[]>();
     listings.forEach(l => {
-      if (l.total_spots_available <= 0 || isUpcoming(l) || !l.neighborhood) return;
+      if (!isOpenNow(l) || !l.neighborhood) return;
       if (!matchesFilters(l, { ignoreNeighborhood: true })) return;
       const canon = canonicalNeighborhood(l.neighborhood).toLowerCase();
       const arr = openByHood.get(canon);
@@ -1075,7 +1070,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
               {t('publicListings.browseByNeighborhood')}
             </span>
             {(['sunset', 'richmond', 'excelsior', 'bayview', 'mission'] as const).map(slug => {
-              const langKey = language === 'zh-TW' ? 'zh' : language === 'es' ? 'es' : 'en';
+              const langKey = LANGUAGES[language].short;
               const label = NEIGHBORHOOD_ARTICLES[slug].label[langKey];
               const active = isChipActive(slug);
               return (
@@ -1289,8 +1284,7 @@ export function PublicListings({ listings, loading, isProvider = false }: Public
           <div className="space-y-4">
             {groupedListings.map(([neighborhood, groupListings]) => {
               const articleSlug = getArticleSlug(neighborhood);
-              const langKey = language === 'zh-TW' ? 'zh' : language === 'es' ? 'es' : 'en';
-              const langPrefix = language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : '';
+              const { short: langKey, pathPrefix: langPrefix } = LANGUAGES[language];
               const article = articleSlug ? NEIGHBORHOOD_ARTICLES[articleSlug] : null;
               const learnMoreLabel = langKey === 'zh' ? '了解更多' : langKey === 'es' ? 'Más información' : 'Learn more';
               return (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Calculator, Search, BookOpen, HelpCircle, X, Baby, Home, DollarSign, MapPin } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { LANGUAGES } from '../../i18n/languages';
 import { PublicListing } from '../../types/registry';
 import { EligibilityScreener } from './EligibilityScreener';
 import { LicenseLookup } from './LicenseLookup';
@@ -140,7 +141,7 @@ export function ParentToolbox({ listings, vacancyStats, onListingClick }: Parent
                 {EVALUATE_LINKS.map(({ key, href, icon: Icon }) => (
                   <a
                     key={key}
-                    href={`${language === 'zh-TW' ? '/zh' : language === 'es' ? '/es' : ''}${href}`}
+                    href={`${LANGUAGES[language].pathPrefix}${href}`}
                     className="p-3 bg-gray-50 rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-sm transition-all group"
                   >
                     <Icon size={18} className="text-indigo-600 mb-1.5" />

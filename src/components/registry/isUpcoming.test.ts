@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isUpcoming } from '../../lib/upcoming';
+import { isOpenNow, isUpcoming, reportedAgeGroups } from '../../lib/upcoming';
 import type { PublicListing } from '../../types/registry';
 
 // "Opening soon" = available_date in a later calendar month, at most 6 months ahead, with spots or age groups
@@ -32,5 +32,29 @@ describe('isUpcoming', () => {
   });
   it('no date is not upcoming', () => {
     expect(isUpcoming(L({ available_date: '' as unknown as string, total_spots_available: 1 }), now)).toBe(false);
+  });
+});
+
+describe('isOpenNow', () => {
+  it('spots with a past date are open now', () => {
+    expect(isOpenNow(L({ available_date: '2026-11-06', total_spots_available: 2, infant_spots: 2 }), now)).toBe(true);
+  });
+  it('spots reported for a later month are "Opening soon", not open now', () => {
+    expect(isOpenNow(L({ available_date: '2027-01-17', total_spots_available: 2, toddler_spots: 2 }), now)).toBe(false);
+  });
+  it('no spots is not open now', () => {
+    expect(isOpenNow(L({ available_date: '2026-11-06', accepting_infants: true }), now)).toBe(false);
+  });
+});
+
+describe('reportedAgeGroups', () => {
+  it('counts an age group with spots even when its "accepting" flag is off (Jotform intake case)', () => {
+    expect(reportedAgeGroups(L({ toddler_spots: 2 })).map(g => g.value)).toEqual(['toddler']);
+  });
+  it('counts an age group flagged "accepting" with no spot count, in age order', () => {
+    expect(reportedAgeGroups(L({ accepting_preschool: true, infant_spots: 1 })).map(g => g.value)).toEqual(['infant', 'preschool']);
+  });
+  it('nothing reported gives no age groups', () => {
+    expect(reportedAgeGroups(L({}))).toEqual([]);
   });
 });

@@ -4,6 +4,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { escapeHtml as esc } from './lib/html.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { redirects } = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8'));
@@ -43,7 +44,6 @@ const links = redirects
 
 const groups = ORDER.filter(g => links.some(l => l.group === g));
 
-const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const destShort = d => d.startsWith('http')
   ? esc(d.replace(/^https?:\/\//, '').replace(/\/$/, '').slice(0, 48) + (d.length > 55 ? '…' : ''))
   : esc(d);

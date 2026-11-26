@@ -9,6 +9,9 @@ Dates are Pacific time. "Prod" = the Vercel production deployment aliased to fam
 
 ## How to add an entry
 
+Before any preview or production deploy, run `npm run review` (`scripts/review.mjs`). It must end in PASS;
+WARN lines are open decisions listed below. When you fix a drift, add a check for it there.
+
 One entry per production deploy, at the top. Copy this block:
 
 ```

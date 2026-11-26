@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "review": "node scripts/review.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "generate:neighborhoods": "node scripts/generate-neighborhood-pages.mjs",
